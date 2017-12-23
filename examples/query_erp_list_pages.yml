@@ -1,0 +1,581 @@
+- config:
+    name: 企业名称列表查询配置参数
+    variables:
+        - url: http://10.65.209.29:8065/pas/gateway.do
+        - service: query_erp_list_pages
+        - version: PAS_1.0
+        - request_time: ${get_now_time()}
+        - partner_id: 200003670082
+        - _input_charset: UTF-8
+        - sign_type: RSA
+        - sign_version: 1.0
+        - encrypt_version: 1.0
+        - notify_url: http://10.65.110.27:8888/receiveNotify
+        - return_url: http://10.65.110.27:8888/receiveNotify
+        - memo: test
+    request:
+         data:
+            service: $service
+            version: $version
+            request_time: $request_time
+            partner_id: $partner_id
+            _input_charset: $_input_charset
+            sign_type: $sign_type
+            sign_version: $sign_version
+            encrypt_version: $encrypt_version
+            notify_url: $notify_url
+            return_url: $return_url
+            memo: $memo
+
+
+- test:
+    name: 企业名称列表查询正常-无扩展参数
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_TRUE"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证正确"}
+
+- test:
+    name: 企业名称列表查询正常-传扩展参数（扩展参数不校验）
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_TRUE"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证正确"}
+
+- test:
+    name: 企业名称列表查询失败-企业参数格式错误
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度#￥%
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_FAIL"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证失败"}
+
+- test:
+    name: 企业名称列表查询失败-企业参数超长
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十已
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_FAIL"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证失败"}
+
+- test:
+    name: 企业名称列表查询失败-无该企业名称
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 无该错误
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_FAIL"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证失败"}
+
+- test:
+    name: 企业名称列表查询失败-企业名称未加密
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "SYSTEM_ERROR"}
+        - {"check": "response_message", "comparator": "eq", "expected": "系统繁忙，请稍后再试"}  
+
+- test:
+    name: 企业名称列表查询失败-企业查询类型格式错误
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAM#￥%
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证失败"}
+
+- test:
+    name: 企业名称列表查询失败-企业查询类型错误
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAM
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "企业参数类型暂不支持"}
+
+- test:
+    name: 企业名称列表查询失败-企业查询类型超长
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ASDFGHJKLQWER
+        - current_page: 1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1.2"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "企业查询参数类型长度不超过10"}  
+
+- test:
+    name: 企业名称列表查询失败-当前页为小数
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1.3
+        - page_size: 20 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "当前页数格式错误或为空"}
+
+- test:
+    name: 企业名称列表查询失败-当前页负数
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: -1
+        - page_size: 20 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "当前页数格式错误或为空"}
+
+- test:
+    name: 企业名称列表查询失败-当前页无数据
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 不走备案
+        - erp_type: ENAME
+        - current_page: 3
+        - page_size: 20 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "SYSTEM_ERROR"}
+        - {"check": "response_message", "comparator": "eq", "expected": "当前页数格式错误或为空"}
+
+- test:
+    name: 企业名称列表查询失败-当前页超长
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 10.56
+        - page_size: 20 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "当前页最大长度不超过3"}
+
+- test:
+    name: 企业名称列表查询失败-当前页传0
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 0
+        - page_size: 20 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "请求页数请从大于0开始"}
+
+
+- test:
+    name: 企业名称列表查询失败-页大小非整数
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 2.5 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "页大小格式错误或为空"}
+
+- test:
+    name: 企业名称列表查询失败-页大小传0
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 0 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "页大小格式错误或为空"}
+
+
+- test:
+    name: 企业名称列表查询失败-页大小超长
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 1235 
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "页大小最大长度不超过3"}
+
+- test:
+    name: 企业名称列表查询失败-页大小超限
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: 101
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "超过当前单页列表数最大值"}
+
+- test:
+    name: 企业名称列表查询失败-页大小格式错误
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 百度
+        - erp_type: ENAME
+        - current_page: 1
+        - page_size: AB
+        - extend_param: '{currentPage:"1"}'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            current_page: $current_page
+            page_size: $page_size
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "页大小格式错误或为空"}
+
+- test:
+    name: 企业名称列表查询失败-扩展参数错误（扩展参数不校验）
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 小米
+        - erp_type: ENAME
+        - extend_param: '{currentPage:"'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            extend_param: $extend_param
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "VALIDATE_TRUE"}
+        - {"check": "response_message", "comparator": "eq", "expected": "验证正确"}
+
+- test:
+    name: 企业名称列表查询失败-扩展参数超长
+    variables:
+        - out_request_no: ${get_now_time()}
+        - erp_param: 小米
+        - erp_type: ENAME
+        - extend_param: '{currentPage:"1",pageSize:"20"}qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm'
+    request:
+        method: POST
+        url: $url
+        data:
+            out_request_no: $out_request_no
+            erp_type: $erp_type
+            extend_param: $extend_param
+        encrypt_data:
+            erp_param: $erp_param
+    extractors:
+        - response_code: response_code
+        - response_message: response_message
+    validators:
+        - {"check": "response_code", "comparator": "eq", "expected": "ILLEGAL_ARGUMENT"}
+        - {"check": "response_message", "comparator": "eq", "expected": "扩展信息长度不超过200"}
+
+    
+
+
+

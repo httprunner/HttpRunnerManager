@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}新增模块{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+            <div class="listbiaoti am-cf">
+                <ul class="am-icon-flag on"> 新增模块</ul>
+                <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">新增模块</a></dl>
+            </div>
+            <div class="fbneirong">
+                <form class="am-form">
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">模块名称：</div>
+                        <div class="you">
+                            <input type="text" class="am-input-sm" id="doc-ipt-email-1" placeholder="请输入模块名称">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">所属项目：</div>
+                        <div class="you">
+                            <select data-am-selected="{searchBox: 1}" style="display: none;">
+                                <option value="a">-The.CC</option>
+                                <option value="b">夕风色</option>
+                                <option value="o">Orange</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">测试人员：</div>
+                        <div class="you">
+                            <input type="text" class="am-input-sm" id="doc-ipt-pwd-1" placeholder="测试人员">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">提测时间：</div>
+                        <div class="you">
+                            <input type="text" class="am-input-sm" id="doc-ipt-pwd-1" placeholder="提测时间">
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">简要描述：</div>
+                        <div class="you">
+                            <textarea class="" rows="2" id="doc-ta-1"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="zuo">其他信息：</div>
+                        <div class="you">
+                            <textarea class="" rows="2" id="doc-ta-1"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-form-group am-cf">
+                        <div class="you" style="margin-left: 11%;">
+                            <button type="button" class="am-btn am-btn-success am-radius" onclick="add_ajax('#add_module')">点 击 提 交</button>&nbsp;
+                            &raquo; &nbsp;
+                            <a type="submit"  href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="foods">
+                <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a> {% comment %}- More
+                        Templates<a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a>{% endcomment %}
+                </ul>
+                <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
+
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

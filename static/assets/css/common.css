@@ -1,0 +1,3 @@
+table#variables tr td, table#data tr td,table#header tr td,table#validate tr td,table#extract tr td{
+    padding: 0px;
+}

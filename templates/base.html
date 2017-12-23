@@ -1,0 +1,147 @@
+<!doctype html>
+<html class="no-js" lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="QC质量管理平台">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    {% load staticfiles %}
+
+    <link href="{% static "/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "/bootstrap/css/bootstrap-theme.min.css" %}" rel="stylesheet"/>
+
+    <link rel="icon" type="image/png" href="{% static "assets/i/favicon.png" %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static "assets/i/app-icon72x72@2x.png" %}">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
+    <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
+    <script src="{% static "assets/js/jquery.min.js" %}"></script>
+    <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
+    <script src="{% static "assets/js/app.js" %}"></script>
+</head>
+<body>
+<!--[if lte IE 9]><p class="browsehappy">升级你的浏览器吧！ <a href="http://se.360.cn/" target="_blank">升级浏览器</a>以获得更好的体验！</p>
+<![endif]-->
+{% comment %}<header class="am-topbar admin-header">
+{#    <div class="am-topbar-brand"><img src="{% static "/assets/img/sina-log.png" %}" alt="新浪支付"></div>#}
+</header>{% endcomment %}
+
+
+<div class="am-cf admin-main">
+
+    <div class="nav-navicon admin-main admin-sidebar">
+
+
+        <div class="sideMenu am-icon-dashboard" style="color:#aeb2b7; margin: 10px 0 0 0;"> 欢迎您：尹全旺</div>
+        <div class="sideMenu">
+            <h3 class="am-icon-flag"><em></em> <a href="#">项目管理</a></h3>
+            <ul>
+                <li><a href="">项 目 列 表</a></li>
+                <li><a href="/api/add_project">新 增 项 目</a></li>
+                <li>编 辑 项 目</li>
+                <li>项 目 预 览</li>
+                <li>删 除 项 目</li>
+            </ul>
+            <h3 class="am-icon-cart-plus"><em></em> <a href="#"> 模块管理</a></h3>
+            <ul>
+                <li>模 块 列 表</li>
+                <li><a href="/api/add_module">新 增 模 块</a></li>
+                <li>编 辑 模 块</li>
+                <li>模 块 预 览</li>
+                <li>删 除 模 块</li>
+            </ul>
+            <h3 class="am-icon-users"><em></em> <a href="#">接口管理</a></h3>
+            <ul>
+                <li>接 口 列 表</li>
+                <li>添 加 接 口</li>
+                <li>编 辑 接 口</li>
+                <li>详 细 信 息</li>
+                <li>删 除 接 口</li>
+            </ul>
+            <h3 class="am-icon-volume-up"><em></em> <a href="#">用例管理</a></h3>
+            <ul>
+                <li><a href="/api/add_config">新 增 配 置</a></li>
+                <li><a href="/api/add_case">新 增 用 例</a></li>
+                <li>编 辑 用 例</li>
+                <li>查 看 用 例</li>
+                <li>删 除 用 例</li>
+            </ul>
+            <h3 class="am-icon-gears"><em></em> <a href="#">系统设置</a></h3>
+            <ul>
+                <li>数据备份</li>
+                <li>邮件/短信管理</li>
+                <li>上传/下载</li>
+                <li>权限</li>
+               {% comment %} <li>网站设置</li>
+                <li>第三方支付</li>
+                <li>提现 /转账 出入账汇率</li>{% endcomment %}
+                <li>平台设置</li>
+                <li>声音文件</li>
+            </ul>
+        </div>
+        <!-- sideMenu End -->
+
+        <script type="text/javascript">
+            jQuery(".sideMenu").slide({
+                titCell: "h3", //鼠标触发对象
+                targetCell: "ul", //与titCell一一对应，第n个titCell控制第n个targetCell的显示隐藏
+                effect: "slideDown", //targetCell下拉效果
+                delayTime: 300, //效果时间
+                triggerTime: 150, //鼠标延迟触发时间（默认150）
+                defaultPlay: true,//默认是否执行效果（默认true）
+                returnDefault: true //鼠标从.sideMen移走后返回默认状态（默认false）
+            });
+        </script>
+    </div>
+
+    <div class="daohang">
+        <ul>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"> 返回首页 <a
+                        href="/api/index" class="am-close am-close-spin" data-am-modal-close="">~</a></button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增模块<a
+                        href="/api/add_module" class="am-close am-close-spin" data-am-modal-close="">~</a>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增接口<a
+                        href="/api/add_api" class="am-close am-close-spin" data-am-modal-close="">~</a>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增用例<a
+                        href="/api/add_case" class="am-close am-close-spin" data-am-modal-close="">~</a>
+                </button>
+            </li>
+        </ul>
+    </div>
+    {% block content %}{% endblock %}
+
+
+    <!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="{% static "assets/js/polyfill/rem.min.js" %}"></script>
+<script src="{% static "assets/js/polyfill/respond.min.js" %}"></script>
+<script src="{% static "assets/js/amazeui.legacy.js" %}"></script>
+<![endif]-->
+
+    <!--[if (gte IE 9)|!(IE)]><!-->
+    <script src="{% static "assets/js/amazeui.min.js" %}"></script>
+    <script src="{% static "assets/js/common.js" %}"></script>
+    {% comment %} <script src="{% static "/bootstrap/js/bootstrap.min.js" %}"></script>{% endcomment %}
+
+    <!--<![endif]-->
+</div>
+
+</body>
+</html>
