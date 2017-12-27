@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 # Create your views here.
 
 from ApiManager.forms import username_validate, password_validate, email_validate
+from ApiManager.logic.common import module_info_logic
 from ApiManager.models import UserInfo, UserType
 from httprunner.cli import main_ate
 
@@ -78,6 +79,9 @@ def index(request):
 
 
 def add_project(request):
+    if request.is_ajax():
+        project_info = json.loads(request.body.decode('utf-8'))
+
     return render_to_response('add_project.html')
 
 
@@ -85,7 +89,17 @@ def add_project(request):
 
 
 def add_module(request):
-    return render_to_response('add_module.html')
+    if request.is_ajax():
+        module_info = json.loads(request.body.decode('utf-8'))
+        msg = module_info_logic(**module_info)
+
+        if msg is 'ok':
+            return HttpResponse('模块添加成功')
+        else:
+            return  HttpResponse(msg)
+
+    elif request.method == 'GET':
+        return render_to_response('add_module.html')
 
 
 '''添加配置'''

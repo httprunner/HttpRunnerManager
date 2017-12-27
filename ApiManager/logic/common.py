@@ -72,3 +72,25 @@ def load_case(path):
     testcase_lists.append({'test':parsed_request})
     return testcase_lists
 
+def module_info_logic(**kwargs):
+    if kwargs.get('module_name') is '':
+        return '模块名称不能为空'
+    if kwargs.get('belong_project') is '':
+        return '所属项目不能为空'
+    if kwargs.get('test_user') is '':
+        return '测试人员不能为空'
+    if kwargs.get('lifting_time') is '':
+        return '提测时间不能为空'
+    return 'ok'
+
+
+def project_info_logic(**kwargs):
+    if kwargs.get('project_name') is '':
+        return '项目名称不能为空'
+    if kwargs.get('responsible_name') is '':
+        return '负责人不能为空'
+    if kwargs.get('test_user') is '':
+        return '测试人员不能为空'
+    if kwargs.get('dev_user') is '':
+        return '开发人员不能为空'
+    return 'ok'

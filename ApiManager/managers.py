@@ -24,4 +24,8 @@ class UserInfoManager(models.Manager):
         return self.filter(username__exact=username,password__exact=password).count()
 
 
+class ProjectInfoManager(models.Manager):
+    pass
 
+class ModuleInfoManager(models.Manager):
+    pass

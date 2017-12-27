@@ -7,7 +7,7 @@ import re
 
 import yaml
 
-from ApiManager.common import load_case
+from ApiManager.logic.common import load_case
 from httprunner import exception, utils
 
 variable_regexp = r"\$([\w_]+)"

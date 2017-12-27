@@ -55,15 +55,21 @@ function removeRow(id) {
 }
 
 /*表单信息异步传输*/
-function add_ajax(id) {
+function info_ajax(id) {
+    url = '/api/add_project/';
+    if(id === '#add_module') {
+        url = '/api/add_module/';
+    }
     $.ajax({
         type: 'post',
-        url: '/api/add_project/',
+        url: url,
         data: JSON.stringify($(id).serializeJSON()),
         contentType: "application/json",
         success: function (data) {
+            alert(data)
         },
         error: function () {
+            alert('系统繁忙，请稍候重试')
         }
     });
 
