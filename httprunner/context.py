@@ -10,7 +10,6 @@ class Context(object):
     """ Manages context functions and variables.
         context has two levels, testset and testcase.
     """
-
     def __init__(self):
         self.testset_shared_variables_mapping = OrderedDict()
         self.testcase_variables_mapping = OrderedDict()
@@ -50,11 +49,11 @@ class Context(object):
 
         # import_module_functions will be deprecated soon
         module_items = config_dict.get('import_module_items', []) \
-                       or config_dict.get('import_module_functions', [])
+            or config_dict.get('import_module_functions', [])
         self.import_module_items(module_items, level)
 
         variables = config_dict.get('variables') \
-                    or config_dict.get('variable_binds', OrderedDict())
+            or config_dict.get('variable_binds', OrderedDict())
         self.bind_variables(variables, level)
 
     def import_requires(self, modules):

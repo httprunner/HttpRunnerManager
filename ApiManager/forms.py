@@ -1,6 +1,4 @@
 import re
-from django import forms
-from django.core.exceptions import ValidationError
 
 '''
 用户名正则匹配验证

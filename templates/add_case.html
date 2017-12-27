@@ -147,12 +147,12 @@
                             </select>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加字段</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除字段</button>
+                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加数据</button>
+                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除数据</button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">添加头部</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">删除头部</button>
                         {% comment %}  </form>{% endcomment %}
-                        <form id="form_request">
+                        <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>request:</caption>
                                 <thead>
@@ -165,7 +165,9 @@
                                 <tbody>
                                 </tbody>
                             </table>
+                        </form>
 
+                        <form id="form_request_headers">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="header">
                                 <caption>headers:</caption>
                                 <thead>
@@ -223,11 +225,8 @@
 
         </div>
 
-        {% comment %}<div class="am-margin">
-            <button type="button" class="am-btn am-btn-success am-radius ">提交保存</button>
-            <button type="button" class="am-btn am-btn-primary am-radius ">放弃保存</button>
-        </div>{% endcomment %}
         <div class="am-form-group am-cf">
+            {% csrf_token %}
             <div class="you" style="margin-left: 11%;">
                 <button type="button" class="am-btn am-btn-success am-radius" onclick="case_ajax()">点 击 提 交
                 </button>&nbsp;

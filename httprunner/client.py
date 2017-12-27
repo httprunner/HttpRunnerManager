@@ -5,11 +5,10 @@ import time
 
 import requests
 import urllib3
+from httprunner.exception import ParamsError
 from requests import Request, Response
 from requests.exceptions import (InvalidSchema, InvalidURL, MissingSchema,
                                  RequestException)
-
-from httprunner.exception import ParamsError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -25,6 +24,7 @@ def prepare_kwargs(method, kwargs):
 
 
 class ApiResponse(Response):
+
     def raise_for_status(self):
         if hasattr(self, 'error') and self.error:
             raise self.error
@@ -44,7 +44,6 @@ class HttpSession(requests.Session):
     part of the URL will be prepended with the HttpSession.base_url which is normally inherited
     from a HttpRunner class' host property.
     """
-
     def __init__(self, base_url=None, *args, **kwargs):
         super(HttpSession, self).__init__(*args, **kwargs)
         self.base_url = base_url if base_url else ""
@@ -109,16 +108,10 @@ class HttpSession(requests.Session):
         request_meta["method"] = method
         request_meta["start_time"] = time.time()
 
-        if "httpntlmauth" in kwargs:
-            from requests_ntlm import HttpNtlmAuth
-            auth_account = kwargs.pop("httpntlmauth")
-            kwargs["auth"] = HttpNtlmAuth(
-                auth_account["username"], auth_account["password"])
-
         kwargs.setdefault("timeout", 120)
 
         response = self._send_request_safe_mode(method, url, **kwargs)
-        request_meta["url"] = (response.history and response.history[0] or response) \
+        request_meta["url"] = (response.history and response.history[0] or response)\
             .request.path_url
 
         # record the consumed time
@@ -146,9 +139,9 @@ class HttpSession(requests.Session):
                 method=method, url=url, exception=str(e)))
         else:
             logging.info(
-                """ status_code: {}, response_time: {} ms, response_length: {} bytes""" \
-                    .format(request_meta["status_code"], request_meta["response_time"], \
-                            request_meta["content_size"]))
+                """ status_code: {}, response_time: {} ms, response_length: {} bytes"""\
+                .format(request_meta["status_code"], request_meta["response_time"], \
+                    request_meta["content_size"]))
 
         return response
 

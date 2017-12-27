@@ -27,7 +27,7 @@ class UserInfo(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     status = models.IntegerField(default=1)
-    user_type = models.ForeignKey(UserType,db_column='user_type')
+    user_type = models.ForeignKey(UserType,db_column='user_type', on_delete=models.CASCADE)
     objects = UserInfoManager()
 
 

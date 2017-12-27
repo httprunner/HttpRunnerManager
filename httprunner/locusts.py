@@ -1,11 +1,10 @@
-import codecs
+import io
 import multiprocessing
 import os
 import sys
 
-from locust.main import main
-
 from httprunner.testcase import load_test_file
+from locust.main import main
 
 
 def parse_locustfile(file_path):
@@ -29,7 +28,6 @@ def parse_locustfile(file_path):
 
     return locustfile_path
 
-
 def gen_locustfile(testcase_file_path):
     """ generate locustfile from template.
     """
@@ -41,8 +39,8 @@ def gen_locustfile(testcase_file_path):
     testset = load_test_file(testcase_file_path)
     host = testset.get("config", {}).get("request", {}).get("base_url", "")
 
-    with codecs.open(template_path, encoding='utf-8') as template:
-        with codecs.open(locustfile_path, 'w', encoding='utf-8') as locustfile:
+    with io.open(template_path, encoding='utf-8') as template:
+        with io.open(locustfile_path, 'w', encoding='utf-8') as locustfile:
             template_content = template.read()
             template_content = template_content.replace("$HOST", host)
             template_content = template_content.replace("$TESTCASE_FILE", testcase_file_path)
@@ -50,18 +48,15 @@ def gen_locustfile(testcase_file_path):
 
     return locustfile_path
 
-
 def start_master(sys_argv):
     sys_argv.append("--master")
     sys.argv = sys_argv
     main()
 
-
 def start_slave(sys_argv):
     sys_argv.extend(["--slave"])
     sys.argv = sys_argv
     main()
-
 
 def run_locusts_at_full_speed(sys_argv):
     sys_argv.pop(sys_argv.index("--full-speed"))

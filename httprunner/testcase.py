@@ -1,5 +1,5 @@
 import ast
-import codecs
+import io
 import json
 import logging
 import os
@@ -7,6 +7,7 @@ import re
 
 import yaml
 
+from ApiManager.common import load_case
 from httprunner import exception, utils
 
 variable_regexp = r"\$([\w_]+)"
@@ -23,7 +24,7 @@ testcases_cache_mapping = {}
 def _load_yaml_file(yaml_file):
     """ load yaml file and check file content format
     """
-    with codecs.open(yaml_file, 'r+', encoding='utf-8') as stream:
+    with io.open(yaml_file, 'r', encoding='utf-8') as stream:
         yaml_content = yaml.load(stream)
         check_format(yaml_file, yaml_content)
         return yaml_content
@@ -32,7 +33,7 @@ def _load_yaml_file(yaml_file):
 def _load_json_file(json_file):
     """ load json file and check file content format
     """
-    with codecs.open(json_file, encoding='utf-8') as data_file:
+    with io.open(json_file, encoding='utf-8') as data_file:
         try:
             json_content = json.load(data_file)
         except exception.JSONDecodeError:
@@ -183,42 +184,37 @@ def load_testcases_by_path(path):
             testset_dict_2
         ]
     """
-    if isinstance(path, (list, set)):
-        testsets = []
+    # if isinstance(path, (list, set)):
+    #     testsets = []
+    #
+    #     for file_path in set(path):
+    #         testset = load_testcases_by_path(file_path)
+    #         if not testset:
+    #             continue
+    #         testsets.extend(testset)
+    #
+    #     return testsets
+    #
+    # if not os.path.isabs(path):
+    #     path = os.path.join(os.getcwd(), path)
+    #
+    # if path in testcases_cache_mapping:
+    #     return testcases_cache_mapping[path]
+    #
+    # if os.path.isdir(path):
+    #     files_list = utils.load_folder_files(path)
+    #     testcases_list = load_testcases_by_path(files_list)
 
-        for file_path in set(path):
-            testset = load_testcases_by_path(file_path)
-            if not testset:
-                continue
-            testsets.extend(testset)
 
-        return testsets
-
-    if not os.path.isabs(path):
-        path = os.path.join(os.getcwd(), path)
-
-    if path in testcases_cache_mapping:
-        return testcases_cache_mapping[path]
-
-    if os.path.isdir(path):
-        files_list = utils.load_folder_files(path)
-        testcases_list = load_testcases_by_path(files_list)
-
-    elif os.path.isfile(path):
-        try:
-            testset = load_test_file(path)
-            if testset["testcases"] or testset["api"]:
-                testcases_list = [testset]
-            else:
-                testcases_list = []
-        except exception.FileFormatError:
+    try:
+        testset = load_test_file(path)
+        if testset["testcases"] or testset["api"]:
+            testcases_list = [testset]
+        else:
             testcases_list = []
-
-    else:
-        logging.error(u"file not found: {}".format(path))
+    except exception.FileFormatError:
         testcases_list = []
 
-    testcases_cache_mapping[path] = testcases_list
     return testcases_list
 
 
@@ -236,12 +232,12 @@ def load_test_file(file_path):
     testset = {
         "name": "",
         "config": {
-            "path": file_path
+            "path": ''
         },
         "api": {},
         "testcases": []
     }
-    tests_list = _load_file(file_path)
+    tests_list = load_case(file_path)
 
     for item in tests_list:
         for key in item:

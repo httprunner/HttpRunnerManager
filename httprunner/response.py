@@ -1,17 +1,16 @@
-import json
 import logging
 import re
 from collections import OrderedDict
-from urllib.parse import unquote
 
-from requests.structures import CaseInsensitiveDict
 
 from httprunner import exception, utils
+from requests.structures import CaseInsensitiveDict
 
 text_extractor_regexp_compile = re.compile(r".*\(.*\).*")
 
 
 class ResponseObject(object):
+
     def __init__(self, resp_obj):
         """ initialize with a requests.Response object
         @param (requests.Response instance) resp_obj
@@ -24,10 +23,7 @@ class ResponseObject(object):
         try:
             return self.resp_obj.json()
         except ValueError:
-            try:
-                return json.loads(unquote(self.resp_text))
-            except:
-                return self.resp_text
+            return self.resp_text
 
     def parsed_dict(self):
         return {

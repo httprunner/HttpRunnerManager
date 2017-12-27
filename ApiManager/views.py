@@ -1,11 +1,12 @@
 import json
-
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 # Create your views here.
+
 from ApiManager.forms import username_validate, password_validate, email_validate
 from ApiManager.models import UserInfo, UserType
+from httprunner.cli import main_ate
 
 '''用户注册'''
 
@@ -94,15 +95,18 @@ def add_config(request):
     return render_to_response('add_config.html')
 
 
-'''添加用例'''
+def run_test(request):
+    if request.is_ajax():
+        testcase_lists = json.loads(request.body.decode('utf-8'))
+
+        if main_ate(testcase_lists):
+            return HttpResponse('ok')
+        else:
+            return HttpResponse('fail')
+
 
 
 def add_case(request):
-    if request.method == 'POST':
-        test = json.loads(request.body.decode('utf-8'))
-        for value in test:
-            print(sorted(value.items()))
-        return HttpResponse('用例添加成功')
     return render_to_response('add_case.html')
 
 
@@ -111,3 +115,23 @@ def add_case(request):
 
 def add_api(request):
     return render_to_response('add_api.html')
+
+
+def test_get(request):
+    if request.method == 'GET':
+        if request.GET.get('username') == 'lcc':
+            return HttpResponse(json.dumps({'status': 'ok'}))
+        else:
+            return HttpResponse('illegal')
+    elif request.method == 'POST':
+
+        if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
+            a = {'login': 'success'}
+            return HttpResponse(json.dumps(a))
+        elif json.loads(request.body.decode('utf-8')).get('username') == 'yinquanwang':
+            return HttpResponse('this is a json post request')
+        else:
+            return HttpResponse('this is a post request')
+
+
+

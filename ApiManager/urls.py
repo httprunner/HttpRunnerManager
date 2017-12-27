@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from ApiManager.views import register, login, index, add_project, add_module, add_case, add_config, add_api
+from ApiManager.views import register, login, index, add_project, add_module, add_case, add_config, add_api, run_test, \
+    test_get
 
 urlpatterns = [
     url(r'^register/', register),
@@ -26,6 +27,8 @@ urlpatterns = [
     url(r'^add_case/', add_case),
     url(r'^add_config/', add_config),
     url(r'^add_api/', add_api),
+    url(r'^run_test/', run_test),
+    url(r'^test_get/', test_get),
 
 ]
 

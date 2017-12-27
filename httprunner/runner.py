@@ -1,7 +1,5 @@
 import logging
-from urllib.parse import unquote
 
-from examples.debugtalk import get_request_msg
 from httprunner import exception, response, testcase, utils
 from httprunner.client import HttpSession
 from httprunner.context import Context
@@ -11,11 +9,10 @@ class Runner(object):
     def __init__(self, http_client_session=None, request_failure_hook=None):
         self.http_client_session = http_client_session
         self.context = Context()
-        testcase.load_test_dependencies()
+        # testcase.load_test_dependencies()
         self.request_failure_hook = request_failure_hook
 
     def init_config(self, config_dict, level):
-        # logging.info("config_dict: {config_dict}".format(config_dict=config_dict))
         """ create/update context variables binds
         @param (dict) config_dict
         @param (str) level, "testset" or "testcase"
@@ -118,13 +115,14 @@ class Runner(object):
 
         for _ in range(run_times):
             setup_teardown(setup_actions)
-            parsed_request = get_request_msg(**parsed_request)
+
             resp = self.http_client_session.request(
                 method,
                 url,
                 name=group_name,
                 **parsed_request
             )
+
             resp_obj = response.ResponseObject(resp)
 
             extracted_variables_mapping = resp_obj.extract_response(extractors)
@@ -137,7 +135,7 @@ class Runner(object):
                 err_msg += u"HTTP request url: {}\n".format(url)
                 err_msg += u"HTTP request kwargs: {}\n".format(parsed_request)
                 err_msg += u"HTTP response status_code: {}\n".format(resp.status_code)
-                err_msg += u"HTTP response content: \n{}".format(unquote(resp.text))
+                err_msg += u"HTTP response content: \n{}".format(resp.text)
                 logging.error(err_msg)
                 raise
             finally:
