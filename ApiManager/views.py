@@ -1,13 +1,14 @@
 import json
+
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
-# Create your views here.
-
 from ApiManager.forms import username_validate, password_validate, email_validate
-from ApiManager.logic.common import module_info_logic
-from ApiManager.models import UserInfo, UserType
+from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic
+from ApiManager.models import UserInfo, UserType, ProjectInfo
 from httprunner.cli import main_ate
+
+# Create your views here.
 
 '''用户注册'''
 
@@ -81,8 +82,14 @@ def index(request):
 def add_project(request):
     if request.is_ajax():
         project_info = json.loads(request.body.decode('utf-8'))
+        msg = project_info_logic(**project_info)
 
-    return render_to_response('add_project.html')
+        if msg is 'ok':
+            return HttpResponse('项目添加成功')
+        else:
+            return HttpResponse(msg)
+    elif request.method == 'GET':
+        return render_to_response('add_project.html')
 
 
 '''添加模块'''
@@ -96,11 +103,26 @@ def add_module(request):
         if msg is 'ok':
             return HttpResponse('模块添加成功')
         else:
-            return  HttpResponse(msg)
+            return HttpResponse(msg)
 
     elif request.method == 'GET':
-        return render_to_response('add_module.html')
 
+        return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
+
+
+def add_case(request):
+    project = ProjectInfo.objects.all().values('pro_name')
+
+    if request.is_ajax():
+        testcase_lists = json.loads(request.body.decode('utf-8'))
+        print(testcase_lists)
+        msg = case_info_logic(**testcase_lists)
+        if msg is 'ok':
+            return HttpResponse('用例添加成功')
+        else:
+            return HttpResponse(msg)
+    else:
+        return render_to_response('add_case.html', {'project': project})
 
 '''添加配置'''
 
@@ -120,15 +142,14 @@ def run_test(request):
 
 
 
-def add_case(request):
-    return render_to_response('add_case.html')
-
-
 '''添加接口'''
 
 
 def add_api(request):
     return render_to_response('add_api.html')
+
+
+'''测试代码'''
 
 
 def test_get(request):
@@ -146,6 +167,3 @@ def test_get(request):
             return HttpResponse('this is a json post request')
         else:
             return HttpResponse('this is a post request')
-
-
-

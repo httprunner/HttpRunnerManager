@@ -49,8 +49,9 @@
                             <div class="col-md-4">
                                 <select name="project" class="form-control" data-am-selected="{searchBox: 1}"
                                         style="display: none;">
-                                    <option>1</option>
-                                    <option>2</option>
+                                    {% for foo in project %}
+                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -66,17 +67,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
-                            <label for="which-api" class="col-md-2 control-label text-info" style="font-size: 14px;">which
-                                api:</label>
-                            <div class="col-md-4">
-                                <select name="which-api" class="form-control" data-am-selected="{searchBox: 1}"
-                                        style="display: none;">
-                                    <option>1</option>
-                                    <option>2</option>
-                                </select>
-                            </div>
-                        </div>
 
                         <div class="form-group has-feedback has-info">
                             <label for="include" class="col-md-2 control-label text-info"

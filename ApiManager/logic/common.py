@@ -1,3 +1,4 @@
+from ApiManager.logic.operation import add_project_data, add_module_data
 
 
 def key_value_dict(**kwargs):
@@ -37,42 +38,47 @@ def key_value_list(name='false', **kwargs):
     return lists
 
 
-def load_case(path):
-    parsed_request = {}
-    request = {}
-    testcase_lists = []
+# def load_case(path):
+#     parsed_request = {}
+#     request = {}
+#     testcase_lists = []
+#
+#     for value in path:
+#         if value is not {}:
+#             key_name = str(value.keys())
+#             if 'keyvariables' in key_name:
+#                 parsed_request.setdefault('variables', key_value_list(**value))
+#             elif 'keyheader' in key_name:
+#                 parsed_request.setdefault('headers', key_value_dict(**value))
+#             elif 'keydata' in key_name:
+#                 parsed_request.setdefault('data', key_value_dict(**value))
+#             elif 'keyextract' in key_name:
+#                 parsed_request.setdefault('extract', key_value_list(**value))
+#             elif 'keyvalidate' in key_name:
+#                 parsed_request.setdefault('validate', key_value_list(name='true', **value))
+#             elif 'case_name' in key_name:
+#                 parsed_request['name'] = value.pop('case_name')
+#             elif 'DataType' in key_name:
+#                 parsed_request['data_type'] = value.pop('DataType')
+#             elif 'method' in key_name:
+#                 request['method'] = value.pop('method')
+#             elif 'url' in key_name:
+#                 request['url'] = value.pop('url')
+#
+#     if 'data' in parsed_request.keys():
+#         data_type = parsed_request.pop('data_type')
+#         request.setdefault(data_type, parsed_request.pop('data'))
+#
+#     parsed_request.setdefault('request', request)
+#     testcase_lists.append({'test': parsed_request})
+#     return testcase_lists
 
-    for value in path:
-        if value is not {}:
-            key_name = str(value.keys())
-            if 'keyvariables' in key_name:
-                parsed_request.setdefault('variables', key_value_list(**value))
-            elif 'keyheader' in key_name:
-                parsed_request.setdefault('headers', key_value_dict(**value))
-            elif 'keydata' in key_name:
-                parsed_request.setdefault('data', key_value_dict(**value))
-            elif 'keyextract' in key_name:
-                parsed_request.setdefault('extract', key_value_list(**value))
-            elif 'keyvalidate' in key_name:
-                parsed_request.setdefault('validate', key_value_list(name='true', **value))
-            elif 'case_name' in key_name:
-                parsed_request['name'] = value.pop('case_name')
-            elif 'DataType' in key_name:
-                parsed_request['data_type'] = value.pop('DataType')
-            elif 'method' in key_name:
-                request['method'] = value.pop('method')
-            elif 'url' in key_name:
-                request['url'] = value.pop('url')
+def load_case(**kwargs):
+    pass
 
-    if 'data' in parsed_request.keys():
-        data_type = parsed_request.pop('data_type')
-        request.setdefault(data_type, parsed_request.pop('data'))
-
-    parsed_request.setdefault('request', request)
-    testcase_lists.append({'test':parsed_request})
-    return testcase_lists
 
 def module_info_logic(**kwargs):
+
     if kwargs.get('module_name') is '':
         return '模块名称不能为空'
     if kwargs.get('belong_project') is '':
@@ -81,7 +87,7 @@ def module_info_logic(**kwargs):
         return '测试人员不能为空'
     if kwargs.get('lifting_time') is '':
         return '提测时间不能为空'
-    return 'ok'
+    return add_module_data(**kwargs)
 
 
 def project_info_logic(**kwargs):
@@ -93,4 +99,24 @@ def project_info_logic(**kwargs):
         return '测试人员不能为空'
     if kwargs.get('dev_user') is '':
         return '开发人员不能为空'
+    if kwargs.get('publish_app') is '':
+        return '发布应用不能为空'
+
+    return add_project_data(**kwargs)
+
+
+def case_info_logic(**kwargs):
+    if kwargs.get('test').get('name').get('case_name') is '':
+        return '用例名称不可为空'
+    if kwargs.get('test').get('name').get('project') is '':
+        return '所属项目不能为空'
+    if kwargs.get('test').get('name').get('module') is '':
+        return '所属模块不能为空'
+    if kwargs.get('test').get('name').get('author') is '':
+        return '创建者不能为空'
+    if kwargs.get('test').get('request').get('url') is '':
+        return '接口地址不能为空'
+    if not kwargs.get('test').get('validate'):
+        return '至少需要一个结果校验！'
     return 'ok'
+

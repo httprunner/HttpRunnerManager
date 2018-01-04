@@ -76,29 +76,73 @@ function info_ajax(id) {
 }
 
 /*用例信息异步传输*/
+// function case_ajax() {
+//     var test = [];
+//     var url = $("#url").serializeJSON();
+//     var method = $("#method").serializeJSON();
+//     var dataType = $("#DataType").serializeJSON();
+//     var messages = $("#form_message").serializeJSON();
+//     var variables = $("#form_variables").serializeJSON();
+//     var request_data = $("#form_request_data").serializeJSON();
+//     var request_headers = $("#form_request_headers").serializeJSON();
+//     var extract = $("#form_extract").serializeJSON();
+//     var validate = $("#form_validate").serializeJSON();
+//     test.push(url);
+//     test.push(method);
+//     test.push(dataType);
+//     test.push(messages);
+//     test.push(variables);
+//     test.push(request_data);
+//     test.push(request_headers);
+//     test.push(extract);
+//     test.push(validate);
+//     $.ajax({
+//         type: 'post',
+//         url: '/api/add_case/',
+//         data: JSON.stringify(test),
+//         contentType: "application/json",
+//         success: function (data) {
+//              alert(data)
+//         },
+//         error: function () {
+//             alert('系统繁忙，请稍候重试')
+//         }
+//     });
+// }
+
+
 function case_ajax() {
-    var test = [];
     var url = $("#url").serializeJSON();
     var method = $("#method").serializeJSON();
     var dataType = $("#DataType").serializeJSON();
-    var messages = $("#form_message").serializeJSON();
+    var caseInfo = $("#form_message").serializeJSON();
     var variables = $("#form_variables").serializeJSON();
     var request_data = $("#form_request_data").serializeJSON();
-    var request_headers = $("#form_request_headers").serializeJSON();
+    var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
-    test.push(url);
-    test.push(method);
-    test.push(dataType);
-    test.push(messages);
-    test.push(variables);
-    test.push(request_data);
-    test.push(request_headers);
-    test.push(extract);
-    test.push(validate);
+    var test= {
+        "test":{
+            "name": caseInfo,
+            "variables": variables,
+            "setUp": "",
+            "request": {
+                "url": url.url,
+                "method": method.method,
+                "headers": headers,
+                "type": dataType.DataType,
+                "request_data": request_data
+            },
+            "tearDown": "",
+            "extract": extract,
+            "validate": validate
+
+        }
+    };
+
     $.ajax({
         type: 'post',
-        url: '/api/run_test/',
+        url: '/api/add_case/',
         data: JSON.stringify(test),
         contentType: "application/json",
         success: function (data) {
