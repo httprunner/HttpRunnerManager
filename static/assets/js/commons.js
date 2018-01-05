@@ -8,7 +8,7 @@ function addNewRow(id) {
         attribute = 'header';
     } else if (id === 'extract') {
         attribute = 'extract';
-    } else if(id === 'validate'){
+    } else if (id === 'validate') {
         attribute = 'validate';
     }
     var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='nodename " + rowsNum + "' value='' style='width:100%; border: none' />";
@@ -32,6 +32,7 @@ function addNewRow(id) {
     }
 
 }
+
 /*表格删除行*/
 function removeRow(id) {
     var attribute = 'variables';
@@ -41,7 +42,7 @@ function removeRow(id) {
         attribute = 'header';
     } else if (id === 'extract') {
         attribute = 'extract';
-    } else if(id === 'validate'){
+    } else if (id === 'validate') {
         attribute = 'validate';
     }
     var chkObj = document.getElementsByName(attribute);
@@ -54,19 +55,51 @@ function removeRow(id) {
     }
 }
 
+/*动态改变模块信息*/
+function show_module(module_info) {
+    module_info = module_info.split('replaceFlag');
+    var a =  $("#belong_module_id");
+    a.empty();
+    for(var i = 0; i < module_info.length; i++) {
+        var value = module_info[i];
+        a.prepend("<option value='"+value+"' >"+value+"</option>")
+    }
+
+}
+
 /*表单信息异步传输*/
 function info_ajax(id) {
+    data = $(id).serializeJSON();
     url = '/api/add_project/';
-    if(id === '#add_module') {
+    if (id === '#add_module') {
         url = '/api/add_module/';
+    } else if (id === '#form_message') {
+        url = '/api/add_case/';
+        data = {
+            "test": {
+                "name": data
+            }
+        }
+    } else if (id === '#form_config') {
+        url = '/api/add_config/';
+        data = {
+            "test": {
+                "name": data
+            }
+        }
     }
+
     $.ajax({
         type: 'post',
         url: url,
-        data: JSON.stringify($(id).serializeJSON()),
+        data: JSON.stringify(data),
         contentType: "application/json",
         success: function (data) {
-            alert(data)
+            if (id !== '#form_message' && id !=='#form_config') {
+                alert(data)
+            } else {
+                show_module(data)
+            }
         },
         error: function () {
             alert('系统繁忙，请稍候重试')
@@ -74,41 +107,6 @@ function info_ajax(id) {
     });
 
 }
-
-/*用例信息异步传输*/
-// function case_ajax() {
-//     var test = [];
-//     var url = $("#url").serializeJSON();
-//     var method = $("#method").serializeJSON();
-//     var dataType = $("#DataType").serializeJSON();
-//     var messages = $("#form_message").serializeJSON();
-//     var variables = $("#form_variables").serializeJSON();
-//     var request_data = $("#form_request_data").serializeJSON();
-//     var request_headers = $("#form_request_headers").serializeJSON();
-//     var extract = $("#form_extract").serializeJSON();
-//     var validate = $("#form_validate").serializeJSON();
-//     test.push(url);
-//     test.push(method);
-//     test.push(dataType);
-//     test.push(messages);
-//     test.push(variables);
-//     test.push(request_data);
-//     test.push(request_headers);
-//     test.push(extract);
-//     test.push(validate);
-//     $.ajax({
-//         type: 'post',
-//         url: '/api/add_case/',
-//         data: JSON.stringify(test),
-//         contentType: "application/json",
-//         success: function (data) {
-//              alert(data)
-//         },
-//         error: function () {
-//             alert('系统繁忙，请稍候重试')
-//         }
-//     });
-// }
 
 
 function case_ajax() {
@@ -121,11 +119,11 @@ function case_ajax() {
     var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
-    var test= {
-        "test":{
+    var test = {
+        "test": {
             "name": caseInfo,
             "variables": variables,
-            "setUp": "",
+            "setUp": {},
             "request": {
                 "url": url.url,
                 "method": method.method,
@@ -133,7 +131,7 @@ function case_ajax() {
                 "type": dataType.DataType,
                 "request_data": request_data
             },
-            "tearDown": "",
+            "tearDown": {},
             "extract": extract,
             "validate": validate
 
@@ -146,7 +144,7 @@ function case_ajax() {
         data: JSON.stringify(test),
         contentType: "application/json",
         success: function (data) {
-             alert(data)
+            alert(data)
         },
         error: function () {
             alert('系统繁忙，请稍候重试')
@@ -154,4 +152,37 @@ function case_ajax() {
     });
 }
 
+function config_ajax() {
+    var url = $("#config_url").serializeJSON();
+    var dataType = $("#config_data_type").serializeJSON();
+    var caseInfo = $("#form_config").serializeJSON();
+    var variables = $("#config_variables").serializeJSON();
+    var request_data = $("#config_request_data").serializeJSON();
+    var headers = $("#config_request_headers").serializeJSON();
+    var config = {
+        "config": {
+            "name": caseInfo,
+            "variables": variables,
+            "request": {
+                "base_url": url.url,
+                "headers": headers,
+                "type": dataType.DataType,
+                "request_data": request_data
+            }
+        }
+    };
+
+    $.ajax({
+        type: 'post',
+        url: '/api/add_config/',
+        data: JSON.stringify(config),
+        contentType: "application/json",
+        success: function (data) {
+            alert(data)
+        },
+        error: function () {
+            alert('系统繁忙，请稍候重试')
+        }
+    });
+}
 

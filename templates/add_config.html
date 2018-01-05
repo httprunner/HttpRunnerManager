@@ -5,7 +5,7 @@
 {% block content %}
 
 
-    <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html">
+    <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 配置编辑</ul>
@@ -19,145 +19,140 @@
                 <li><a href="#tab3">request</a></li>
             </ul>
 
-
             <div class="am-tabs-bd">
                 <div class="am-tab-panel am-fade am-in am-active " id="tab1">
-                    <form class="form-horizontal" method="POST" action="">
-
+                    <form class="form-horizontal" id="form_config">
                         <div class="form-group has-feedback has-info">
-                            <label for="dev_name" class="col-md-2 control-label text-info" style="font-size: 14px;">config_name:</label>
+                            <label for="config_name" class="col-md-2 control-label text-info" style="font-size: 14px;">config_name:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="配置名称" name="dev_name"
+                                <input type="text" class="form-control" id="config_name" placeholder="配置名称"
+                                       name="config_name"
                                        value="">
                                 <span class="glyphicon glyphicon-certificate form-control-feedback"
                                       aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="dev_name" class="col-md-2 control-label text-info" style="font-size: 14px;">config_id:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="配置编号" name="dev_name"
-                                       value="" disabled>
-                                <span class="glyphicon glyphicon-th form-control-feedback" aria-hidden="true"></span>
-                            </div>
-                        </div>
 
                         <div class="form-group has-success">
-                            <label for="project_name" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
+                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select class="form-control">
-                                    <option>1</option>
-                                    <option>2</option>
+                                <select name="project" class="form-control" onchange=info_ajax("#form_config")>
+                                    {% for foo in project %}
+                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group has-success">
-                            <label for="project_name" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
+                            <label for="config_module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
-                                <select class="form-control">
-                                    <option>1</option>
-                                    <option>2</option>
+                                <select id="belong_module_id" name="config_module" class="form-control" >
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group has-feedback has-info">
-                            <label for="dev_name" class="col-md-2 control-label text-info"
+                            <label for="config_author" class="col-md-2 control-label text-info"
                                    style="font-size: 14px;">author:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="创建者" name="dev_name"
+                                <input type="text" class="form-control" id="config_author" placeholder="创建者" name="config_author"
                                        value="">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>
                     </form>
-
                 </div>
                 <div class="am-tab-panel am-fade" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('variables')">添加</button>
                     <button class="btn btn-danger" value="删 除" onclick="removeRow('variables')">删除</button>
-                    <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
-                        <caption>Variables:</caption>
-                        <thead>
-                        <tr class="active text-success">
-                            <th width="5%" align="center">Option</th>
-                            <th width="40%" align="center">Key</th>
-                            <th width="55%" align="center">Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <form id="config_variables">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
+                            <caption>Variables:</caption>
+                            <thead>
+                            <tr class="active text-success">
+                                <th width="5%" align="center">Option</th>
+                                <th width="40%" align="center">Key</th>
+                                <th width="55%" align="center">Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
-
-
                 <div class="am-tab-panel am-fade" id="tab3">
                     <div class="form-inline">
-
                         <div class="form-group has-success">
-                            <label for="dev_name" style="font-size: 14px;">Base_url:</label>
-                            <input type="text" class="form-control am-input-lg" placeholder="url" name="dev_name"
-                                   value="mas">
+                            <label for="url" style="font-size: 14px;">Base Url:</label>
+                            <input type="text" class="form-control am-input-lg" placeholder="Base Url" name="url" id="config_url">
                         </div>
 
                         <div class="form-group has-warning ">
-                            <label for="project_name"
+                            <label for="DataType"
                                    style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
-                            <select class="form-control">
-                                <option>Form</option>
-                                <option>Json</option>
+                            <select class="form-control" name="DataType" id="config_data_type">
+                                <option>data</option>
+                                <option>json</option>
                             </select>
                         </div>
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加字段</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除字段</button>
+
+                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加数据</button>
+                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除数据</button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">添加头部</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">删除头部</button>
-                        <table class="table table-hover table-condensed table-bordered table-striped" id="data">
-                            <caption>request:</caption>
-                            <thead>
-                            <tr class="active text-success">
-                                <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
-                                <th width="55%" align="center">Value</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <form id="config_request_data">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="data">
+                                <caption>request:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
 
-                        <table class="table table-hover table-condensed table-bordered table-striped" id="header">
-                            <caption>headers:</caption>
-                            <thead>
-                            <tr class="active text-success">
-                                <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
-                                <th width="55%" align="center">Value</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <form id="config_request_headers">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="header">
+                                <caption>headers:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
-
                 </div>
+            </div>
+
+        </div>
+
+        <div class="am-form-group am-cf">
+            <div class="you" style="margin-left: 11%;">
+                <button type="button" class="am-btn am-btn-success am-radius" onclick="config_ajax()">点 击 提 交
+                </button>&nbsp;
+                &raquo; &nbsp;
+                <a type="submit" href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
 
             </div>
         </div>
+        <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
+            <div class="foods">
+                <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
+                <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
+            </div>
 
-        <div class="am-margin">
-            <button type="button" class="am-btn am-btn-success am-radius ">提交保存</button>
-            <button type="button" class="am-btn am-btn-primary am-radius ">放弃保存</button>
-        </div>
-
-
-        <div class="foods">
-            <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
-            <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
-        </div>
-
-
+        </table>
     </div>
 
 

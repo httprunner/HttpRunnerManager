@@ -109,28 +109,35 @@ def add_module(request):
 
         return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
 
-
+'''
+添加用例
+'''
 def add_case(request):
-    project = ProjectInfo.objects.all().values('pro_name')
+    project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
 
     if request.is_ajax():
         testcase_lists = json.loads(request.body.decode('utf-8'))
-        print(testcase_lists)
         msg = case_info_logic(**testcase_lists)
         if msg is 'ok':
             return HttpResponse('用例添加成功')
         else:
             return HttpResponse(msg)
-    else:
+    elif request.method == 'GET':
         return render_to_response('add_case.html', {'project': project})
 
 '''添加配置'''
 
 
 def add_config(request):
-    return render_to_response('add_config.html')
+    project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
 
+    if request.is_ajax():
+        testconfig_lists = json.loads(request.body.decode('utf-8'))
 
+    elif request.method == 'GET':
+        return render_to_response('add_config.html', {'project': project})
+
+'''运行用例'''
 def run_test(request):
     if request.is_ajax():
         testcase_lists = json.loads(request.body.decode('utf-8'))

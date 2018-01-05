@@ -35,20 +35,19 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
+                       {% comment %} <div class="form-group has-feedback has-info">
                             <label for="case_id" class="col-md-2 control-label text-info" style="font-size: 14px;">case_id:</label>
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="dev_name" placeholder="用例编号" name="case_id"
                                        value="" disabled>
                                 <span class="glyphicon glyphicon-th form-control-feedback" aria-hidden="true"></span>
                             </div>
-                        </div>
+                        </div>{% endcomment %}
 
                         <div class="form-group has-success">
-                            <label for="project_name" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
+                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" data-am-selected="{searchBox: 1}"
-                                        style="display: none;">
+                                <select name="project" class="form-control" onchange=info_ajax("#form_message")>
                                     {% for foo in project %}
                                         <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
                                     {% endfor %}
@@ -59,10 +58,7 @@
                         <div class="form-group has-success">
                             <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
-                                <select name="module" class="form-control" data-am-selected="{searchBox: 1}"
-                                        style="display: none;">
-                                    <option>1</option>
-                                    <option>2</option>
+                                <select id="belong_module_id" name="module" class="form-control" >
                                 </select>
                             </div>
                         </div>

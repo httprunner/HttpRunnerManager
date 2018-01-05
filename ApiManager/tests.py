@@ -5,10 +5,14 @@ import os,django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HttpRunnerManager.settings")
 django.setup()
-from ApiManager.models import ProjectInfo
-a = ProjectInfo.objects.all().values()
-for key in a:
-    print(key)
-print(ProjectInfo.objects.get(pro_name__exact='上海存管'))
+from ApiManager.models import ProjectInfo, ModuleInfo
+
+module_info = list(ModuleInfo.objects.get_module_info('上海存管'))
+string = ''
+for value in module_info:
+    string = string + value + 'replaceFlag'
+print(string[:len(string) - 11])
+
+
 
 

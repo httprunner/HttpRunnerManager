@@ -1,7 +1,8 @@
 from django.db import models
 
 # Create your models here.
-from ApiManager.managers import UserTypeManager, UserInfoManager, ProjectInfoManager, ModuleInfoManager
+from ApiManager.managers import UserTypeManager, UserInfoManager, ProjectInfoManager, ModuleInfoManager, \
+    TestCaseInfoManager
 
 '''
 用户类型表
@@ -62,7 +63,7 @@ class ModuleInfo(models.Model):
     class Meta:
         db_table = 'ModuleInfo'
 
-    module_name = models.CharField(max_length=100)
+    module_name = models.CharField(max_length=50)
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
     test_user = models.CharField(max_length=50)
     lifting_time = models.DateTimeField()
@@ -84,13 +85,32 @@ class TestCaseInfo(models.Model):
     include = models.CharField(max_length=200, null=True)
     author = models.CharField(max_length=20)
     variables = models.TextField(null=True)
+    setup = models.TextField(null=True)
     url = models.CharField(max_length=30)
     method = models.CharField(max_length=10)
     data_type = models.CharField(max_length=10)
     request = models.TextField(null=True)
     headers = models.TextField(null=True)
-    extract = models.TextField()
-    validate = models.TextField()
+    teardown = models.TextField(null=True)
+    extract = models.TextField(null=True)
+    validate = models.TextField(null=True)
+    status = models.IntegerField(default=1)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    objects = TestCaseInfoManager()
+
+class ConfigInfo(models.Model):
+    class Meta:
+        db_table = 'ConfigInfo'
+    config_name = models.CharField(max_length=50)
+    belong_project = models.CharField(max_length=50)
+    belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
+    author = models.CharField(max_length=20)
+    variables = models.TextField(null=True)
+    url = models.CharField(max_length=30)
+    data_type = models.CharField(max_length=10)
+    request = models.TextField(null=True)
+    headers = models.TextField(null=True)
     status = models.IntegerField(default=1)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)

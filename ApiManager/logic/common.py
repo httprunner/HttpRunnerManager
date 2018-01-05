@@ -1,7 +1,10 @@
-from ApiManager.logic.operation import add_project_data, add_module_data
+from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data
+from ApiManager.models import  ModuleInfo
 
 
 def key_value_dict(**kwargs):
+    if not kwargs:
+        return None
     sorted_kwargs = sorted(kwargs.items())
     kwargs.clear()
     half_index = len(sorted_kwargs) // 2
@@ -16,6 +19,8 @@ def key_value_dict(**kwargs):
 
 
 def key_value_list(name='false', **kwargs):
+    if not kwargs:
+        return None
     sorted_kwargs = sorted(kwargs.items())
     lists = []
     if name == 'true':
@@ -34,44 +39,10 @@ def key_value_list(name='false', **kwargs):
             value = sorted_kwargs[half_index + value][1]
             if key != '' and value != '':
                 lists.append({key: value})
-
+    if not lists:
+        return None
     return lists
 
-
-# def load_case(path):
-#     parsed_request = {}
-#     request = {}
-#     testcase_lists = []
-#
-#     for value in path:
-#         if value is not {}:
-#             key_name = str(value.keys())
-#             if 'keyvariables' in key_name:
-#                 parsed_request.setdefault('variables', key_value_list(**value))
-#             elif 'keyheader' in key_name:
-#                 parsed_request.setdefault('headers', key_value_dict(**value))
-#             elif 'keydata' in key_name:
-#                 parsed_request.setdefault('data', key_value_dict(**value))
-#             elif 'keyextract' in key_name:
-#                 parsed_request.setdefault('extract', key_value_list(**value))
-#             elif 'keyvalidate' in key_name:
-#                 parsed_request.setdefault('validate', key_value_list(name='true', **value))
-#             elif 'case_name' in key_name:
-#                 parsed_request['name'] = value.pop('case_name')
-#             elif 'DataType' in key_name:
-#                 parsed_request['data_type'] = value.pop('DataType')
-#             elif 'method' in key_name:
-#                 request['method'] = value.pop('method')
-#             elif 'url' in key_name:
-#                 request['url'] = value.pop('url')
-#
-#     if 'data' in parsed_request.keys():
-#         data_type = parsed_request.pop('data_type')
-#         request.setdefault(data_type, parsed_request.pop('data'))
-#
-#     parsed_request.setdefault('request', request)
-#     testcase_lists.append({'test': parsed_request})
-#     return testcase_lists
 
 def load_case(**kwargs):
     pass
@@ -82,7 +53,7 @@ def module_info_logic(**kwargs):
     if kwargs.get('module_name') is '':
         return '模块名称不能为空'
     if kwargs.get('belong_project') is '':
-        return '所属项目不能为空'
+        return '请先添加项目'
     if kwargs.get('test_user') is '':
         return '测试人员不能为空'
     if kwargs.get('lifting_time') is '':
@@ -106,17 +77,54 @@ def project_info_logic(**kwargs):
 
 
 def case_info_logic(**kwargs):
-    if kwargs.get('test').get('name').get('case_name') is '':
-        return '用例名称不可为空'
-    if kwargs.get('test').get('name').get('project') is '':
-        return '所属项目不能为空'
-    if kwargs.get('test').get('name').get('module') is '':
-        return '所属模块不能为空'
-    if kwargs.get('test').get('name').get('author') is '':
-        return '创建者不能为空'
-    if kwargs.get('test').get('request').get('url') is '':
-        return '接口地址不能为空'
-    if not kwargs.get('test').get('validate'):
-        return '至少需要一个结果校验！'
-    return 'ok'
+    test = kwargs.pop('test')
+    '''
+        动态展示模块
+    '''
+    if 'request' not in test.keys():
+        belong_project = test.get('name').get('project')
+        module_info = list(ModuleInfo.objects.get_module_info(belong_project))
+        string = ''
+        for value in module_info:
+            string = string + value + 'replaceFlag'
+
+        return string[:len(string) - 11]
+
+    else:
+        if test.get('name').get('case_name') is '':
+            return '用例名称不可为空'
+        if test.get('name').get('project') is None or test.get('name').get('project') is '':
+            return '请先添加项目'
+        if test.get('name').get('module') is None or test.get('name').get('module') is '':
+            return '请先添加模块'
+        if test.get('name').get('author') is '':
+            return '创建者不能为空'
+        if test.get('request').get('url') is '':
+            return '接口地址不能为空'
+        if not test.get('validate'):
+            return '至少需要一个结果校验！'
+
+        validate = test.pop('validate')
+        test.setdefault('validate', key_value_list(name='true', **validate))
+
+        extract = test.pop('extract')
+        test.setdefault('extract', key_value_list(**extract))
+
+        request_data = test.get('request').pop('request_data')
+        test.get('request').setdefault('request_data', key_value_list(**request_data))
+
+        headers = test.get('request').pop('headers')
+        test.get('request').setdefault('headers', key_value_list(**headers))
+
+        variables = test.pop('variables')
+        test.setdefault('variables', key_value_list(**variables))
+
+        setUp = test.pop('setUp')
+        test.setdefault('setUp', key_value_list(**setUp))
+
+        tearDown = test.pop('tearDown')
+        test.setdefault('tearDown', key_value_list(**tearDown))
+
+        return add_case_data(**test)
+
 
