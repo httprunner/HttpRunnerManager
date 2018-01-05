@@ -1,5 +1,7 @@
 from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data
-from ApiManager.models import  ModuleInfo
+from ApiManager.models import ModuleInfo
+
+'''前端test信息转字典'''
 
 
 def key_value_dict(**kwargs):
@@ -16,6 +18,9 @@ def key_value_dict(**kwargs):
             kwargs.setdefault(key, value)
 
     return kwargs
+
+
+'''前端test信息转列表'''
 
 
 def key_value_list(name='false', **kwargs):
@@ -48,8 +53,23 @@ def load_case(**kwargs):
     pass
 
 
-def module_info_logic(**kwargs):
+'''动态加载模块'''
 
+
+def load_modules(**kwargs):
+    belong_project = kwargs.get('name').get('project')
+    module_info = list(ModuleInfo.objects.get_module_info(belong_project))
+    string = ''
+    for value in module_info:
+        string = string + value + 'replaceFlag'
+
+    return string[:len(string) - 11]
+
+
+'''模块信息逻辑及落地'''
+
+
+def module_info_logic(**kwargs):
     if kwargs.get('module_name') is '':
         return '模块名称不能为空'
     if kwargs.get('belong_project') is '':
@@ -59,6 +79,9 @@ def module_info_logic(**kwargs):
     if kwargs.get('lifting_time') is '':
         return '提测时间不能为空'
     return add_module_data(**kwargs)
+
+
+'''项目信息逻辑及落地'''
 
 
 def project_info_logic(**kwargs):
@@ -76,20 +99,16 @@ def project_info_logic(**kwargs):
     return add_project_data(**kwargs)
 
 
+'''用例信息逻辑及落地'''
+
+
 def case_info_logic(**kwargs):
     test = kwargs.pop('test')
     '''
         动态展示模块
     '''
     if 'request' not in test.keys():
-        belong_project = test.get('name').get('project')
-        module_info = list(ModuleInfo.objects.get_module_info(belong_project))
-        string = ''
-        for value in module_info:
-            string = string + value + 'replaceFlag'
-
-        return string[:len(string) - 11]
-
+        return load_modules(**test)
     else:
         if test.get('name').get('case_name') is '':
             return '用例名称不可为空'
@@ -126,5 +145,3 @@ def case_info_logic(**kwargs):
         test.setdefault('tearDown', key_value_list(**tearDown))
 
         return add_case_data(**test)
-
-

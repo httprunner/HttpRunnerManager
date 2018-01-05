@@ -109,9 +109,12 @@ def add_module(request):
 
         return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
 
+
 '''
 添加用例
 '''
+
+
 def add_case(request):
     project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
 
@@ -125,6 +128,7 @@ def add_case(request):
     elif request.method == 'GET':
         return render_to_response('add_case.html', {'project': project})
 
+
 '''添加配置'''
 
 
@@ -137,7 +141,10 @@ def add_config(request):
     elif request.method == 'GET':
         return render_to_response('add_config.html', {'project': project})
 
+
 '''运行用例'''
+
+
 def run_test(request):
     if request.is_ajax():
         testcase_lists = json.loads(request.body.decode('utf-8'))
@@ -146,7 +153,6 @@ def run_test(request):
             return HttpResponse('ok')
         else:
             return HttpResponse('fail')
-
 
 
 '''添加接口'''

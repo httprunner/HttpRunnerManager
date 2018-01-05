@@ -58,7 +58,10 @@ class ProjectInfo(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     objects = ProjectInfoManager()
 
+
 '''模块信息表'''
+
+
 class ModuleInfo(models.Model):
     class Meta:
         db_table = 'ModuleInfo'
@@ -74,7 +77,10 @@ class ModuleInfo(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     objects = ModuleInfoManager()
 
+
 '''用例信息表'''
+
+
 class TestCaseInfo(models.Model):
     class Meta:
         db_table = 'TestCaseInfo'
@@ -99,9 +105,14 @@ class TestCaseInfo(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     objects = TestCaseInfoManager()
 
+
+'''模块信息表'''
+
+
 class ConfigInfo(models.Model):
     class Meta:
         db_table = 'ConfigInfo'
+
     config_name = models.CharField(max_length=50)
     belong_project = models.CharField(max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
