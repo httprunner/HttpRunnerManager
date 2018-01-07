@@ -43,13 +43,28 @@ def add_module_data(**kwargs):
 
 
 def add_case_data(**kwargs):
-    name = kwargs.get('name')
+    case_info = kwargs.get('test').get('case_info')
     try:
-        if TestCaseInfo.objects.get_case_name(name.get('case_name'), name.get('module')) < 1:
-            belong_module = ModuleInfo.objects.get_module_name(name.get('module'), type=False)
+        if TestCaseInfo.objects.get_case_name(kwargs.get('test').get('name'), case_info.get('module')) < 1:
+            belong_module = ModuleInfo.objects.get_module_name(case_info.get('module'), type=False)
             TestCaseInfo.objects.insert_case(belong_module, **kwargs)
         else:
-            return '用例已存在，请重新编辑'
+            return '用例或配置已存在，请重新编辑'
+    except DataError:
+        return '字段长度超长，请重新编辑'
+    return 'ok'
+
+'''配置数据落地'''
+
+
+def add_config_data(**kwargs):
+    config_info = kwargs.get('config').get('config_info')
+    try:
+        if TestCaseInfo.objects.get_case_name(kwargs.get('config').get('name'), config_info.get('config_module')) < 1:
+            belong_module = ModuleInfo.objects.get_module_name(config_info.get('config_module'), type=False)
+            TestCaseInfo.objects.insert_config(belong_module, **kwargs)
+        else:
+            return '用例或配置已存在，请重新编辑'
     except DataError:
         return '字段长度超长，请重新编辑'
     return 'ok'

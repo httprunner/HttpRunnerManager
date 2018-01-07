@@ -83,7 +83,7 @@ function info_ajax(id) {
     } else if (id === '#form_config') {
         url = '/api/add_config/';
         data = {
-            "test": {
+            "config": {
                 "name": data
             }
         }

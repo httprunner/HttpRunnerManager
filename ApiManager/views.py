@@ -4,7 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from ApiManager.forms import username_validate, password_validate, email_validate
-from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic
+from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic
+from ApiManager.logic.pagination import PageInfo, customer_pager
 from ApiManager.models import UserInfo, UserType, ProjectInfo
 from httprunner.cli import main_ate
 
@@ -138,6 +139,12 @@ def add_config(request):
     if request.is_ajax():
         testconfig_lists = json.loads(request.body.decode('utf-8'))
 
+        msg = config_info_logic(**testconfig_lists)
+        if msg is 'ok':
+            return HttpResponse('配置添加成功')
+        else:
+            return HttpResponse(msg)
+
     elif request.method == 'GET':
         return render_to_response('add_config.html', {'project': project})
 
@@ -160,6 +167,16 @@ def run_test(request):
 
 def add_api(request):
     return render_to_response('add_api.html')
+
+'''项目列表'''
+
+def project_list(request, id ):
+    total = ProjectInfo.objects.all().count()
+    page_info = PageInfo(int(id), total)
+    project = ProjectInfo.objects.all().order_by('create_time')[page_info.start:page_info.end]
+    page_list = customer_pager('/api/project_list/', int(id), page_info.total_page)
+    return  render_to_response('project_list.html', {'project': project, 'page_list': page_list})
+
 
 
 '''测试代码'''

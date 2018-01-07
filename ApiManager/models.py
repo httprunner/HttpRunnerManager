@@ -84,44 +84,15 @@ class ModuleInfo(models.Model):
 class TestCaseInfo(models.Model):
     class Meta:
         db_table = 'TestCaseInfo'
-
-    case_name = models.CharField(max_length=50)
+    type = models.IntegerField(default=1)
+    name = models.CharField(max_length=50)
     belong_project = models.CharField(max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
     include = models.CharField(max_length=200, null=True)
     author = models.CharField(max_length=20)
-    variables = models.TextField(null=True)
-    setup = models.TextField(null=True)
-    url = models.CharField(max_length=30)
-    method = models.CharField(max_length=10)
-    data_type = models.CharField(max_length=10)
-    request = models.TextField(null=True)
-    headers = models.TextField(null=True)
-    teardown = models.TextField(null=True)
-    extract = models.TextField(null=True)
-    validate = models.TextField(null=True)
+    request = models.TextField()
     status = models.IntegerField(default=1)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     objects = TestCaseInfoManager()
 
-
-'''模块信息表'''
-
-
-class ConfigInfo(models.Model):
-    class Meta:
-        db_table = 'ConfigInfo'
-
-    config_name = models.CharField(max_length=50)
-    belong_project = models.CharField(max_length=50)
-    belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
-    author = models.CharField(max_length=20)
-    variables = models.TextField(null=True)
-    url = models.CharField(max_length=30)
-    data_type = models.CharField(max_length=10)
-    request = models.TextField(null=True)
-    headers = models.TextField(null=True)
-    status = models.IntegerField(default=1)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)

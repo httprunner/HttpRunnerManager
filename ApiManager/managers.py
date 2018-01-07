@@ -42,8 +42,12 @@ class ProjectInfoManager(models.Manager):
         else:
             return self.get(pro_name=pro_name)
 
-    def get_pro_info(self):
-        return self.all().values('pro_name')
+    def get_pro_info(self, type = True):
+        if type:
+            return self.all().values('pro_name')
+        else :
+            return self.all()
+
 
 
 '''模块信息表操作'''
@@ -72,15 +76,16 @@ class ModuleInfoManager(models.Manager):
 
 class TestCaseInfoManager(models.Manager):
     def insert_case(self, belong_module, **kwargs):
-        name = kwargs.pop('name')
-        request = kwargs.pop('request')
-        self.create(case_name=name.pop('case_name'), belong_project=name.pop('project'), belong_module=belong_module,
-                    author=name.pop('author'), include=name.pop('include'), variables=kwargs.get('variables'),
-                    setup=kwargs.get('setUp'), url=request.pop('url'), method=request.pop('method'),
-                    data_type=request.pop('type'),
-                    request=request.pop('request_data'), headers=request.pop('headers'),
-                    teardown=kwargs.pop('tearDown'),
-                    extract=kwargs.pop('extract'), validate=kwargs.pop('validate'))
+        case_info = kwargs.get('test').pop('case_info')
+        self.create(name=kwargs.get('test').get('name'), belong_project=case_info.pop('project'),
+                    belong_module=belong_module,
+                    author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
 
-    def get_case_name(self, case_name, module_name):
-        return self.filter(belong_module__module_name=module_name).filter(case_name__exact=case_name).count()
+    def insert_config(self, belong_module, **kwargs):
+        config_info = kwargs.get('config').pop('config_info')
+        self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
+                    belong_module=belong_module,
+                    author=config_info.pop('config_author'), type = 2, request=kwargs)
+
+    def get_case_name(self, name, module_name):
+        return self.filter(belong_module__module_name=module_name).filter(name__exact=name).count()

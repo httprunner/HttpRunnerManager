@@ -1,4 +1,4 @@
-from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data
+from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data
 from ApiManager.models import ModuleInfo
 
 '''前端test信息转字典'''
@@ -123,6 +123,11 @@ def case_info_logic(**kwargs):
         if not test.get('validate'):
             return '至少需要一个结果校验！'
 
+        name = test.pop('name')
+        test.setdefault('name', name.pop('case_name'))
+
+        test.setdefault('case_info', name)
+
         validate = test.pop('validate')
         test.setdefault('validate', key_value_list(name='true', **validate))
 
@@ -130,10 +135,10 @@ def case_info_logic(**kwargs):
         test.setdefault('extract', key_value_list(**extract))
 
         request_data = test.get('request').pop('request_data')
-        test.get('request').setdefault('request_data', key_value_list(**request_data))
+        test.get('request').setdefault(test.get('request').pop('type'), key_value_dict(**request_data))
 
         headers = test.get('request').pop('headers')
-        test.get('request').setdefault('headers', key_value_list(**headers))
+        test.get('request').setdefault('headers', key_value_dict(**headers))
 
         variables = test.pop('variables')
         test.setdefault('variables', key_value_list(**variables))
@@ -144,4 +149,43 @@ def case_info_logic(**kwargs):
         tearDown = test.pop('tearDown')
         test.setdefault('tearDown', key_value_list(**tearDown))
 
-        return add_case_data(**test)
+        kwargs.setdefault('test', test)
+        return add_case_data(**kwargs)
+
+
+'''模块信息逻辑及落地'''
+
+
+def config_info_logic(**kwargs):
+    config = kwargs.pop('config')
+    '''
+        动态展示模块
+    '''
+    if 'request' not in config.keys():
+        return load_modules(**config)
+    else:
+        if config.get('name').get('config_name') is '':
+            return '配置名称不可为空'
+        if config.get('name').get('project') is None or config.get('name').get('project') is '':
+            return '请先添加项目'
+        if config.get('name').get('config_module') is None or config.get('name').get('config_module') is '':
+            return '请先添加模块'
+        if config.get('name').get('config_author') is '':
+            return '创建者不能为空'
+
+        name = config.pop('name')
+        config.setdefault('name', name.pop('config_name'))
+
+        config.setdefault('config_info', name)
+
+        request_data = config.get('request').pop('request_data')
+        config.get('request').setdefault(config.get('request').pop('type'), key_value_dict(**request_data))
+
+        headers = config.get('request').pop('headers')
+        config.get('request').setdefault('headers', key_value_dict(**headers))
+
+        variables = config.pop('variables')
+        config.setdefault('variables', key_value_list(**variables))
+
+        kwargs.setdefault('config', config)
+        return add_config_data(**kwargs)
