@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}项目信息{% endblock %}
+{% block title %}模块信息{% endblock %}
 {% load staticfiles %}
 {% block content %}
 
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
-            <ul class="am-icon-flag on"> 项目列表</ul>
-            <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">模块展示</a></dl>
+            <ul class="am-icon-flag on"> 模块列表</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 项目管理 > <a href="#">项目展示</a></dl>
             <dl>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
-                        onclick="location='/api/add_project/'">新增项目
+                        onclick="location='/api/add_module/'">新增模块
                 </button>
             </dl>
 
@@ -44,22 +44,24 @@
                 <tr class="am-success">
                     <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
                     <th class="table-title">序号</th>
-                    <th class="table-type">项目名称</th>
-                    <th class="table-type">负责人</th>
+                    <th class="table-type">模块名称</th>
+                    <th class="table-type">测试人员</th>
+                    <th class="table-type">所属项目</th>
                     <th class="table-title">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
                             class="am-icon-close am-text-primary"></i></th>
-                    <th class="table-date am-hide-sm-only">创建日期</th>
+                    <th class="table-date am-hide-sm-only">提测时间</th>
                     <th width="163px" class="table-set">操作</th>
                 </tr>
                 </thead>
                 <tbody>
 
-                {% for foo in project %}
+                {% for foo in module %}
                     <tr>
                         <td><input type="checkbox"/></td>
-                        <td>{{forloop.counter}}</td>
-                        <td><a href="#">{{ foo.pro_name }}</a></td>
-                        <td>{{ foo.responsible_name }}</td>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="#">{{ foo.module_name }}</a></td>
+                        <td>{{ foo.test_user }}</td>
+                        <td>{{ foo.belong_project.pro_name}}</td>
                         {% if foo.status == 1 %}
                             <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
                         {% else %}

@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from ApiManager.forms import username_validate, password_validate, email_validate
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic
 from ApiManager.logic.pagination import PageInfo, customer_pager
-from ApiManager.models import UserInfo, UserType, ProjectInfo
+from ApiManager.models import UserInfo, UserType, ProjectInfo, ModuleInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
@@ -173,11 +173,18 @@ def add_api(request):
 def project_list(request, id ):
     total = ProjectInfo.objects.all().count()
     page_info = PageInfo(int(id), total)
-    project = ProjectInfo.objects.all().order_by('create_time')[page_info.start:page_info.end]
+    project = ProjectInfo.objects.all().order_by('-create_time')[page_info.start:page_info.end]
     page_list = customer_pager('/api/project_list/', int(id), page_info.total_page)
     return  render_to_response('project_list.html', {'project': project, 'page_list': page_list})
 
 
+'''模块列表'''
+def module_list(request, id):
+    total = ModuleInfo.objects.all().count()
+    page_info = PageInfo(int(id), total)
+    module = ModuleInfo.objects.all()[page_info.start:page_info.end]
+    page_list = customer_pager('/api/module_list/', int(id), page_info.total_page)
+    return render_to_response('module_list.html', {'module': module, 'page_list': page_list})
 
 '''测试代码'''
 
