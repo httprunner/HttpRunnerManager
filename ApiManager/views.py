@@ -5,11 +5,12 @@ from django.shortcuts import render_to_response, redirect
 
 from ApiManager.forms import username_validate, password_validate, email_validate
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic
-from ApiManager.logic.pagination import PageInfo, customer_pager
-from ApiManager.models import UserInfo, UserType, ProjectInfo, ModuleInfo
+from ApiManager.logic.pagination import get_pager_info
+from ApiManager.models import UserInfo, UserType, ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
+
 
 '''用户注册'''
 
@@ -168,23 +169,59 @@ def run_test(request):
 def add_api(request):
     return render_to_response('add_api.html')
 
+
 '''项目列表'''
 
-def project_list(request, id ):
-    total = ProjectInfo.objects.all().count()
-    page_info = PageInfo(int(id), total)
-    project = ProjectInfo.objects.all().order_by('-create_time')[page_info.start:page_info.end]
-    page_list = customer_pager('/api/project_list/', int(id), page_info.total_page)
-    return  render_to_response('project_list.html', {'project': project, 'page_list': page_list})
+
+def project_list(request, id):
+    if request.method == 'POST':
+        request.session['filter'] = request.POST.get('filter')
+        request.session['user'] = request.POST.get('user')
+        request.session['name'] = request.POST.get('name')
+    try:
+        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
+                        'name': request.session['name']}
+    except KeyError:
+        filter_query = {'filter': '1', 'user': '', 'name': ''}
+
+    pro_list = get_pager_info(ProjectInfo, filter_query, '/api/project_list/', id)
+    return render_to_response('project_list.html',
+                              {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
 
 
 '''模块列表'''
+
+
 def module_list(request, id):
-    total = ModuleInfo.objects.all().count()
-    page_info = PageInfo(int(id), total)
-    module = ModuleInfo.objects.all()[page_info.start:page_info.end]
-    page_list = customer_pager('/api/module_list/', int(id), page_info.total_page)
-    return render_to_response('module_list.html', {'module': module, 'page_list': page_list})
+    if request.method == 'POST':
+        request.session['filter'] = request.POST.get('filter')
+        request.session['user'] = request.POST.get('user')
+        request.session['name'] = request.POST.get('name')
+    try:
+        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
+                        'name': request.session['name']}
+    except KeyError:
+        filter_query = {'filter': '1', 'user': '', 'name': ''}
+    module_list = get_pager_info(ModuleInfo, filter_query, '/api/module_list/', id)
+    return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0]})
+
+
+'''配置或用例列表'''
+
+
+def test_list(request, id):
+    if request.method == 'POST':
+        request.session['filter'] = request.POST.get('filter')
+        request.session['user'] = request.POST.get('user')
+        request.session['name'] = request.POST.get('name')
+    try:
+        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
+                        'name': request.session['name']}
+    except KeyError:
+        filter_query = {'filter': '1', 'user': '', 'name': ''}
+    test_list = get_pager_info(TestCaseInfo, filter_query,  '/api/test_list/', id)
+    return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0]})
+
 
 '''测试代码'''
 

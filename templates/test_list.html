@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-{% block title %}模块信息{% endblock %}
+{% block title %}用例信息{% endblock %}
 {% load staticfiles %}
 {% block content %}
 
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
-            <ul class="am-icon-flag on"> 模块列表</ul>
-            <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">模块展示</a></dl>
+            <ul class="am-icon-flag on"> 用例列表</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">用例展示</a></dl>
             <dl>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
-                        onclick="location='/api/add_module/'">新增模块
+                        onclick="location='/api/add_case/'">新增用例
+                </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
+                        onclick="location='/api/add_config/'">新增配置
                 </button>
             </dl>
 
@@ -17,7 +20,7 @@
         </div>
 
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-             <form id="pro_filter" method="post" action="/api/project_list/1/">
+            <form id="pro_filter" method="post" action="/api/project_list/1/">
                 <ul>
                     <li>
                         <div class="am-btn-group am-btn-group-xs">
@@ -37,10 +40,10 @@
                     </li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
                                                         class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="测试人员"/></li>
+                                                        placeholder="创建者"/></li>
                     <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
                                                         class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="模块名称"/></li>
+                                                        placeholder="用例/配置"/></li>
                     <li>
                         <button class="am-btn am-radius am-btn-xs am-btn-success"
                                 style="margin-top: -1px;">搜索
@@ -57,30 +60,38 @@
                 <tr class="am-success">
                     <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
                     <th class="table-title">序号</th>
-                    <th class="table-type">模块名称</th>
-                    <th class="table-type">测试人员</th>
+                    <th class="table-title">类型</th>
+                    <th class="table-type">名称</th>
                     <th class="table-type">所属项目</th>
+                    <th class="table-type">所属模块</th>
+                    <th class="table-type">创建者</th>
                     <th class="table-title">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
                             class="am-icon-close am-text-primary"></i></th>
-                    <th class="table-date am-hide-sm-only">提测时间</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-set">操作</th>
                 </tr>
                 </thead>
                 <tbody>
 
-                {% for foo in module %}
+                {% for foo in test %}
                     <tr>
                         <td><input type="checkbox"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="#">{{ foo.module_name }}</a></td>
-                        <td>{{ foo.test_user }}</td>
-                        <td>{{ foo.belong_project.pro_name }}</td>
+                        {% if foo.type == 1 %}
+                            <td>用例</td>
+                        {% elif foo.type == 2 %}
+                            <td>配置</td>
+                        {% endif %}
+                        <td><a href="#">{{ foo.name }}</a></td>
+                        <td><a href="#">{{ foo.belong_project }}</a></td>
+                        <td><a href="#">{{ foo.belong_module.module_name }}</a></td>
+                        <td>{{ foo.author }}</td>
                         {% if foo.status == 1 %}
                             <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
                         {% else %}
                             <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
                         {% endif %}
-                        <td class="am-hide-sm-only">{{ foo.lifting_time }}</td>
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
@@ -101,8 +112,11 @@
             </table>
 
             <div class="am-btn-group am-btn-group-xs">
-                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_module/'"><span
-                        class="am-icon-plus"></span> 新增
+                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_case/'"><span
+                        class="am-icon-plus"></span> 新增用例
+                </button>
+                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
+                        class="am-icon-plus"></span> 新增配置
                 </button>
                 <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
             </div>

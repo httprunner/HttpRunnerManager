@@ -17,24 +17,37 @@
         </div>
 
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-
-            <ul>
-                <li>
-                    <div class="am-btn-group am-btn-group-xs">
-                        <select data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                            <option value="b">所有</option>
-                            <option value="b">有效</option>
-                            <option value="o">无效</option>
-                        </select>
-                    </div>
-                </li>
-                <li><input type="text" class="am-form-field am-input-lg am-input-xm" placeholder="测试人员"/></li>
-                <li><input type="text" class="am-form-field am-input-lg am-input-xm" placeholder="模块名称"/></li>
-                <li>
-                    <button type="button" class="am-btn am-radius am-btn-xs am-btn-success" style="margin-top: -1px;">搜索
-                    </button>
-                </li>
-            </ul>
+            <form id="pro_filter" method="post" action="/api/project_list/1/">
+                <ul>
+                    <li>
+                        <div class="am-btn-group am-btn-group-xs">
+                            <select name="filter" data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
+                                {% if info.filter == '1' %}
+                                    <option value="1" selected>有效</option>
+                                    <option value="0">无效</option>
+                                {% elif info.filter == '0' %}
+                                    <option value="1">有效</option>
+                                    <option value="0" selected>无效</option>
+                                {% else %}
+                                     <option value="1">有效</option>
+                                     <option value="0">无效</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </li>
+                    <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="负责人"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="项目名称"/></li>
+                    <li>
+                        <button class="am-btn am-radius am-btn-xs am-btn-success"
+                                style="margin-top: -1px;">搜索
+                        </button>
+                    </li>
+                </ul>
+            </form>
         </div>
 
 
@@ -57,7 +70,7 @@
                 {% for foo in project %}
                     <tr>
                         <td><input type="checkbox"/></td>
-                        <td>{{forloop.counter}}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td><a href="#">{{ foo.pro_name }}</a></td>
                         <td>{{ foo.responsible_name }}</td>
                         {% if foo.status == 1 %}

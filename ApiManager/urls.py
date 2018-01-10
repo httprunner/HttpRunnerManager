@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 
 from ApiManager.views import register, login, index, add_project, add_module, add_case, add_config, add_api, run_test, \
-    test_get, project_list, module_list
+    test_get, project_list, module_list, test_list
 
 urlpatterns = [
     url(r'^register/', register),
@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^run_test/', run_test),
     url(r'^project_list/(?P<id>\w+)/', project_list),
     url(r'^module_list/(?P<id>\w+)/', module_list),
+    url(r'^test_list/(?P<id>\w+)/', test_list),
     url(r'^test_get/', test_get),
 
 ]
-

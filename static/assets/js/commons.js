@@ -11,9 +11,11 @@ function addNewRow(id) {
     } else if (id === 'validate') {
         attribute = 'validate';
     }
-    var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='nodename " + rowsNum + "' value='' style='width:100%; border: none' />";
-    var cellHtml2 = "<input type='text' name='cell2_value" + id + rowsNum + "' id='nodename " + rowsNum + "' value='' style='width:100%; border: none' />";
-    var cellHtml3 = "<input type='text' name='cell3_value" + id + rowsNum + "' id='nodename " + rowsNum + "' value='' style='width:100%; border: none' />";
+    var style = 'width:100%; border: none';
+    var ids = 'nodename' + rowsNum;
+    var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
+    var cellHtml2 = "<input type='text' name='cell2_value" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
+    var cellHtml3 = "<input type='text' name='cell3_value" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
     var myNewRow = tabObj.insertRow(rowsNum);
     var newTdObj0 = myNewRow.insertCell(0);
     var newTdObj1 = myNewRow.insertCell(1);
@@ -58,11 +60,11 @@ function removeRow(id) {
 /*动态改变模块信息*/
 function show_module(module_info) {
     module_info = module_info.split('replaceFlag');
-    var a =  $("#belong_module_id");
+    var a = $("#belong_module_id");
     a.empty();
-    for(var i = 0; i < module_info.length; i++) {
+    for (var i = 0; i < module_info.length; i++) {
         var value = module_info[i];
-        a.prepend("<option value='"+value+"' >"+value+"</option>")
+        a.prepend("<option value='" + value + "' >" + value + "</option>")
     }
 
 }
@@ -95,7 +97,7 @@ function info_ajax(id) {
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (data) {
-            if (id !== '#form_message' && id !=='#form_config') {
+            if (id !== '#form_message' && id !== '#form_config') {
                 alert(data)
             } else {
                 show_module(data)
@@ -185,4 +187,3 @@ function config_ajax() {
         }
     });
 }
-
