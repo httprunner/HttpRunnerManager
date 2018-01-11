@@ -203,7 +203,7 @@ def module_list(request, id):
     except KeyError:
         filter_query = {'filter': '1', 'user': '', 'name': ''}
     module_list = get_pager_info(ModuleInfo, filter_query, '/api/module_list/', id)
-    return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0]})
+    return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
 
 
 '''配置或用例列表'''
@@ -220,7 +220,7 @@ def test_list(request, id):
     except KeyError:
         filter_query = {'filter': '1', 'user': '', 'name': ''}
     test_list = get_pager_info(TestCaseInfo, filter_query,  '/api/test_list/', id)
-    return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0]})
+    return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
 
 
 '''测试代码'''

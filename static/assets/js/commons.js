@@ -1,61 +1,3 @@
-function addNewRow(id) {
-    var tabObj = document.getElementById(id);//获取添加数据的表格
-    var rowsNum = tabObj.rows.length;  //获取当前行数
-    var attribute = 'variables';
-    if (id === 'data') {
-        attribute = 'data';
-    } else if (id === 'header') {
-        attribute = 'header';
-    } else if (id === 'extract') {
-        attribute = 'extract';
-    } else if (id === 'validate') {
-        attribute = 'validate';
-    }
-    var style = 'width:100%; border: none';
-    var ids = 'nodename' + rowsNum;
-    var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
-    var cellHtml2 = "<input type='text' name='cell2_value" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
-    var cellHtml3 = "<input type='text' name='cell3_value" + id + rowsNum + "' id='"+ids+"' value='' style='"+style+"' />";
-    var myNewRow = tabObj.insertRow(rowsNum);
-    var newTdObj0 = myNewRow.insertCell(0);
-    var newTdObj1 = myNewRow.insertCell(1);
-    var newTdObj2 = myNewRow.insertCell(2);
-    newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + rowsNum + "' style='width:55px' />";
-    newTdObj1.innerHTML = cellHtml1;
-    if (id !== 'validate') {
-        newTdObj2.innerHTML = cellHtml2;
-    } else {
-        newTdObj2.innerHTML = "<select name='cell_2comparator" + id + rowsNum + "' class='form-control' style='height: 25px; font-size: 15px; " +
-            "padding-top: 0px; padding-left: 0px; border: none'> " +
-            "<option>eq</option> <option>contains</option> " +
-            "<option>lg</option> <option>gt</option> </select>";
-        var newTdObj3 = myNewRow.insertCell(3);
-        newTdObj3.innerHTML = cellHtml3;
-    }
-
-}
-
-/*表格删除行*/
-function removeRow(id) {
-    var attribute = 'variables';
-    if (id === 'data') {
-        attribute = 'data';
-    } else if (id === 'header') {
-        attribute = 'header';
-    } else if (id === 'extract') {
-        attribute = 'extract';
-    } else if (id === 'validate') {
-        attribute = 'validate';
-    }
-    var chkObj = document.getElementsByName(attribute);
-    var tabObj = document.getElementById(id);
-    for (var k = 0; k < chkObj.length; k++) {
-        if (chkObj[k].checked) {
-            tabObj.deleteRow(k + 1);
-            k = -1;
-        }
-    }
-}
 
 /*动态改变模块信息*/
 function show_module(module_info) {
@@ -187,3 +129,5 @@ function config_ajax() {
         }
     });
 }
+
+

@@ -2,7 +2,100 @@
 {% block title %}模块信息{% endblock %}
 {% load staticfiles %}
 {% block content %}
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="my-edit">
+        <div class="am-modal-dialog">
+            <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                <form class="form-horizontal" id="#form_message">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">模块名称：</label>
+                        <div class="col-sm-9">
+                            <input name="module_name" type="text" class="form-control" id="inputSuccess3"
+                                   placeholder="模块名称">
+                        </div>
+                    </div>
 
+                     <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">所属项目：</label>
+                        <div class="col-sm-9">
+                            <input name="test_user" type="text" id="inputSuccess3" class="form-control"
+                                   placeholder="所属项目" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">测试人员：</label>
+                        <div class="col-sm-9">
+                            <input name="test_user" type="text" id="inputSuccess3" class="form-control"
+                                   placeholder="测试人员">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">提测时间：</label>
+                        <div class="col-sm-9">
+                            <input name="lifting_time" type="text" id="inputSuccess3" class="form-control"
+                                   placeholder="提测时间">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">简要描述：</label>
+                        <div class="col-sm-9">
+                            <input name="simple_desc" type="text" id="inputSuccess3" class="form-control"
+                                   placeholder="简要描述">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="inputSuccess3"
+                               style="font-weight: inherit; font-size: small ">其他信息：</label>
+                        <div class="col-sm-9">
+                            <input name="other_desc" type="text" id="inputSuccess3" class="form-control"
+                                   placeholder="其他信息">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-invalid">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                亲，确定要删除该模块么？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-valid">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                亲，确定要恢复该模块么？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 模块列表</ul>
@@ -12,12 +105,10 @@
                         onclick="location='/api/add_module/'">新增模块
                 </button>
             </dl>
-
-
         </div>
 
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-             <form id="pro_filter" method="post" action="/api/project_list/1/">
+            <form id="pro_filter" method="post" action="/api/module_list/1/">
                 <ul>
                     <li>
                         <div class="am-btn-group am-btn-group-xs">
@@ -29,8 +120,8 @@
                                     <option value="1">有效</option>
                                     <option value="0" selected>无效</option>
                                 {% else %}
-                                     <option value="1">有效</option>
-                                     <option value="0">无效</option>
+                                    <option value="1">有效</option>
+                                    <option value="0">无效</option>
                                 {% endif %}
                             </select>
                         </div>
@@ -84,11 +175,19 @@
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
-                                    <button class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"><span
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '编辑', trigger: 'hover focus'}"
+                                            onclick="edit()"> <span
                                             class="am-icon-pencil-square-o"></span></button>
-                                    <button class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"><span
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
+                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}" onclick="valid()"><span
                                             class="am-icon-copy"></span></button>
-                                    <button class="am-btn am-btn-default am-btn-xs am-text-danger am-round"><span
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
+                                            onclick="invalid()"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -120,5 +219,42 @@
             <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
         </div>
     </div>
+    <script type="text/javascript">
+        function edit() {
+            $('#my-edit').modal({
+                relatedTarget: this,
+                onConfirm: function (e) {
+                    alert('你输入的是：' + e.data || '')
+                },
+                onCancel: function (e) {
+                    alert('不想说!');
+                }
+            });
+        }
+
+        function invalid() {
+            $('#my-invalid').modal({
+                relatedTarget: this,
+                onConfirm: function (e) {
+                    alert('你输入的是：' + e.data || '')
+                },
+                onCancel: function (e) {
+                    alert('不想说!');
+                }
+            });
+        }
+
+        function valid() {
+            $('#my-valid').modal({
+                relatedTarget: this,
+                onConfirm: function (e) {
+                    alert('你输入的是：' + e.data || '')
+                },
+                onCancel: function (e) {
+                    alert('不想说!');
+                }
+            });
+        }
+    </script>
 
 {% endblock %}

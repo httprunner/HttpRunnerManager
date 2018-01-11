@@ -6,15 +6,21 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 '''项目数据落地'''
 
 
-def add_project_data(**kwargs):
+def add_project_data(type, **kwargs):
     project_opt = ProjectInfo.objects
     try:
-        if project_opt.get_pro_name(kwargs.get('project_name')) < 1:
-            project_opt.insert_project(kwargs.pop('project_name'), kwargs.pop('responsible_name'),
+        if type:
+            if project_opt.get_pro_name(kwargs.get('project_name')) < 1:
+                project_opt.insert_project(kwargs.pop('project_name'), kwargs.pop('responsible_name'),
+                                           kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),
+                                           kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
+            else:
+                return '该项目已存在，请重新编辑'
+        else:
+            project_opt.update_project(kwargs.pop('project_name'), kwargs.pop('responsible_name'),
                                        kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),
                                        kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
-        else:
-            return '该项目已存在，请重新编辑'
+
     except DataError:
         return '字段长度超长，请重新编辑'
     return 'ok'
@@ -53,6 +59,7 @@ def add_case_data(**kwargs):
     except DataError:
         return '字段长度超长，请重新编辑'
     return 'ok'
+
 
 '''配置数据落地'''
 

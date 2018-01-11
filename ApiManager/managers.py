@@ -36,18 +36,23 @@ class ProjectInfoManager(models.Manager):
         self.create(pro_name=pro_name, responsible_name=responsible_name, test_user=test_user, dev_user=dev_user
                     , publish_app=publish_app, simple_desc=simple_desc, other_desc=other_desc)
 
+    def update_project(self, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc):
+        self.filter(pro_name__exact=pro_name).update(responsible_name=responsible_name,
+                                                     test_user=test_user, dev_user=dev_user
+                                                     , publish_app=publish_app, simple_desc=simple_desc,
+                                                     other_desc=other_desc)
+
     def get_pro_name(self, pro_name, type=True):
         if type:
             return self.filter(pro_name__exact=pro_name).count()
         else:
             return self.get(pro_name=pro_name)
 
-    def get_pro_info(self, type = True):
+    def get_pro_info(self, type=True):
         if type:
             return self.all().values('pro_name')
-        else :
+        else:
             return self.all()
-
 
 
 '''模块信息表操作'''
@@ -85,7 +90,7 @@ class TestCaseInfoManager(models.Manager):
         config_info = kwargs.get('config').pop('config_info')
         self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
                     belong_module=belong_module,
-                    author=config_info.pop('config_author'), type = 2, request=kwargs)
+                    author=config_info.pop('config_author'), type=2, request=kwargs)
 
     def get_case_name(self, name, module_name):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).count()

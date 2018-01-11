@@ -84,7 +84,7 @@ def module_info_logic(**kwargs):
 '''项目信息逻辑及落地'''
 
 
-def project_info_logic(**kwargs):
+def project_info_logic(type = True, **kwargs):
     if kwargs.get('project_name') is '':
         return '项目名称不能为空'
     if kwargs.get('responsible_name') is '':
@@ -96,7 +96,7 @@ def project_info_logic(**kwargs):
     if kwargs.get('publish_app') is '':
         return '发布应用不能为空'
 
-    return add_project_data(**kwargs)
+    return add_project_data(type, **kwargs)
 
 
 '''用例信息逻辑及落地'''
