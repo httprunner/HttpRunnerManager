@@ -1,3 +1,5 @@
+from django.http import HttpResponse
+
 from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data
 from ApiManager.models import ModuleInfo
 
@@ -84,7 +86,7 @@ def module_info_logic(**kwargs):
 '''项目信息逻辑及落地'''
 
 
-def project_info_logic(type = True, **kwargs):
+def project_info_logic(type=True, **kwargs):
     if kwargs.get('project_name') is '':
         return '项目名称不能为空'
     if kwargs.get('responsible_name') is '':
@@ -189,3 +191,31 @@ def config_info_logic(**kwargs):
 
         kwargs.setdefault('config', config)
         return add_config_data(**kwargs)
+
+
+'''查询session'''
+
+
+def set_filter_session(request):
+    filter_query = {'filter': '1', 'user': '', 'name': ''}
+    if request.method == 'POST':
+        request.session['filter'] = request.POST.get('filter')
+        request.session['user'] = request.POST.get('user')
+        request.session['name'] = request.POST.get('name')
+        try:
+            filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
+                            'name': request.session['name']}
+        except KeyError:
+            pass
+
+    return filter_query
+
+
+'''ajax异步提示'''
+
+
+def get_ajax_msg(msg, success):
+    if msg is 'ok':
+        return success
+    else:
+        return msg

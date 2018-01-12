@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 '''用户类型表操作'''
@@ -84,13 +86,13 @@ class TestCaseInfoManager(models.Manager):
         case_info = kwargs.get('test').pop('case_info')
         self.create(name=kwargs.get('test').get('name'), belong_project=case_info.pop('project'),
                     belong_module=belong_module,
-                    author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
+                    author=case_info.pop('author'), include=case_info.pop('include'), request=json.dumps(kwargs))
 
     def insert_config(self, belong_module, **kwargs):
         config_info = kwargs.get('config').pop('config_info')
         self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
                     belong_module=belong_module,
-                    author=config_info.pop('config_author'), type=2, request=kwargs)
+                    author=config_info.pop('config_author'), type=2, request=json.dumps(kwargs))
 
     def get_case_name(self, name, module_name):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).count()

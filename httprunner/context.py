@@ -10,6 +10,7 @@ class Context(object):
     """ Manages context functions and variables.
         context has two levels, testset and testcase.
     """
+
     def __init__(self):
         self.testset_shared_variables_mapping = OrderedDict()
         self.testcase_variables_mapping = OrderedDict()
@@ -27,12 +28,16 @@ class Context(object):
             self.testset_shared_variables_mapping = OrderedDict()
 
         # testcase config shall inherit from testset configs,
-        # but can not change testset configs, that's why we use copy.deepcopy here.
-        self.testcase_functions_config = copy.deepcopy(self.testset_functions_config)
-        self.testcase_variables_mapping = copy.deepcopy(self.testset_shared_variables_mapping)
+        # but can not change testset configs, that's why we use copy.deepcopy
+        # here.
+        self.testcase_functions_config = copy.deepcopy(
+            self.testset_functions_config)
+        self.testcase_variables_mapping = copy.deepcopy(
+            self.testset_shared_variables_mapping)
 
         self.testcase_parser.bind_functions(self.testcase_functions_config)
-        self.testcase_parser.update_binded_variables(self.testcase_variables_mapping)
+        self.testcase_parser.update_binded_variables(
+            self.testcase_variables_mapping)
 
         if level == "testset":
             self.import_module_items(["httprunner.built_in"], "testset")
@@ -85,10 +90,13 @@ class Context(object):
         sys.path.insert(0, os.getcwd())
         for module_name in modules:
             imported_module = utils.get_imported_module(module_name)
-            imported_functions_dict = utils.filter_module(imported_module, "function")
-            self.__update_context_functions_config(level, imported_functions_dict)
+            imported_functions_dict = utils.filter_module(
+                imported_module, "function")
+            self.__update_context_functions_config(
+                level, imported_functions_dict)
 
-            imported_variables_dict = utils.filter_module(imported_module, "variable")
+            imported_variables_dict = utils.filter_module(
+                imported_module, "variable")
             self.bind_variables(imported_variables_dict, level)
 
     def bind_variables(self, variables, level="testcase"):
@@ -109,13 +117,17 @@ class Context(object):
             variables = utils.convert_to_order_dict(variables)
 
         for variable_name, value in variables.items():
-            variable_evale_value = self.testcase_parser.parse_content_with_bindings(value)
+            variable_evale_value = self.testcase_parser.parse_content_with_bindings(
+                value)
 
             if level == "testset":
-                self.testset_shared_variables_mapping[variable_name] = variable_evale_value
+                self.testset_shared_variables_mapping[
+                    variable_name] = variable_evale_value
 
-            self.testcase_variables_mapping[variable_name] = variable_evale_value
-            self.testcase_parser.update_binded_variables(self.testcase_variables_mapping)
+            self.testcase_variables_mapping[
+                variable_name] = variable_evale_value
+            self.testcase_parser.update_binded_variables(
+                self.testcase_variables_mapping)
 
     def bind_extracted_variables(self, variables):
         """ bind extracted variables to testset context
@@ -125,7 +137,8 @@ class Context(object):
         for variable_name, value in variables.items():
             self.testset_shared_variables_mapping[variable_name] = value
             self.testcase_variables_mapping[variable_name] = value
-            self.testcase_parser.update_binded_variables(self.testcase_variables_mapping)
+            self.testcase_parser.update_binded_variables(
+                self.testcase_variables_mapping)
 
     def __update_context_functions_config(self, level, config_mapping):
         """
@@ -187,7 +200,8 @@ class Context(object):
             }
         """
         if not isinstance(validator, dict):
-            raise exception.ParamsError("invalid validator: {}".format(validator))
+            raise exception.ParamsError(
+                "invalid validator: {}".format(validator))
 
         if "check" in validator and len(validator) > 1:
             # format1
@@ -198,7 +212,8 @@ class Context(object):
             elif "expected" in validator:
                 expect_value = validator.get("expected")
             else:
-                raise exception.ParamsError("invalid validator: {}".format(validator))
+                raise exception.ParamsError(
+                    "invalid validator: {}".format(validator))
 
             comparator = validator.get("comparator", "eq")
 
@@ -208,12 +223,14 @@ class Context(object):
             compare_values = validator[comparator]
 
             if not isinstance(compare_values, list) or len(compare_values) != 2:
-                raise exception.ParamsError("invalid validator: {}".format(validator))
+                raise exception.ParamsError(
+                    "invalid validator: {}".format(validator))
 
             check_item, expect_value = compare_values
 
         else:
-            raise exception.ParamsError("invalid validator: {}".format(validator))
+            raise exception.ParamsError(
+                "invalid validator: {}".format(validator))
 
         # check_item should only be in 3 type:
         # 1, variable reference, e.g. $token
@@ -221,15 +238,18 @@ class Context(object):
         # 3, regex string, e.g. "LB[\d]*(.*)RB[\d]*"
         if testcase.extract_variables(check_item):
             # type 1
-            check_value = self.testcase_parser.eval_content_variables(check_item)
+            check_value = self.testcase_parser.eval_content_variables(
+                check_item)
         else:
             try:
                 # type 2 or type 3
                 check_value = resp_obj.extract_field(check_item)
             except exception.ParseResponseError:
-                raise exception.ParseResponseError("failed to extract check item in response!")
+                raise exception.ParseResponseError(
+                    "failed to extract check item in response!")
 
-        expect_value = self.testcase_parser.eval_content_variables(expect_value)
+        expect_value = self.testcase_parser.eval_content_variables(
+            expect_value)
 
         validator_dict = {
             "check_item": check_item,
@@ -243,10 +263,12 @@ class Context(object):
         """ validate with functions
         """
         comparator = utils.get_uniform_comparator(validator_dict["comparator"])
-        validate_func = self.testcase_parser.get_bind_item("function", comparator)
+        validate_func = self.testcase_parser.get_bind_item(
+            "function", comparator)
 
         if not validate_func:
-            raise exception.FunctionNotFound("comparator not found: {}".format(comparator))
+            raise exception.FunctionNotFound(
+                "comparator not found: {}".format(comparator))
 
         check_item = validator_dict["check_item"]
         check_value = validator_dict["check_value"]
@@ -256,13 +278,16 @@ class Context(object):
             if check_value is None or expect_value is None:
                 assert comparator in ["is", "eq", "equals", "=="]
 
-            validate_func(validator_dict["check_value"], validator_dict["expect_value"])
+            validate_func(validator_dict["check_value"],
+                          validator_dict["expect_value"])
         except (AssertionError, TypeError):
             err_msg = "\n" + "\n".join([
                 "\tcheck item name: %s;" % check_item,
-                "\tcheck item value: %s (%s);" % (check_value, type(check_value).__name__),
+                "\tcheck item value: %s (%s);" % (
+                    check_value, type(check_value).__name__),
                 "\tcomparator: %s;" % comparator,
-                "\texpected value: %s (%s)." % (expect_value, type(expect_value).__name__)
+                "\texpected value: %s (%s)." % (
+                    expect_value, type(expect_value).__name__)
             ])
             raise exception.ValidationError(err_msg)
 

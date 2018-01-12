@@ -1,4 +1,3 @@
-
 /*动态改变模块信息*/
 function show_module(module_info) {
     module_info = module_info.split('replaceFlag');
@@ -13,11 +12,16 @@ function show_module(module_info) {
 
 /*表单信息异步传输*/
 function info_ajax(id) {
+    // id = id.toString();
     data = $(id).serializeJSON();
     url = '/api/add_project/';
     if (id === '#add_module') {
         url = '/api/add_module/';
-    } else if (id === '#form_message') {
+    } else if (id === '#list_pro') {
+        url = '/api/project_list/1/';
+    }
+
+    else if (id === '#form_message') {
         url = '/api/add_case/';
         data = {
             "test": {
@@ -31,6 +35,19 @@ function info_ajax(id) {
                 "name": data
             }
         }
+    } else if (id.indexOf('un_pro') > -1) {
+        console.log(id)
+        url = '/api/project_list/1/';
+        data = {
+            "status": 0,
+            "name": id.substring(6, id.length)
+        };
+    } else if (id.indexOf('in_pro') > -1) {
+        url = '/api/project_list/1/';
+        data = {
+            "status": 1,
+            "name": id.substring(6, id.length)
+        };
     }
 
     $.ajax({

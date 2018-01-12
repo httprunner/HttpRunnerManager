@@ -26,6 +26,23 @@ def add_project_data(type, **kwargs):
     return 'ok'
 
 
+'''改变状态'''
+
+
+def change_status(Model, type='pro', **kwargs):
+    name = kwargs.pop('name')
+
+    obj = Model.objects.get(pro_name=name)
+    if type == 'module':
+        obj = Model.objects.get(module_name=name)
+    elif type == 'test':
+        obj = Model.objects.get(name=name)
+
+    obj.status = kwargs.pop('status')
+    obj.save()
+    return 'ok'
+
+
 '''模块数据落地'''
 
 

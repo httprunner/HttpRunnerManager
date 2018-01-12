@@ -17,7 +17,8 @@ absolute_http_url_regexp = re.compile(r"^https?://", re.I)
 
 def prepare_kwargs(method, kwargs):
     if method == "POST":
-        # if request content-type is application/json, request data should be dumped
+        # if request content-type is application/json, request data should be
+        # dumped
         content_type = kwargs.get("headers", {}).get("content-type", "")
         if content_type.startswith("application/json") and "data" in kwargs:
             kwargs["data"] = json.dumps(kwargs["data"])
@@ -44,6 +45,7 @@ class HttpSession(requests.Session):
     part of the URL will be prepended with the HttpSession.base_url which is normally inherited
     from a HttpRunner class' host property.
     """
+
     def __init__(self, base_url=None, *args, **kwargs):
         super(HttpSession, self).__init__(*args, **kwargs)
         self.base_url = base_url if base_url else ""
@@ -101,7 +103,8 @@ class HttpSession(requests.Session):
         url = self._build_url(url)
         logging.info(" Start to {method} {url}".format(method=method, url=url))
         logging.debug(" kwargs: {kwargs}".format(kwargs=kwargs))
-        # store meta data that is used when reporting the request to locust's statistics
+        # store meta data that is used when reporting the request to locust's
+        # statistics
         request_meta = {}
 
         # set up pre_request hook for attaching meta data to the request object
@@ -115,12 +118,15 @@ class HttpSession(requests.Session):
             .request.path_url
 
         # record the consumed time
-        request_meta["response_time"] = int((time.time() - request_meta["start_time"]) * 1000)
+        request_meta["response_time"] = int(
+            (time.time() - request_meta["start_time"]) * 1000)
 
         # get the length of the content, but if the argument stream is set to True, we take
-        # the size from the content-length header, in order to not trigger fetching of the body
+        # the size from the content-length header, in order to not trigger
+        # fetching of the body
         if kwargs.get("stream", False):
-            request_meta["content_size"] = int(response.headers.get("content-length") or 0)
+            request_meta["content_size"] = int(
+                response.headers.get("content-length") or 0)
         else:
             request_meta["content_size"] = len(response.content or "")
 
@@ -139,9 +145,9 @@ class HttpSession(requests.Session):
                 method=method, url=url, exception=str(e)))
         else:
             logging.info(
-                """ status_code: {}, response_time: {} ms, response_length: {} bytes"""\
-                .format(request_meta["status_code"], request_meta["response_time"], \
-                    request_meta["content_size"]))
+                """ status_code: {}, response_time: {} ms, response_length: {} bytes"""
+                .format(request_meta["status_code"], request_meta["response_time"],
+                        request_meta["content_size"]))
 
         return response
 

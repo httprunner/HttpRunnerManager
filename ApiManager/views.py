@@ -4,7 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from ApiManager.forms import username_validate, password_validate, email_validate
-from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic
+from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
+    set_filter_session, get_ajax_msg
+from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
 from ApiManager.models import UserInfo, UserType, ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
@@ -36,14 +38,15 @@ def register(request):
                     else:
                         # 后台校验通过，进行数据库重复校验逻辑
                         if UserInfo.objects.filter(username__exact=username).count() > 0 or \
-                                        UserInfo.objects.filter(email__exact=email).count() > 0:
+                                UserInfo.objects.filter(email__exact=email).count() > 0:
                             error_msg['error'] = '用户名或邮箱已被其他用户注册'
                         else:
                             del request.session['username']  # 删掉session
                             del request.session['email']
 
                             obj = UserType.objects.get_objects(1)  # 普通用户
-                            UserInfo.objects.insert_user(username, password, email, obj)
+                            UserInfo.objects.insert_user(
+                                username, password, email, obj)
                             return redirect('/api/login/')
             else:
                 error_msg['error'] = password_validate(password)
@@ -85,11 +88,8 @@ def add_project(request):
     if request.is_ajax():
         project_info = json.loads(request.body.decode('utf-8'))
         msg = project_info_logic(**project_info)
+        return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
-        if msg is 'ok':
-            return HttpResponse('项目添加成功')
-        else:
-            return HttpResponse(msg)
     elif request.method == 'GET':
         return render_to_response('add_project.html')
 
@@ -101,11 +101,7 @@ def add_module(request):
     if request.is_ajax():
         module_info = json.loads(request.body.decode('utf-8'))
         msg = module_info_logic(**module_info)
-
-        if msg is 'ok':
-            return HttpResponse('模块添加成功')
-        else:
-            return HttpResponse(msg)
+        return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
 
     elif request.method == 'GET':
 
@@ -123,10 +119,7 @@ def add_case(request):
     if request.is_ajax():
         testcase_lists = json.loads(request.body.decode('utf-8'))
         msg = case_info_logic(**testcase_lists)
-        if msg is 'ok':
-            return HttpResponse('用例添加成功')
-        else:
-            return HttpResponse(msg)
+        return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
     elif request.method == 'GET':
         return render_to_response('add_case.html', {'project': project})
 
@@ -141,10 +134,7 @@ def add_config(request):
         testconfig_lists = json.loads(request.body.decode('utf-8'))
 
         msg = config_info_logic(**testconfig_lists)
-        if msg is 'ok':
-            return HttpResponse('配置添加成功')
-        else:
-            return HttpResponse(msg)
+        return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
 
     elif request.method == 'GET':
         return render_to_response('add_config.html', {'project': project})
@@ -174,35 +164,30 @@ def add_api(request):
 
 
 def project_list(request, id):
-    if request.method == 'POST':
-        request.session['filter'] = request.POST.get('filter')
-        request.session['user'] = request.POST.get('user')
-        request.session['name'] = request.POST.get('name')
-    try:
-        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
-                        'name': request.session['name']}
-    except KeyError:
-        filter_query = {'filter': '1', 'user': '', 'name': ''}
+    if request.is_ajax():
+        project_info = json.loads(request.body.decode('utf-8'))
 
-    pro_list = get_pager_info(ProjectInfo, filter_query, '/api/project_list/', id)
-    return render_to_response('project_list.html',
-                              {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
+        if 'status' in project_info.keys():
+            msg = change_status(ProjectInfo, **project_info)
+            return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
+        else:
+            msg = project_info_logic(type=False, **project_info)
+            return HttpResponse(get_ajax_msg(msg, '项目更新成功'))
+    else:
+        filter_query = set_filter_session(request)
+        pro_list = get_pager_info(
+            ProjectInfo, filter_query, '/api/project_list/', id)
+        return render_to_response('project_list.html',
+                                  {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
 
 
 '''模块列表'''
 
 
 def module_list(request, id):
-    if request.method == 'POST':
-        request.session['filter'] = request.POST.get('filter')
-        request.session['user'] = request.POST.get('user')
-        request.session['name'] = request.POST.get('name')
-    try:
-        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
-                        'name': request.session['name']}
-    except KeyError:
-        filter_query = {'filter': '1', 'user': '', 'name': ''}
-    module_list = get_pager_info(ModuleInfo, filter_query, '/api/module_list/', id)
+    filter_query = set_filter_session(request)
+    module_list = get_pager_info(
+        ModuleInfo, filter_query, '/api/module_list/', id)
     return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
 
 
@@ -210,16 +195,9 @@ def module_list(request, id):
 
 
 def test_list(request, id):
-    if request.method == 'POST':
-        request.session['filter'] = request.POST.get('filter')
-        request.session['user'] = request.POST.get('user')
-        request.session['name'] = request.POST.get('name')
-    try:
-        filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
-                        'name': request.session['name']}
-    except KeyError:
-        filter_query = {'filter': '1', 'user': '', 'name': ''}
-    test_list = get_pager_info(TestCaseInfo, filter_query,  '/api/test_list/', id)
+    filter_query = set_filter_session(request)
+    test_list = get_pager_info(
+        TestCaseInfo, filter_query,  '/api/test_list/', id)
     return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
 
 
