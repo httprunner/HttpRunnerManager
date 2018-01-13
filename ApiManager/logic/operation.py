@@ -17,9 +17,14 @@ def add_project_data(type, **kwargs):
             else:
                 return '该项目已存在，请重新编辑'
         else:
-            project_opt.update_project(kwargs.pop('project_name'), kwargs.pop('responsible_name'),
+            if kwargs.get('project_name') != project_opt.get_pro_name('',
+                                            type=False, id = kwargs.get('index')) and project_opt.get_pro_name(
+                kwargs.get('project_name')) > 0:
+                return '该项目已存在， 请重新命名'
+            project_opt.update_project(kwargs.pop('index'), kwargs.pop('project_name'), kwargs.pop('responsible_name'),
                                        kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),
                                        kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
+
 
     except DataError:
         return '字段长度超长，请重新编辑'
