@@ -38,17 +38,24 @@ class ProjectInfoManager(models.Manager):
         self.create(pro_name=pro_name, responsible_name=responsible_name, test_user=test_user, dev_user=dev_user
                     , publish_app=publish_app, simple_desc=simple_desc, other_desc=other_desc)
 
-    def update_project(self, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc):
-        self.filter(pro_name__exact=pro_name).update(responsible_name=responsible_name,
-                                                     test_user=test_user, dev_user=dev_user
-                                                     , publish_app=publish_app, simple_desc=simple_desc,
-                                                     other_desc=other_desc)
+    def update_project(self, id, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc):
+        obj = self.get(id=int(id))
+        obj.pro_name = pro_name
+        obj.responsible_name = responsible_name
+        obj.test_user = test_user
+        obj.dev_user = dev_user
+        obj.publish_app = publish_app
+        obj.simple_desc = simple_desc
+        obj.other_desc = other_desc
 
-    def get_pro_name(self, pro_name, type=True):
+        obj.save()
+
+    def get_pro_name(self, pro_name, type=True, id = None):
         if type:
             return self.filter(pro_name__exact=pro_name).count()
         else:
-            return self.get(pro_name=pro_name)
+            if id is not None:
+                return self.get(id = int(id)).pro_name
 
     def get_pro_info(self, type=True):
         if type:
