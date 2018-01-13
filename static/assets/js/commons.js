@@ -18,7 +18,7 @@ function info_ajax(id) {
         url = '/api/add_module/';
     } else if (id === '#list_pro') {
         url = '/api/project_list/1/';
-    } else if (id === '#list_modu;e') {
+    } else if (id === '#list_module') {
         url = '/api/module_list/1/';
     } else if (id === '#form_message') {
         url = '/api/add_case/';
