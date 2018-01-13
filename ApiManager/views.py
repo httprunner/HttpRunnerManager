@@ -172,7 +172,7 @@ def project_list(request, id):
             return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
         else:
             msg = project_info_logic(type=False, **project_info)
-            return HttpResponse(get_ajax_msg(msg, '项目更新成功'))
+            return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
     else:
         filter_query = set_filter_session(request)
         pro_list = get_pager_info(
@@ -185,10 +185,20 @@ def project_list(request, id):
 
 
 def module_list(request, id):
-    filter_query = set_filter_session(request)
-    module_list = get_pager_info(
-        ModuleInfo, filter_query, '/api/module_list/', id)
-    return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
+    if request.is_ajax():
+        module_info = json.loads(request.body.decode('utf-8'))
+
+        if 'status' in module_info.keys():
+            msg = change_status(ModuleInfo, **module_info)
+            return HttpResponse(get_ajax_msg(msg, '模块状态已更改！'))
+        else:
+            msg = module_info_logic(type=False, **module_info)
+            return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
+    else:
+        filter_query = set_filter_session(request)
+        module_list = get_pager_info(
+            ModuleInfo, filter_query, '/api/module_list/', id)
+        return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
 
 
 '''配置或用例列表'''
