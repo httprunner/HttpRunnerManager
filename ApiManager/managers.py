@@ -56,6 +56,7 @@ class ProjectInfoManager(models.Manager):
         else:
             if id is not None:
                 return self.get(id = int(id)).pro_name
+            return self.get(pro_name__exact=pro_name)
 
     def get_pro_info(self, type=True):
         if type:
@@ -73,10 +74,22 @@ class ModuleInfoManager(models.Manager):
                     lifting_time=lifting_time,
                     simple_desc=simple_desc, other_desc=other_desc)
 
-    def get_module_name(self, module_name, type=True):
+    def update_module(self, id, module_name, test_user, lifting_time, simple_desc, other_desc):
+        obj = self.get(id = int(id))
+        obj.module_name = module_name
+        obj.test_user = test_user
+        obj.lifting_time = lifting_time
+        obj.simple_desc = simple_desc
+        obj.other_desc = other_desc
+
+        obj.save()
+
+    def get_module_name(self, module_name, type=True, id = None):
         if type:
             return self.filter(module_name__exact=module_name).count()
         else:
+            if id is not  None:
+                return self.get(id = int(id)).module_name
             return self.get(module_name=module_name)
 
     def get_module_info(self, belong_project):
