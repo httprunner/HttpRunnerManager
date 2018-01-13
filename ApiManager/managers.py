@@ -84,13 +84,13 @@ class ModuleInfoManager(models.Manager):
 
         obj.save()
 
-    def get_module_name(self, module_name, type=True, id = None):
+    def get_module_name(self, module_name, type=True, id = None, project = None):
         if type:
             return self.filter(module_name__exact=module_name).count()
         else:
             if id is not  None:
                 return self.get(id = int(id)).module_name
-            return self.get(module_name=module_name)
+            return self.get(belong_project__pro_name__exact=project, module_name__exact=module_name)
 
     def get_module_info(self, belong_project):
         return self.filter(belong_project__pro_name__exact=belong_project).values_list('module_name',
@@ -114,5 +114,5 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=config_info.pop('config_author'), type=2, request=json.dumps(kwargs))
 
-    def get_case_name(self, name, module_name):
-        return self.filter(belong_module__module_name=module_name).filter(name__exact=name).count()
+    def get_case_name(self, name, module_name, belong_project):
+        return self.filter(belong_module__module_name=module_name).filter(name__exact=name).filter(belong_project__exact=belong_project).count()
