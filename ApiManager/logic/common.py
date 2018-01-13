@@ -71,7 +71,7 @@ def load_modules(**kwargs):
 '''模块信息逻辑及落地'''
 
 
-def module_info_logic(**kwargs):
+def module_info_logic(type = True, **kwargs):
     if kwargs.get('module_name') is '':
         return '模块名称不能为空'
     if kwargs.get('belong_project') is '':
@@ -80,7 +80,7 @@ def module_info_logic(**kwargs):
         return '测试人员不能为空'
     if kwargs.get('lifting_time') is '':
         return '提测时间不能为空'
-    return add_module_data(**kwargs)
+    return add_module_data(type, **kwargs)
 
 
 '''项目信息逻辑及落地'''
