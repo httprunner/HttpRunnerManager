@@ -8,11 +8,20 @@
             <div class="am-modal-bd">
                 <form class="form-horizontal" id="list_pro">
                     <div class="form-group">
+                        <label class="control-label col-sm-3" for="index"
+                               style="font-weight: inherit; font-size: small " hidden>索引值：</label>
+                        <div class="col-sm-9">
+                            <input name="index" type="text" class="form-control" id="index"
+                                   placeholder="索引值" hidden>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="control-label col-sm-3" for="project_name"
                                style="font-weight: inherit; font-size: small ">项目名称</label>
                         <div class="col-sm-9">
                             <input name="project_name" type="text" class="form-control" id="project_name"
-                                   placeholder="项目名称" readonly>
+                                   placeholder="项目名称" >
                         </div>
                     </div>
 
@@ -187,7 +196,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                            onclick="edit('{{ foo.pro_name }}', '{{ foo.responsible_name }}'
+                                            onclick="edit('{{ foo.id }}','{{ foo.pro_name }}', '{{ foo.responsible_name }}'
                                                     , '{{ foo.test_user }}','{{ foo.dev_user }}', '{{ foo.publish_app }}'
                                                     , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')"> <span
                                             class="am-icon-pencil-square-o"></span></button>
@@ -232,7 +241,8 @@
         </div>
     </div>
     <script type="text/javascript">
-        function edit(pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc) {
+        function edit(id, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc) {
+            $('#index').val(id);
             $('#project_name').val(pro_name);
             $('#responsible_name').val(responsible_name);
             $('#test_user').val(test_user);
@@ -243,7 +253,7 @@
             $('#my-edit').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax('#list_pro')
+                    info_ajax('#list_pro', id)
                 },
                 onCancel: function () {
                 }
