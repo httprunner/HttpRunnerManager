@@ -7,11 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HttpRunnerManager.settings")
 django.setup()
 from ApiManager.models import ProjectInfo, ModuleInfo
 
-module_info = list(ModuleInfo.objects.get_module_info('上海存管'))
-string = ''
-for value in module_info:
-    string = string + value + 'replaceFlag'
-print(string[:len(string) - 11])
+print(ProjectInfo.objects.all().get(pro_name__exact='上海').id)
 
 
 
