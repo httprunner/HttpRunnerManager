@@ -36,10 +36,12 @@ def add_project_data(type, **kwargs):
 
 def add_module_data(type, **kwargs):
     module_opt = ModuleInfo.objects
+    belong_project = kwargs.pop('belong_project')
     try:
         if type:
-            if module_opt.get_module_name(kwargs.get('module_name')) < 1:
-                belong_project = ProjectInfo.objects.get_pro_name(kwargs.pop('belong_project'), type=False)
+            if module_opt.filter(belong_project__pro_name__exact = belong_project)\
+                            .filter(module_name__exact = kwargs.get('module_name')).count() < 1:
+                belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
                 module_opt.insert_module(kwargs.pop('module_name'), belong_project, kwargs.pop('test_user'),
                                                  kwargs.pop('lifting_time'), kwargs.pop('simple_desc'),
                                                  kwargs.pop('other_desc'))
@@ -47,7 +49,7 @@ def add_module_data(type, **kwargs):
                 return '该模块已在项目中存在，请重新编辑'
         else:
             if kwargs.get('module_name') != module_opt.get_module_name('',type = False, id = kwargs.get('index')) \
-                    and module_opt.filter(belong_project__pro_name__exact = kwargs.pop('belong_project'))\
+                    and module_opt.filter(belong_project__pro_name__exact = belong_project)\
                             .filter(module_name__exact = kwargs.get('module_name')).count() > 0:
                 return '该模块已存在，请重新命名'
             module_opt.update_module(kwargs.pop('index'), kwargs.pop('module_name'), kwargs.get('test_user'), kwargs.pop('lifting_time'),
@@ -65,10 +67,11 @@ def add_module_data(type, **kwargs):
 
 def add_case_data(**kwargs):
     case_info = kwargs.get('test').get('case_info')
+    case_opt = TestCaseInfo.objects
     try:
-        if TestCaseInfo.objects.get_case_name(kwargs.get('test').get('name'), case_info.get('module')) < 1:
-            belong_module = ModuleInfo.objects.get_module_name(case_info.get('module'), type=False)
-            TestCaseInfo.objects.insert_case(belong_module, **kwargs)
+        if case_opt.get_case_name(kwargs.get('test').get('name'), case_info.get('module'), case_info.get('project')) < 1:
+            belong_module = ModuleInfo.objects.get_module_name(case_info.get('module'), type=False, project=case_info.get('project'))
+            case_opt.insert_case(belong_module, **kwargs)
         else:
             return '用例或配置已存在，请重新编辑'
     except DataError:
@@ -80,11 +83,12 @@ def add_case_data(**kwargs):
 
 
 def add_config_data(**kwargs):
+    case_opt = TestCaseInfo.objects
     config_info = kwargs.get('config').get('config_info')
     try:
-        if TestCaseInfo.objects.get_case_name(kwargs.get('config').get('name'), config_info.get('config_module')) < 1:
-            belong_module = ModuleInfo.objects.get_module_name(config_info.get('config_module'), type=False)
-            TestCaseInfo.objects.insert_config(belong_module, **kwargs)
+        if case_opt.get_case_name(kwargs.get('config').get('name'), config_info.get('config_module'), config_info.get('project')) < 1:
+            belong_module = ModuleInfo.objects.get_module_name(config_info.get('config_module'), type=False, project=config_info.get('project'))
+            case_opt.insert_config(belong_module, **kwargs)
         else:
             return '用例或配置已存在，请重新编辑'
     except DataError:
