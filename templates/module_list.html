@@ -6,58 +6,66 @@
         <div class="am-modal-dialog">
             <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                <form class="form-horizontal" id="#form_message">
+                <form class="form-horizontal" id="#list_module">
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="index"
+                               style="font-weight: inherit; font-size: small " hidden>索引值：</label>
+                        <div class="col-sm-9">
+                            <input name="index" type="text" class="form-control" id="index"
+                                   placeholder="索引值" hidden>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="module_name"
                                style="font-weight: inherit; font-size: small ">模块名称：</label>
                         <div class="col-sm-9">
-                            <input name="module_name" type="text" class="form-control" id="inputSuccess3"
+                            <input name="module_name" type="text" class="form-control" id="module_name"
                                    placeholder="模块名称">
                         </div>
                     </div>
 
                      <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="belong_project"
                                style="font-weight: inherit; font-size: small ">所属项目：</label>
                         <div class="col-sm-9">
-                            <input name="test_user" type="text" id="inputSuccess3" class="form-control"
-                                   placeholder="所属项目" disabled>
+                            <input name="belong_project" type="text" id="belong_project" class="form-control"
+                                   placeholder="所属项目" >
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="test_user"
                                style="font-weight: inherit; font-size: small ">测试人员：</label>
                         <div class="col-sm-9">
-                            <input name="test_user" type="text" id="inputSuccess3" class="form-control"
+                            <input name="test_user" type="text" id="test_user" class="form-control"
                                    placeholder="测试人员">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="lifting_time"
                                style="font-weight: inherit; font-size: small ">提测时间：</label>
                         <div class="col-sm-9">
-                            <input name="lifting_time" type="text" id="inputSuccess3" class="form-control"
+                            <input name="lifting_time" type="text" id="lifting_time" class="form-control"
                                    placeholder="提测时间">
                         </div>
                     </div>
 
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="simple_desc"
                                style="font-weight: inherit; font-size: small ">简要描述：</label>
                         <div class="col-sm-9">
-                            <input name="simple_desc" type="text" id="inputSuccess3" class="form-control"
+                            <input name="simple_desc" type="text" id="simple_desc" class="form-control"
                                    placeholder="简要描述">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="inputSuccess3"
+                        <label class="control-label col-sm-3" for="other_desc"
                                style="font-weight: inherit; font-size: small ">其他信息：</label>
                         <div class="col-sm-9">
-                            <input name="other_desc" type="text" id="inputSuccess3" class="form-control"
+                            <input name="other_desc" type="text" id="other_desc" class="form-control"
                                    placeholder="其他信息">
                         </div>
                     </div>
@@ -175,19 +183,22 @@
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
-                                    <button type="button"
+                                   <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                            onclick="edit()"> <span
+                                            onclick="edit('{{ foo.id }}','{{ foo.module_name }}', '{{ foo.belong_project.pro_name }}'
+                                                    , '{{ foo.test_user }}','{{ foo.lifting_time }}'
+                                                    , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')"> <span
                                             class="am-icon-pencil-square-o"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}" onclick="valid()"><span
+                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
+                                            onclick="valid('in_pro{{ foo.pro_name }}')"><span
                                             class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid()"><span
+                                            onclick="invalid('un_pro{{ foo.pro_name }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -220,38 +231,42 @@
         </div>
     </div>
     <script type="text/javascript">
-        function edit() {
+        function edit(id, module_name, belong_project, test_user, lifting_time, simple_desc, other_desc) {
+            $('#index').val(id);
+            $('#module_name').val(module_name);
+            $('#belong_project').val(belong_project);
+            $('#test_user').val(test_user);
+            $('#lifting_time').val(lifting_time);
+            $('#simple_desc').val(simple_desc);
+            $('#other_desc').val(other_desc);
             $('#my-edit').modal({
                 relatedTarget: this,
-                onConfirm: function (e) {
-                    alert('你输入的是：' + e.data || '')
+                onConfirm: function () {
+                    info_ajax('#list_module', id)
                 },
-                onCancel: function (e) {
-                    alert('不想说!');
+                onCancel: function () {
                 }
             });
         }
 
-        function invalid() {
+        function invalid(name) {
             $('#my-invalid').modal({
                 relatedTarget: this,
-                onConfirm: function (e) {
-                    alert('你输入的是：' + e.data || '')
+                onConfirm: function () {
+                    info_ajax(name)
                 },
-                onCancel: function (e) {
-                    alert('不想说!');
+                onCancel: function () {
                 }
             });
         }
 
-        function valid() {
+        function valid(name) {
             $('#my-valid').modal({
                 relatedTarget: this,
-                onConfirm: function (e) {
-                    alert('你输入的是：' + e.data || '')
+                onConfirm: function () {
+                    info_ajax(name)
                 },
-                onCancel: function (e) {
-                    alert('不想说!');
+                onCancel: function () {
                 }
             });
         }
