@@ -31,35 +31,28 @@ def add_project_data(type, **kwargs):
     return 'ok'
 
 
-'''改变状态'''
-
-
-def change_status(Model, type='pro', **kwargs):
-    name = kwargs.pop('name')
-
-    obj = Model.objects.get(pro_name=name)
-    if type == 'module':
-        obj = Model.objects.get(module_name=name)
-    elif type == 'test':
-        obj = Model.objects.get(name=name)
-
-    obj.status = kwargs.pop('status')
-    obj.save()
-    return 'ok'
-
-
 '''模块数据落地'''
 
 
-def add_module_data(**kwargs):
+def add_module_data(type, **kwargs):
+    module_opt = ModuleInfo.objects
     try:
-        if ModuleInfo.objects.get_module_name(kwargs.get('module_name')) < 1:
-            belong_project = ProjectInfo.objects.get_pro_name(kwargs.pop('belong_project'), type=False)
-            ModuleInfo.objects.insert_module(kwargs.pop('module_name'), belong_project, kwargs.pop('test_user'),
-                                             kwargs.pop('lifting_time'), kwargs.pop('simple_desc'),
-                                             kwargs.pop('other_desc'))
+        if type:
+            if module_opt.get_module_name(kwargs.get('module_name')) < 1:
+                belong_project = ProjectInfo.objects.get_pro_name(kwargs.pop('belong_project'), type=False)
+                module_opt.insert_module(kwargs.pop('module_name'), belong_project, kwargs.pop('test_user'),
+                                                 kwargs.pop('lifting_time'), kwargs.pop('simple_desc'),
+                                                 kwargs.pop('other_desc'))
+            else:
+                return '该模块已在项目中存在，请重新编辑'
         else:
-            return '该模块已在项目中存在，请重新编辑'
+            if kwargs.get('module_name') != module_opt.get_module_name('',type = False, id = kwargs.get('index')) \
+                    and module_opt.filter(belong_project__pro_name__exact = kwargs.pop('belong_project'))\
+                            .filter(module_name__exact = kwargs.get('module_name')).count() > 0:
+                return '该模块已存在，请重新命名'
+            module_opt.update_module(kwargs.pop('index'), kwargs.pop('module_name'), kwargs.get('test_user'), kwargs.pop('lifting_time'),
+                                     kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
+
     except DataError:
         return '字段长度超长，请重新编辑'
     except ValidationError:
@@ -96,4 +89,16 @@ def add_config_data(**kwargs):
             return '用例或配置已存在，请重新编辑'
     except DataError:
         return '字段长度超长，请重新编辑'
+    return 'ok'
+
+
+
+'''改变状态'''
+
+
+def change_status(Model, **kwargs):
+    name = kwargs.pop('name')
+    obj = Model.objects.get(id=name)
+    obj.status = kwargs.pop('status')
+    obj.save()
     return 'ok'
