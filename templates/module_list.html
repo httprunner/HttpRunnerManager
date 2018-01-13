@@ -6,7 +6,7 @@
         <div class="am-modal-dialog">
             <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                <form class="form-horizontal" id="#list_module">
+                <form class="form-horizontal" id="list_module">
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="index"
                                style="font-weight: inherit; font-size: small " hidden>索引值：</label>
@@ -29,7 +29,7 @@
                                style="font-weight: inherit; font-size: small ">所属项目：</label>
                         <div class="col-sm-9">
                             <input name="belong_project" type="text" id="belong_project" class="form-control"
-                                   placeholder="所属项目" >
+                                   placeholder="所属项目" readonly>
                         </div>
                     </div>
 
@@ -193,12 +193,12 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
                                             data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                            onclick="valid('in_pro{{ foo.pro_name }}')"><span
+                                            onclick="valid('in_mod{{ foo.id }}')"><span
                                             class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_pro{{ foo.pro_name }}')"><span
+                                            onclick="invalid('un_mod{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
