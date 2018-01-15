@@ -4,7 +4,7 @@
 Design Philosophy
 -----------------
 基于HttpRunner的接口自动化测试平台: `Django`_, `Bootstrap`_ and `Python`.目前不支持HttpRunner api功能
-注意：目前前端页面还未开发用例运行入口，后台开发完毕，待时间松点一定及时更新！
+注意：目前前端页面还未开发用例运行入口，后台开发完毕，待时间宽松点一定及时更新！
 
 Key Features
 ------------
