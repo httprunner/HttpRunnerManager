@@ -46,7 +46,7 @@ function info_ajax(id) {
             "status": 1,
             "name": id.substring(6, id.length)
         };
-    }else if (id.indexOf('un_mod') > -1) {
+    } else if (id.indexOf('un_mod') > -1) {
         url = '/api/module_list/1/';
         data = {
             "status": 0,
@@ -67,13 +67,15 @@ function info_ajax(id) {
         contentType: "application/json",
         success: function (data) {
             if (id !== '#form_message' && id !== '#form_config') {
-                alert(data)
-            } else {
+                myAlert(data);
+            }
+            else {
                 show_module(data)
             }
-        },
+        }
+        ,
         error: function () {
-            alert('系统繁忙，请稍候重试')
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
         }
     });
 
@@ -115,10 +117,10 @@ function case_ajax() {
         data: JSON.stringify(test),
         contentType: "application/json",
         success: function (data) {
-            alert(data)
+            myAlert(data)
         },
         error: function () {
-            alert('系统繁忙，请稍候重试')
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
         }
     });
 }
@@ -149,12 +151,19 @@ function config_ajax() {
         data: JSON.stringify(config),
         contentType: "application/json",
         success: function (data) {
-            alert(data)
+            myAlert(data)
         },
         error: function () {
-            alert('系统繁忙，请稍候重试')
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
         }
     });
 }
 
+/*alert 弹出*/
+function myAlert(data) {
+    $('#my-alert_print').text(data);
+    $('#my-alert').modal({
+        relatedTarget: this
+    });
+}
 
