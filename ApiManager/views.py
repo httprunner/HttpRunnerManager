@@ -38,7 +38,7 @@ def register(request):
                     else:
                         # 后台校验通过，进行数据库重复校验逻辑
                         if UserInfo.objects.filter(username__exact=username).count() > 0 or \
-                                UserInfo.objects.filter(email__exact=email).count() > 0:
+                                        UserInfo.objects.filter(email__exact=email).count() > 0:
                             error_msg['error'] = '用户名或邮箱已被其他用户注册'
                         else:
                             del request.session['username']  # 删掉session
@@ -198,7 +198,8 @@ def module_list(request, id):
         filter_query = set_filter_session(request)
         module_list = get_pager_info(
             ModuleInfo, filter_query, '/api/module_list/', id)
-        return render_to_response('module_list.html', {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
+        return render_to_response('module_list.html',
+                                  {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
 
 
 '''配置或用例列表'''
@@ -207,8 +208,17 @@ def module_list(request, id):
 def test_list(request, id):
     filter_query = set_filter_session(request)
     test_list = get_pager_info(
-        TestCaseInfo, filter_query,  '/api/test_list/', id)
+        TestCaseInfo, filter_query, '/api/test_list/', id)
     return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
+
+
+'''用例修改'''
+
+
+def edit_case(request, id):
+    test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+    request = eval(test_info[0].request)
+    return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
 
 
 '''测试代码'''
