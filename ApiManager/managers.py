@@ -106,6 +106,15 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
 
+    def update_case(self,**kwargs):
+        case_info = kwargs.get('test').pop('case_info')
+        obj = self.get(id = int(case_info.pop('test_index')))
+        obj.name = kwargs.get('test').get('name')
+        obj.author = case_info.pop('author')
+        obj.include=case_info.pop('include')
+        obj.request = kwargs
+        obj.save()
+
     def insert_config(self, belong_module, **kwargs):
         config_info = kwargs.get('config').pop('config_info')
         self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
@@ -116,5 +125,8 @@ class TestCaseInfoManager(models.Manager):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).filter(
             belong_project__exact=belong_project).count()
 
-    def get_case_by_id(self, index):
-        return self.filter(id=index).all()
+    def get_case_by_id(self, index, type = True):
+        if type:
+            return self.filter(id=index).all()
+        else:
+            return self.get(id = index).name

@@ -216,9 +216,15 @@ def test_list(request, id):
 
 
 def edit_case(request, id):
-    test_info = TestCaseInfo.objects.get_case_by_id(int(id))
-    request = eval(test_info[0].request)
-    return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
+    if request.is_ajax():
+        testcase_lists = json.loads(request.body.decode('utf-8'))
+        msg = case_info_logic(**testcase_lists, type = False)
+        return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
+
+    elif request.method == 'GET':
+        test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+        request = eval(test_info[0].request)
+        return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
 
 
 '''测试代码'''
