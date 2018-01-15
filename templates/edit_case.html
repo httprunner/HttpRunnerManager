@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}新增用例{% endblock %}
+{% block title %}修改用例{% endblock %}
 {% load staticfiles %}
 
 {% block content %}
@@ -9,7 +9,7 @@
 
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例编辑</ul>
-            <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">新增用例</a></dl>
+            <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">修改用例</a></dl>
         </div>
 
         <div class="am-tabs am-margin" data-am-tabs>
@@ -29,28 +29,31 @@
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="case_name" placeholder="用例名称"
                                        name="case_name"
-                                       value="">
+                                       value="{{ info.name }}">
                                 <span class="glyphicon glyphicon-certificate form-control-feedback"
                                       aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
+                        <div class="form-group has-feedback has-info">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onchange=info_ajax("#form_message")>
-                                    {% for foo in project %}
-                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" class="form-control" id="project" placeholder="所属项目"
+                                       name="project"
+                                       value="{{ info.belong_project }}" readonly>
+                                <span class="glyphicon glyphicon-certificate form-control-feedback"
+                                      aria-hidden="true"></span>
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
-                            <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
+                        <div class="form-group has-feedback has-info">
+                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
-                                <select id="belong_module_id" name="module" class="form-control">
-                                </select>
+                                <input type="text" class="form-control" id="project" placeholder="所属模块"
+                                       name="module"
+                                       value="{{ info.belong_module.module_name }}" readonly>
+                                <span class="glyphicon glyphicon-certificate form-control-feedback"
+                                      aria-hidden="true"></span>
                             </div>
                         </div>
 
@@ -61,7 +64,7 @@
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="dev_name" placeholder="case_name1>casename2"
                                        name="include"
-                                       value="">
+                                       value="{{ info.include }}">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -70,8 +73,8 @@
                             <label for="author" class="col-md-2 control-label text-info"
                                    style="font-size: 14px;">author:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="创建者" name="author"
-                                       value="">
+                                <input type="text" class="form-control" id="author" placeholder="创建者" name="author"
+                                       value="{{ info.author }}">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -91,44 +94,60 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% for foo in request.variables %}
+                                <tr>
+                                    <td><input type="checkbox" name="variables" id="chkArr_{{ forloop.counter }}"
+                                               style="width:55px"></td>
+                                    {% for key, value in foo.items %}
+                                        <td><input type="text" name="cell1_keyvariables{{ forloop.parentloop.counter }}"
+                                                   id="nodename{{ forloop.parentloop.counter }}"
+                                                   value="{{ key }}" style="width:100%; border: none"></td>
+                                        <td><input type="text"
+                                                   name="cell2_valuevariables{{ forloop.parentloop.counter }}"
+                                                   id="nodename{{ forloop.parentloop.counter }}" value="{{ value }}"
+                                                   style="width:100%; border: none"></td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+
                             </tbody>
                         </table>
                     </form>
                 </div>
                 <div class="am-tab-panel am-fade" id="tab3">
                     <div class="form-inline">
-                        {% comment %} <form id="form_request">{% endcomment %}
-                        <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">Url:</label>
-                            <input type="text" class="form-control am-input-lg" placeholder="api url"
-                                   name="url"
-                                   id="url">
-                        </div>
+                        <form id="form_request">
+                            <div class="form-group has-success">
+                                <label for="url" style="font-size: 14px;">Url:</label>
+                                <input type="text" class="form-control am-input-lg" placeholder="api url"
+                                       name="url"
+                                       id="url" value="{{ request.request.url }}">
+                            </div>
 
-                        <div class="form-group has-warning">
-                            <label for="method"
-                                   style="font-size: 14px;"><code>&nbsp;</code>Method:</label>
-                            <select class="form-control" name="method" id="method">
-                                <option>POST</option>
-                                <option>GET</option>
-                                <option>PUT</option>
-                                <option>DELETE</option>
-                            </select>
-                        </div>
-                        <div class="form-group has-warning ">
-                            <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
-                            <select class="form-control" name="DataType" id="DataType">
-                                <option>data</option>
-                                <option>json</option>
-                            </select>
-                        </div>
+                            <div class="form-group has-warning">
+                                <label for="method"
+                                       style="font-size: 14px;"><code>&nbsp;</code>Method:</label>
+                                <select class="form-control" name="method" id="method">
+                                    <option>POST</option>
+                                    <option>GET</option>
+                                    <option>PUT</option>
+                                    <option>DELETE</option>
+                                </select>
+                            </div>
+                            <div class="form-group has-warning ">
+                                <label for="DataType"
+                                       style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
+                                <select class="form-control" name="DataType" id="DataType">
+                                    <option>data</option>
+                                    <option>json</option>
+                                </select>
+                            </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加数据</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除数据</button>
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">添加头部</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">删除头部</button>
-                        {% comment %}  </form>{% endcomment %}
+                            <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">添加数据</button>
+                            <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">删除数据</button>
+                            <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">添加头部</button>
+                            <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">删除头部</button>
+                        </form>
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>request:</caption>
@@ -140,6 +159,24 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% if 'data' in request.request.keys %}
+                                    {% for key, value in request.request.data.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                       style="width:55px">
+                                            </td>
+                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                       style="width:100%; border: none"></td>
+                                        </tr>
+
+                                    {% endfor %}
+                                {% endif %}
+
+
                                 </tbody>
                             </table>
                         </form>
@@ -155,6 +192,21 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% if 'headers' in request.request.keys %}
+                                    {% for key, value in request.request.headers.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="header" id="chkArr_{{ forloop.counter }}"
+                                                       style="width:55px">
+                                            </td>
+                                            <td><input type="text" name="cell1_keyheader{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name="cell2_valueheader{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                       style="width:100%; border: none"></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
                                 </tbody>
                             </table>
                         </form>
@@ -174,6 +226,20 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% for foo in request.extract %}
+                                <tr>
+                                    <td><input type="checkbox" name="extract" id="chkArr_{{ forloop.counter }}"
+                                               style="width:55px"></td>
+                                    {% for key, value in foo.items %}
+                                        <td><input type="text" name="cell1_keyextract{{ forloop.parentloop.counter }}"
+                                                   id="nodename{{ forloop.parentloop.counter }}" value="{{ key }}"
+                                                   style="width:100%; border: none"></td>
+                                        <td><input type="text" name="cell2_valueextract{{ forloop.parentloop.counter }}"
+                                                   id="nodename{{ forloop.parentloop.counter }}" value="{{ value }}"
+                                                   style="width:100%; border: none"></td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </form>
@@ -193,6 +259,39 @@
                             </tr>
                             </thead>
                             <tbody>
+                            {% for foo in request.validate %}
+                                <tr>
+                                    <td><input type="checkbox" name="validate" id="chkArr_{{ forloop.counter }}"
+                                               style="width:55px"></td>
+                                    <td><input type="text" name="cell1_keyvalidate{{ forloop.counter }}"
+                                               id="nodename{{ forloop.counter }}" value="{{ foo.check }}"
+                                               style="width:100%; border: none"></td>
+                                    <td><select name="cell_2comparatorvalidate1" class="form-control"
+                                                style="height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none">
+                                        <option>equals</option>
+                                        <option>contains</option>
+                                        <option>startswith</option>
+                                        <option>endswith</option>
+                                        <option>regex_match</option>
+                                        <option>type_match</option>
+                                        <option>contained_by</option>
+                                        <option>less_than</option>
+                                        <option>less_than_or_equals</option>
+                                        <option>greater_than</option>
+                                        <option>greater_than_or_equals</option>
+                                        <option>not_equals</option>
+                                        <option>string_equals</option>
+                                        <option>length_equals</option>
+                                        <option>length_greater_than</option>
+                                        <option>length_greater_than_or_equals</option>
+                                        <option>length_less_than</option>
+                                        <option>length_less_than_or_equals</option>
+                                    </select></td>
+                                    <td><input type="text" name="cell3_valuevalidate{{ forloop.counter }}"
+                                               id="nodename{{ forloop.counter }}" value="{{ foo.expected }}"
+                                               style="width:100%; border: none"></td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </form>
