@@ -25,6 +25,15 @@
                 <div class="am-tab-panel am-fade am-in am-active " id="tab1">
                     <form class="form-horizontal" id="form_message">
                         <div class="form-group has-feedback has-info">
+                            <label for="test_index" class="col-md-2 control-label text-info" style="font-size: 14px;" hidden>用例索引:</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="test_index" placeholder="用例索引"
+                                       name="test_index"
+                                       value={{ info.id }} hidden>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback has-info">
                             <label for="case_name" class="col-md-2 control-label text-info" style="font-size: 14px;">case_name:</label>
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="case_name" placeholder="用例名称"
@@ -303,10 +312,10 @@
 
         <div class="am-form-group am-cf">
             <div class="you" style="margin-left: 11%;">
-                <button type="button" class="am-btn am-btn-success am-radius" onclick="case_ajax()">点 击 提 交
+                <button type="button" class="am-btn am-btn-success am-radius" onclick="case_ajax('edit')">点 击 修 改
                 </button>&nbsp;
                 &raquo; &nbsp;
-                <a type="submit" href="/api/add_config/" class="am-btn am-btn-secondary am-radius">新 增 配 置</a>
+                <a type="submit" href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
 
             </div>
         </div>
