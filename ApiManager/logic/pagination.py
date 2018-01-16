@@ -81,7 +81,7 @@ def customer_pager(base_url, current_page, total_page):  # 基础页，当前页
 
 def get_pager_info(Model, filter_query, url, id, per_items=10):
     id = int(id)
-    filter = int (filter_query.get('filter'))
+    filter = int(filter_query.get('filter'))
     name = filter_query.get('name')
     user = filter_query.get('user')
     obj = Model.objects.filter(status__exact=filter)
