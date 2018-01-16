@@ -104,7 +104,7 @@ def project_info_logic(type=True, **kwargs):
 '''用例信息逻辑及落地'''
 
 
-def case_info_logic(**kwargs):
+def case_info_logic(type = True, **kwargs):
     test = kwargs.pop('test')
     '''
         动态展示模块
@@ -152,13 +152,13 @@ def case_info_logic(**kwargs):
         test.setdefault('tearDown', key_value_list(**tearDown))
 
         kwargs.setdefault('test', test)
-        return add_case_data(**kwargs)
+        return add_case_data(type,**kwargs)
 
 
 '''模块信息逻辑及落地'''
 
 
-def config_info_logic(**kwargs):
+def config_info_logic(type =True, **kwargs):
     config = kwargs.pop('config')
     '''
         动态展示模块
@@ -190,7 +190,7 @@ def config_info_logic(**kwargs):
         config.setdefault('variables', key_value_list(**variables))
 
         kwargs.setdefault('config', config)
-        return add_config_data(**kwargs)
+        return add_config_data(type, **kwargs)
 
 
 '''查询session'''
