@@ -212,19 +212,34 @@ def test_list(request, id):
     return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
 
 
-'''用例修改'''
+'''用例编辑'''
 
 
 def edit_case(request, id):
     if request.is_ajax():
         testcase_lists = json.loads(request.body.decode('utf-8'))
-        msg = case_info_logic(**testcase_lists, type = False)
+        msg = case_info_logic(**testcase_lists, type=False)
         return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
     elif request.method == 'GET':
         test_info = TestCaseInfo.objects.get_case_by_id(int(id))
         request = eval(test_info[0].request)
         return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
+
+
+'''配置编辑'''
+
+
+def edit_config(request, id):
+    if request.is_ajax():
+        testconfig_lists = json.loads(request.body.decode('utf-8'))
+        msg = config_info_logic(type=False, **testconfig_lists)
+        return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
+
+    elif request.method == 'GET':
+        test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+        request = eval(test_info[0].request)
+        return render_to_response('edit_config.html', {'info': test_info[0], 'request': request['config']})
 
 
 '''测试代码'''
