@@ -106,12 +106,12 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
 
-    def update_case(self,**kwargs):
+    def update_case(self, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
-        obj = self.get(id = int(case_info.pop('test_index')))
+        obj = self.get(id=int(case_info.pop('test_index')))
         obj.name = kwargs.get('test').get('name')
         obj.author = case_info.pop('author')
-        obj.include=case_info.pop('include')
+        obj.include = case_info.pop('include')
         obj.request = kwargs
         obj.save()
 
@@ -121,12 +121,20 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=config_info.pop('config_author'), type=2, request=kwargs)
 
+    def update_config(self, **kwargs):
+        config_info = kwargs.get('config').pop('config_info')
+        obj = self.get(id=int(config_info.pop('test_index')))
+        obj.name = kwargs.get('config').get('name')
+        obj.author = config_info.pop('config_author')
+        obj.request = kwargs
+        obj.save()
+
     def get_case_name(self, name, module_name, belong_project):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).filter(
             belong_project__exact=belong_project).count()
 
-    def get_case_by_id(self, index, type = True):
+    def get_case_by_id(self, index, type=True):
         if type:
             return self.filter(id=index).all()
         else:
-            return self.get(id = index).name
+            return self.get(id=index).name
