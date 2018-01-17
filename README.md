@@ -7,7 +7,7 @@ Design Philosophy
 注意：目前前端页面还未开发用例运行入口，后台开发完毕，待时间宽松点一定及时更新！
 请更改HttpRunnerManager/settings.py DATABASES相关配置(NAME,USER,PASSWORD,HOST,PORT)，推荐mysql 5.7+
 Key Features
-------------
+
 
 - 项目管理模块：新增项目，列表展示及相关操作
 - 模块管理：为项目新增模块，子模块用module1>module2方式
