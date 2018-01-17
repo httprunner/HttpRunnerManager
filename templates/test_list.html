@@ -189,28 +189,28 @@
                 <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
             </div>
         </div>
-        <script type="text/javascript">
-            function invalid(name) {
-                $('#my-invalid').modal({
-                    relatedTarget: this,
-                    onConfirm: function () {
-                        info_ajax(name)
-                    },
-                    onCancel: function () {
-                    }
-                });
-            }
+    </div>
+    <script type="text/javascript">
+        function invalid(name) {
+            $('#my-invalid').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    info_ajax(name)
+                },
+                onCancel: function () {
+                }
+            });
+        }
 
-            function valid(name) {
-                $('#my-valid').modal({
-                    relatedTarget: this,
-                    onConfirm: function () {
-                        info_ajax(name)
-                    },
-                    onCancel: function () {
-                    }
-                });
-            }
-        </script>
-
+        function valid(name) {
+            $('#my-valid').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    info_ajax(name)
+                },
+                onCancel: function () {
+                }
+            });
+        }
+    </script>
 {% endblock %}
