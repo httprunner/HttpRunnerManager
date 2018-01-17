@@ -18,61 +18,14 @@ from httprunner.cli import main_ate
 
 
 def register(request):
-    error_msg = {'error': ''}
-    if request.method == 'POST':
-        username = request.POST.get('username', None)
-        email = request.POST.get('email', None)
-        password = request.POST.get('password', None)
-        re_password = request.POST.get('ensurepwd', None)
-        request.session['username'] = username
-        request.session['email'] = email
-        if username_validate(username) == 'ok':
-            if password_validate(password) == 'ok':
-                if re_password == '':
-                    error_msg['error'] = '确认密码不能为空'
-                elif re_password != password:
-                    error_msg['error'] = '确认密码必须和密码保持一致'
-                else:
-                    if not email_validate(email) == 'ok':
-                        error_msg['error'] = email_validate(email)
-                    else:
-                        # 后台校验通过，进行数据库重复校验逻辑
-                        if UserInfo.objects.filter(username__exact=username).count() > 0 or \
-                                        UserInfo.objects.filter(email__exact=email).count() > 0:
-                            error_msg['error'] = '用户名或邮箱已被其他用户注册'
-                        else:
-                            del request.session['username']  # 删掉session
-                            del request.session['email']
-
-                            obj = UserType.objects.get_objects(1)  # 普通用户
-                            UserInfo.objects.insert_user(
-                                username, password, email, obj)
-                            return redirect('/api/login/')
-            else:
-                error_msg['error'] = password_validate(password)
-        else:
-            error_msg['error'] = username_validate(username)
-
-    return render_to_response('register.html', {'error_msg': error_msg,
-                                                'username': request.session.get('username', ''),
-                                                'email': request.session.get('email', '')})
+    pass
 
 
 '''登录'''
 
 
 def login(request):
-    error_msg = {'error': ''}
-    if request.method == 'POST':
-        username = request.POST.get('username', None)
-        password = request.POST.get('password', None)
-        if UserInfo.objects.query_user(username, password) == 1:
-            return redirect('/api/index/')
-        else:
-            error_msg['error'] = '用户名或密码错误'
-
-    return render_to_response('login.html', {'error_msg': error_msg})
-
+  pass
 
 '''首页'''
 
@@ -206,10 +159,17 @@ def module_list(request, id):
 
 
 def test_list(request, id):
-    filter_query = set_filter_session(request)
-    test_list = get_pager_info(
-        TestCaseInfo, filter_query, '/api/test_list/', id)
-    return render_to_response('test_list.html', {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
+    if request.is_ajax():
+        test_info = json.loads(request.body.decode('utf-8'))
+        if 'status' in test_info.keys():
+            msg = change_status(TestCaseInfo, **test_info)
+            return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
+    else:
+        filter_query = set_filter_session(request)
+        test_list = get_pager_info(
+            TestCaseInfo, filter_query, '/api/test_list/', id)
+        return render_to_response('test_list.html',
+                                  {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
 
 
 '''用例编辑'''
