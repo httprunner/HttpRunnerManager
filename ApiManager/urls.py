@@ -19,8 +19,8 @@ from ApiManager.views import register, login, index, add_project, add_module, ad
     test_get, project_list, module_list, test_list, edit_case, edit_config
 
 urlpatterns = [
-    url(r'^register/', register),
-    url(r'^login/', login),
+    # url(r'^register/', register),
+    # url(r'^login/', login),
     url(r'^index/', index),
     url(r'^add_project/', add_project),
     url(r'^add_module/', add_module),
