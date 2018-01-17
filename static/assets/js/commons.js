@@ -12,8 +12,8 @@ function show_module(module_info) {
 
 /*表单信息异步传输*/
 function info_ajax(id) {
-    data = $(id).serializeJSON();
-    url = '/api/add_project/';
+    var data = $(id).serializeJSON();
+    var url = '/api/add_project/';
     if (id === '#add_module') {
         url = '/api/add_module/';
     } else if (id === '#list_pro') {
@@ -34,30 +34,30 @@ function info_ajax(id) {
                 "name": data
             }
         }
-    } else if (id.indexOf('un_pro') > -1) {
-        url = '/api/project_list/1/';
+    } else {
         data = {
             "status": 0,
             "name": id.substring(6, id.length)
         };
-    } else if (id.indexOf('in_pro') > -1) {
-        url = '/api/project_list/1/';
-        data = {
-            "status": 1,
-            "name": id.substring(6, id.length)
-        };
-    } else if (id.indexOf('un_mod') > -1) {
-        url = '/api/module_list/1/';
-        data = {
-            "status": 0,
-            "name": id.substring(6, id.length)
-        };
-    } else if (id.indexOf('in_mod') > -1) {
-        url = '/api/module_list/1/';
-        data = {
-            "status": 1,
-            "name": id.substring(6, id.length)
-        };
+        if (id.indexOf('un_pro') > -1) {
+            url = '/api/project_list/1/';
+        } else if (id.indexOf('un_mod') > -1) {
+            url = '/api/module_list/1/';
+        } else if (id.indexOf('un_tec') > -1) {
+            url = '/api/test_list/1/';
+        } else {
+            data = {
+                "status": 1,
+                "name": id.substring(6, id.length)
+            };
+            if (id.indexOf('in_pro') > -1) {
+                url = '/api/project_list/1/';
+            } else if (id.indexOf('in_mod') > -1) {
+                url = '/api/module_list/1/';
+            } else if (id.indexOf('in_tec') > -1) {
+                url = '/api/test_list/1/';
+            }
+        }
     }
 
     $.ajax({
@@ -82,7 +82,7 @@ function info_ajax(id) {
 }
 
 
-function case_ajax() {
+function case_ajax(type) {
     var url = $("#url").serializeJSON();
     var method = $("#method").serializeJSON();
     var dataType = $("#DataType").serializeJSON();
@@ -110,10 +110,14 @@ function case_ajax() {
 
         }
     };
-
+    if (type === 'edit') {
+        url = '/api/edit_case/1/';
+    } else {
+        url = '/api/add_case/';
+    }
     $.ajax({
         type: 'post',
-        url: '/api/add_case/',
+        url: url,
         data: JSON.stringify(test),
         contentType: "application/json",
         success: function (data) {
@@ -125,7 +129,7 @@ function case_ajax() {
     });
 }
 
-function config_ajax() {
+function config_ajax(type) {
     var url = $("#config_url").serializeJSON();
     var dataType = $("#config_data_type").serializeJSON();
     var caseInfo = $("#form_config").serializeJSON();
@@ -144,10 +148,14 @@ function config_ajax() {
             }
         }
     };
-
+    if (type === 'edit') {
+        url = '/api/edit_config/1/';
+    } else {
+        url = '/api/add_config/';
+    }
     $.ajax({
         type: 'post',
-        url: '/api/add_config/',
+        url: url,
         data: JSON.stringify(config),
         contentType: "application/json",
         success: function (data) {
