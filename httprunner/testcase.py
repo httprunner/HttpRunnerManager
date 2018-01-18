@@ -4,10 +4,9 @@ import json
 import logging
 import os
 import re
+from collections import OrderedDict
 
 import yaml
-
-from ApiManager.logic.common import load_case
 from httprunner import exception, utils
 
 variable_regexp = r"\$([\w_]+)"
@@ -29,7 +28,6 @@ def _load_yaml_file(yaml_file):
         check_format(yaml_file, yaml_content)
         return yaml_content
 
-
 def _load_json_file(json_file):
     """ load json file and check file content format
     """
@@ -44,7 +42,6 @@ def _load_json_file(json_file):
         check_format(json_file, json_content)
         return json_content
 
-
 def _load_file(testcase_file_path):
     file_suffix = os.path.splitext(testcase_file_path)[1]
     if file_suffix == '.json':
@@ -56,7 +53,6 @@ def _load_file(testcase_file_path):
         err_msg = u"file is not in YAML/JSON format: {}".format(testcase_file_path)
         logging.warning(err_msg)
         return []
-
 
 def extract_variables(content):
     """ extract all variable names from content, which is in format $variable
@@ -72,7 +68,6 @@ def extract_variables(content):
         return re.findall(variable_regexp, content)
     except TypeError:
         return []
-
 
 def extract_functions(content):
     """ extract all functions from string content, which are in format ${fun()}
@@ -90,7 +85,6 @@ def extract_functions(content):
     except TypeError:
         return []
 
-
 def parse_string_value(str_value):
     """ parse string to number if possible
     e.g. "123" => 123
@@ -105,7 +99,6 @@ def parse_string_value(str_value):
     except SyntaxError:
         # e.g. $var, ${func}
         return str_value
-
 
 def parse_function(content):
     """ parse function name and args from string content.
@@ -139,7 +132,6 @@ def parse_function(content):
 
     return function_meta
 
-
 def load_test_dependencies():
     """ load all api and suite definitions.
         default api folder is "$CWD/tests/api/".
@@ -171,7 +163,6 @@ def load_test_dependencies():
         suite["function_meta"] = function_meta
         test_def_overall_dict["suite"][function_meta["func_name"]] = suite
 
-
 def load_testcases_by_path(path):
     """ load testcases from file path
     @param path: path could be in several type
@@ -184,39 +175,211 @@ def load_testcases_by_path(path):
             testset_dict_2
         ]
     """
-    # if isinstance(path, (list, set)):
-    #     testsets = []
-    #
-    #     for file_path in set(path):
-    #         testset = load_testcases_by_path(file_path)
-    #         if not testset:
-    #             continue
-    #         testsets.extend(testset)
-    #
-    #     return testsets
-    #
-    # if not os.path.isabs(path):
-    #     path = os.path.join(os.getcwd(), path)
-    #
-    # if path in testcases_cache_mapping:
-    #     return testcases_cache_mapping[path]
-    #
-    # if os.path.isdir(path):
-    #     files_list = utils.load_folder_files(path)
-    #     testcases_list = load_testcases_by_path(files_list)
+    if isinstance(path, (list, set)):
+        testsets = []
 
+        for file_path in set(path):
+            testset = load_testcases_by_path(file_path)
+            if not testset:
+                continue
+            testsets.extend(testset)
 
-    try:
-        testset = load_test_file(path)
-        if testset["testcases"] or testset["api"]:
-            testcases_list = [testset]
-        else:
+        return testsets
+
+    if not os.path.isabs(path):
+        path = os.path.join(os.getcwd(), path)
+
+    if path in testcases_cache_mapping:
+        return testcases_cache_mapping[path]
+
+    if os.path.isdir(path):
+        files_list = utils.load_folder_files(path)
+        testcases_list = load_testcases_by_path(files_list)
+
+    elif os.path.isfile(path):
+        try:
+            testset = load_test_file(path)
+            if testset["testcases"] or testset["api"]:
+                testcases_list = [testset]
+            else:
+                testcases_list = []
+        except exception.FileFormatError:
             testcases_list = []
-    except exception.FileFormatError:
+
+    else:
+        logging.error(u"file not found: {}".format(path))
         testcases_list = []
 
+    testcases_cache_mapping[path] = testcases_list
     return testcases_list
 
+def parse_validator(validator):
+    """ parse validator, validator maybe in two format
+    @param (dict) validator
+        format1: this is kept for compatiblity with the previous versions.
+            {"check": "status_code", "comparator": "eq", "expect": 201}
+            {"check": "$resp_body_success", "comparator": "eq", "expect": True}
+        format2: recommended new version
+            {'eq': ['status_code', 201]}
+            {'eq': ['$resp_body_success', True]}
+    @return (dict) validator info
+        {
+            "check": "status_code",
+            "expect": 201,
+            "comparator": "eq"
+        }
+    """
+    if not isinstance(validator, dict):
+        raise exception.ParamsError("invalid validator: {}".format(validator))
+
+    if "check" in validator and len(validator) > 1:
+        # format1
+        check_item = validator.get("check")
+
+        if "expect" in validator:
+            expect_value = validator.get("expect")
+        elif "expected" in validator:
+            expect_value = validator.get("expected")
+        else:
+            raise exception.ParamsError("invalid validator: {}".format(validator))
+
+        comparator = validator.get("comparator", "eq")
+
+    elif len(validator) == 1:
+        # format2
+        comparator = list(validator.keys())[0]
+        compare_values = validator[comparator]
+
+        if not isinstance(compare_values, list) or len(compare_values) != 2:
+            raise exception.ParamsError("invalid validator: {}".format(validator))
+
+        check_item, expect_value = compare_values
+
+    else:
+        raise exception.ParamsError("invalid validator: {}".format(validator))
+
+    return {
+        "check": check_item,
+        "expect": expect_value,
+        "comparator": comparator
+    }
+
+def merge_validator(api_validators, test_validators):
+    """ merge api_validators with test_validators
+    @params:
+        api_validators: [{'eq': ['v1', 200]}, {"check": "s2", "expect": 16, "comparator": "len_eq"}]
+        test_validators: [{"check": "v1", "expect": 201}, {'len_eq': ['s3', 12]}]
+    @return:
+        [
+            {"check": "v1", "expect": 201, "comparator": "eq"},
+            {"check": "s2", "expect": 16, "comparator": "len_eq"},
+            {"check": "s3", "expect": 12, "comparator": "len_eq"}
+        ]
+    """
+    if not api_validators:
+        return test_validators
+
+    elif not test_validators:
+        return api_validators
+
+    else:
+        api_validators_mapping = {}
+        for api_validator in api_validators:
+            api_validator = parse_validator(api_validator)
+            key = (api_validator["check"], api_validator["comparator"])
+            api_validators_mapping[key] = api_validator
+
+        test_validators_mapping = {}
+        for test_validator in test_validators:
+            test_validator = parse_validator(test_validator)
+            key = (test_validator["check"], test_validator["comparator"])
+            test_validators_mapping[key] = test_validator
+
+        api_validators_mapping.update(test_validators_mapping)
+        return list(api_validators_mapping.values())
+
+def merge_extractor(api_extrators, test_extracors):
+    """ merge api_extrators with test_extracors
+    @params:
+        api_extrators: [{"var1": "val1"}, {"var2": "val2"}]
+        test_extracors: [{"var1": "val111"}, {"var3": "val3"}]
+    @return:
+        [
+            {"var1": "val111"},
+            {"var2": "val2"},
+            {"var3": "val3"}
+        ]
+    """
+    if not api_extrators:
+        return test_extracors
+
+    elif not test_extracors:
+        return api_extrators
+
+    else:
+        extractor_dict = OrderedDict()
+        for api_extrator in api_extrators:
+            if len(api_extrator) != 1:
+                logging.warning("incorrect extractor: {}".format(api_extrator))
+                continue
+
+            var_name = list(api_extrator.keys())[0]
+            extractor_dict[var_name] = api_extrator[var_name]
+
+        for test_extrator in test_extracors:
+            if len(test_extrator) != 1:
+                logging.warning("incorrect extractor: {}".format(test_extrator))
+                continue
+
+            var_name = list(test_extrator.keys())[0]
+            extractor_dict[var_name] = test_extrator[var_name]
+
+        extractor_list = []
+        for key, value in extractor_dict.items():
+            extractor_list.append({key: value})
+
+        return extractor_list
+
+def extend_test_api(test_block_dict):
+    """ update test block api with api definition
+    @param
+        test_block_dict:
+            {
+                "name": "get token",
+                "api": "get_token($user_agent, $device_sn, $os_platform, $app_version)",
+                "extract": [{"token": "content.token"}],
+                "validate": [{'eq': ['status_code', 200]}, {'len_eq': ['content.token', 16]}]
+            }
+    @return
+        {
+            "name": "get token",
+            "request": {...},
+            "extract": [{"token": "content.token"}],
+            "validate": [{'eq': ['status_code', 200]}, {'len_eq': ['content.token', 16]}]
+        }
+    """
+    ref_name = test_block_dict["api"]
+    test_info = get_testinfo_by_reference(ref_name, "api")
+
+    api_validators = test_info.get("validate") or test_info.get("validators", [])
+    test_validators = test_block_dict.get("validate") or test_block_dict.get("validators", [])
+
+    api_extrators = test_info.get("extract") \
+        or test_info.get("extractors") \
+        or test_info.get("extract_binds", [])
+    test_extracors = test_block_dict.get("extract") \
+        or test_block_dict.get("extractors") \
+        or test_block_dict.get("extract_binds", [])
+
+    test_block_dict.update(test_info)
+    test_block_dict["validate"] = merge_validator(
+        api_validators,
+        test_validators
+    )
+    test_block_dict["extract"] = merge_extractor(
+        api_extrators,
+        test_extracors
+    )
 
 def load_test_file(file_path):
     """ load testset file, get testset data structure.
@@ -232,12 +395,12 @@ def load_test_file(file_path):
     testset = {
         "name": "",
         "config": {
-            "path": ''
+            "path": file_path
         },
         "api": {},
         "testcases": []
     }
-    tests_list = load_case(file_path)
+    tests_list = _load_file(file_path)
 
     for item in tests_list:
         for key in item:
@@ -248,9 +411,7 @@ def load_test_file(file_path):
             elif key == "test":
                 test_block_dict = item["test"]
                 if "api" in test_block_dict:
-                    ref_name = test_block_dict["api"]
-                    test_info = get_testinfo_by_reference(ref_name, "api")
-                    test_block_dict.update(test_info)
+                    extend_test_api(test_block_dict)
                     testset["testcases"].append(test_block_dict)
                 elif "suite" in test_block_dict:
                     ref_name = test_block_dict["suite"]
@@ -270,7 +431,6 @@ def load_test_file(file_path):
                 testset["api"][func_name] = api_info
 
     return testset
-
 
 def get_testinfo_by_reference(ref_name, ref_type):
     """ get test content by reference name
@@ -299,7 +459,6 @@ def get_testinfo_by_reference(ref_name, ref_type):
 
     return test_info
 
-
 def get_test_definition(name, ref_type):
     """ get expected api or suite.
     @params:
@@ -322,7 +481,6 @@ def get_test_definition(name, ref_type):
             raise exception.ParamsError("ref_type can only be api or suite!")
 
     return test_info
-
 
 def substitute_variables_with_mapping(content, mapping):
     """ substitute variables in content with mapping
@@ -377,7 +535,6 @@ def substitute_variables_with_mapping(content, mapping):
 
     return content
 
-
 def check_format(file_path, content):
     """ check testcase format if valid
     """
@@ -395,6 +552,7 @@ def check_format(file_path, content):
 
 
 class TestcaseParser(object):
+
     def __init__(self, variables={}, functions={}, file_path=None):
         self.update_binded_variables(variables)
         self.bind_functions(functions)

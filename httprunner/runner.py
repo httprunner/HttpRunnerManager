@@ -6,10 +6,11 @@ from httprunner.context import Context
 
 
 class Runner(object):
+
     def __init__(self, http_client_session=None, request_failure_hook=None):
         self.http_client_session = http_client_session
         self.context = Context()
-        # testcase.load_test_dependencies()
+        testcase.load_test_dependencies()
         self.request_failure_hook = request_failure_hook
 
     def init_config(self, config_dict, level):
@@ -101,11 +102,8 @@ class Runner(object):
             raise exception.ParamsError("URL or METHOD missed!")
 
         run_times = int(testcase_dict.get("times", 1))
-        extractors = testcase_dict.get("extract") \
-                     or testcase_dict.get("extractors") \
-                     or testcase_dict.get("extract_binds", [])
-        validators = testcase_dict.get("validate") \
-                     or testcase_dict.get("validators", [])
+        extractors = testcase_dict.get("extract", [])
+        validators = testcase_dict.get("validate", [])
         setup_actions = testcase_dict.get("setup", [])
         teardown_actions = testcase_dict.get("teardown", [])
 
@@ -122,7 +120,6 @@ class Runner(object):
                 name=group_name,
                 **parsed_request
             )
-
             resp_obj = response.ResponseObject(resp)
 
             extracted_variables_mapping = resp_obj.extract_response(extractors)

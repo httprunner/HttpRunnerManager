@@ -1,3 +1,4 @@
+import logging
 import unittest
 
 from httprunner import exception, runner, testcase, utils
@@ -6,7 +7,6 @@ from httprunner import exception, runner, testcase, utils
 class ApiTestCase(unittest.TestCase):
     """ create a testcase.
     """
-
     def __init__(self, test_runner, testcase_dict):
         super(ApiTestCase, self).__init__()
         self.test_runner = test_runner
@@ -17,12 +17,10 @@ class ApiTestCase(unittest.TestCase):
         """
         self.assertTrue(self.test_runner._run_test(self.testcase_dict))
 
-
 class ApiTestSuite(unittest.TestSuite):
     """ create test suite with a testset, it may include one or several testcases.
         each suite should initialize a separate Runner() with testset config.
     """
-
     def __init__(self, testset):
         super(ApiTestSuite, self).__init__()
         self.test_runner = runner.Runner()
@@ -45,12 +43,10 @@ class ApiTestSuite(unittest.TestSuite):
         output_variables_list = self.config_dict.get("output", [])
         self.test_runner.generate_output(output_variables_list)
 
-
 class TaskSuite(unittest.TestSuite):
     """ create test task suite with specified testcase path.
         each task suite may include one or several test suite.
     """
-
     def __init__(self, testcase_path):
         super(TaskSuite, self).__init__()
         self.suite_list = []

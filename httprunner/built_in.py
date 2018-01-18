@@ -26,11 +26,6 @@ def get_timestamp(str_len=13):
 
     raise ParamsError("timestamp length can only between 0 and 16.")
 
-def get_now_time(str_len=14):
-    if isinstance(str_len, int) and 0 < str_len < 15:
-        return time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))[0:str_len]
-    raise ParamsError("timestamp length can only between 0 and 14.")
-
 def get_current_date(fmt="%Y-%m-%d"):
     """ get current date, default format is %Y-%m-%d
     """
@@ -94,7 +89,18 @@ def contained_by(check_value, expect_value):
     assert check_value in expect_value
 
 def type_match(check_value, expect_value):
-    assert isinstance(check_value, expect_value)
+    def get_type(name):
+        if isinstance(name, type):
+            return name
+        elif isinstance(name, str):
+            try:
+                return __builtins__[name]
+            except KeyError:
+                raise ValueError(name)
+        else:
+            raise ValueError(name)
+
+    assert isinstance(check_value, get_type(expect_value))
 
 def regex_match(check_value, expect_value):
     assert isinstance(expect_value, string_type)
