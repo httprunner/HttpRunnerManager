@@ -4,46 +4,43 @@ from django.db import models
 from ApiManager.managers import UserTypeManager, UserInfoManager, ProjectInfoManager, ModuleInfoManager, \
     TestCaseInfoManager
 
-'''
-用户类型表
-'''
 
+class BaseTable(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
 
-class UserType(models.Model):
     class Meta:
+        abstract = True
+        verbose_name = "公共字段表"
+        db_table = 'BaseTable'
+
+
+class UserType(BaseTable):
+    class Meta:
+        verbose_name = '用户类型'
         db_table = 'UserType'
 
     type_name = models.CharField(max_length=20)
     type_desc = models.CharField(max_length=50)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
     objects = UserTypeManager()
 
 
-'''
-用户信息表
-'''
-
-
-class UserInfo(models.Model):
+class UserInfo(BaseTable):
     class Meta:
+        verbose_name = '用户信息'
         db_table = 'UserInfo'
 
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=20)
     email = models.EmailField()
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
     status = models.IntegerField(default=1)
     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
     objects = UserInfoManager()
 
 
-'''项目信息表'''
-
-
-class ProjectInfo(models.Model):
+class ProjectInfo(BaseTable):
     class Meta:
+        verbose_name = '项目信息'
         db_table = 'ProjectInfo'
 
     pro_name = models.CharField(max_length=50)
@@ -54,16 +51,12 @@ class ProjectInfo(models.Model):
     simple_desc = models.CharField(max_length=100, null=True)
     other_desc = models.CharField(max_length=100, null=True)
     status = models.IntegerField(default=1)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
     objects = ProjectInfoManager()
 
 
-'''模块信息表'''
-
-
-class ModuleInfo(models.Model):
+class ModuleInfo(BaseTable):
     class Meta:
+        verbose_name = '模块信息'
         db_table = 'ModuleInfo'
 
     module_name = models.CharField(max_length=50)
@@ -73,17 +66,14 @@ class ModuleInfo(models.Model):
     simple_desc = models.CharField(max_length=100, null=True)
     other_desc = models.CharField(max_length=100, null=True)
     status = models.IntegerField(default=1)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
     objects = ModuleInfoManager()
 
 
-'''用例信息表'''
-
-
-class TestCaseInfo(models.Model):
+class TestCaseInfo(BaseTable):
     class Meta:
+        verbose_name = '用例信息'
         db_table = 'TestCaseInfo'
+
     type = models.IntegerField(default=1)
     name = models.CharField(max_length=50)
     belong_project = models.CharField(max_length=50)
@@ -92,7 +82,17 @@ class TestCaseInfo(models.Model):
     author = models.CharField(max_length=20)
     request = models.TextField()
     status = models.IntegerField(default=1)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
     objects = TestCaseInfoManager()
 
+
+class TestReports(BaseTable):
+    class Meta:
+        verbose_name = "测试报告"
+        db_table = 'TestReports'
+
+    name = models.CharField(max_length=50)
+    belong_project = models.CharField(max_length=50)
+    belong_module = models.CharField(max_length=50)
+    belong_case = models.CharField(max_length=50)
+    reports = models.TextField()
+    status = models.IntegerField(default=1)

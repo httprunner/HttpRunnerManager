@@ -1,14 +1,13 @@
 import json
 
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response
 
-from ApiManager.forms import username_validate, password_validate, email_validate
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg
+    set_filter_session, get_ajax_msg, load_case
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
-from ApiManager.models import UserInfo, UserType, ProjectInfo, ModuleInfo, TestCaseInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
@@ -25,7 +24,8 @@ def register(request):
 
 
 def login(request):
-  pass
+    pass
+
 
 '''首页'''
 
@@ -96,14 +96,18 @@ def add_config(request):
 '''运行用例'''
 
 
-def run_test(request):
-    if request.is_ajax():
-        testcase_lists = json.loads(request.body.decode('utf-8'))
+def run_test(request, mode, id):
+    if request.method == 'GET':
+        result = main_ate(load_case(mode, id), 'test')
+        report = result.get('reports')
+        return render_to_response('report_view.html', result.get('reports'))
 
-        if main_ate(testcase_lists):
-            return HttpResponse('ok')
-        else:
-            return HttpResponse('fail')
+
+'''结果展示'''
+
+
+def report_view(request, id):
+    return render_to_response('report_view.html', {'report', id})
 
 
 '''添加接口'''
