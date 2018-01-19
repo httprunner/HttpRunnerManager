@@ -20,5 +20,6 @@ from HttpRunnerManager.activator import process
 urlpatterns = [
     url('^(?P<app>(\w+))/(?P<function>(\w+))/$', process),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<id>(\w+))/$', process),
+    url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<mode>(\w+))/(?P<id>(\w+))/$', process),
 
 ]
