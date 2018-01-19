@@ -1,6 +1,5 @@
-from django.http import HttpResponse
-
 from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data
+from ApiManager.logic.runner import run_by_single
 from ApiManager.models import ModuleInfo
 
 '''前端test信息转字典'''
@@ -51,8 +50,17 @@ def key_value_list(name='false', **kwargs):
     return lists
 
 
-def load_case(**kwargs):
-    pass
+'''加载用例'''
+
+
+def load_case(mode, id):
+    id = int(id)
+    if mode == 'run_single_case':
+        return run_by_single(id)
+    elif mode == 'run_by_module':
+        pass
+    elif mode == 'run_by_project':
+        pass
 
 
 '''动态加载模块'''
@@ -71,7 +79,7 @@ def load_modules(**kwargs):
 '''模块信息逻辑及落地'''
 
 
-def module_info_logic(type = True, **kwargs):
+def module_info_logic(type=True, **kwargs):
     if kwargs.get('module_name') is '':
         return '模块名称不能为空'
     if kwargs.get('belong_project') is '':
@@ -104,7 +112,7 @@ def project_info_logic(type=True, **kwargs):
 '''用例信息逻辑及落地'''
 
 
-def case_info_logic(type = True, **kwargs):
+def case_info_logic(type=True, **kwargs):
     test = kwargs.pop('test')
     '''
         动态展示模块
@@ -152,13 +160,13 @@ def case_info_logic(type = True, **kwargs):
         test.setdefault('tearDown', key_value_list(**tearDown))
 
         kwargs.setdefault('test', test)
-        return add_case_data(type,**kwargs)
+        return add_case_data(type, **kwargs)
 
 
 '''模块信息逻辑及落地'''
 
 
-def config_info_logic(type =True, **kwargs):
+def config_info_logic(type=True, **kwargs):
     config = kwargs.pop('config')
     '''
         动态展示模块
