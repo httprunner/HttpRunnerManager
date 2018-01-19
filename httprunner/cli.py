@@ -1,99 +1,95 @@
-import argparse
 import logging
 import multiprocessing
 import os
 import sys
 from collections import OrderedDict
 
-from httprunner import __version__ as ate_version
 from httprunner import exception
 from httprunner.task import TaskSuite
-from httprunner.utils import create_scaffold, string_type
-from pyunitreport import __version__ as pyu_version
 from pyunitreport import HTMLTestRunner
 
 
-def main_ate():
-    """ API test: parse command line options and run commands.
-    """
-    parser = argparse.ArgumentParser(
-        description='HTTP test runner, not just about api test and load test.')
-    parser.add_argument(
-        '-V', '--version', dest='version', action='store_true',
-        help="show version")
-    parser.add_argument(
-        'testset_paths', nargs='*',
-        help="testset file path")
-    parser.add_argument(
-        '--log-level', default='INFO',
-        help="Specify logging level, default is INFO.")
-    parser.add_argument(
-        '--report-name',
-        help="Specify report name, default is generated time.")
-    parser.add_argument(
-        '--failfast', action='store_true', default=False,
-        help="Stop the test run on the first error or failure.")
-    parser.add_argument(
-        '--startproject',
-        help="Specify new project name.")
+def main_ate(testset_paths, name):
+    # """ API test: parse command line options and run commands.
+    # """
+    # parser = argparse.ArgumentParser(
+    #     description='HTTP test runner, not just about api test and load test.')
+    # parser.add_argument(
+    #     '-V', '--version', dest='version', action='store_true',
+    #     help="show version")
+    # parser.add_argument(
+    #     'testset_paths', nargs='*',
+    #     help="testset file path")
+    # parser.add_argument(
+    #     '--log-level', default='INFO',
+    #     help="Specify logging level, default is INFO.")
+    # parser.add_argument(
+    #     '--report-name',
+    #     help="Specify report name, default is generated time.")
+    # parser.add_argument(
+    #     '--failfast', action='store_true', default=False,
+    #     help="Stop the test run on the first error or failure.")
+    # parser.add_argument(
+    #     '--startproject',
+    #     help="Specify new project name.")
+    #
+    # args = parser.parse_args()
+    #
+    # if args.version:
+    #     print("HttpRunner version: {}".format(ate_version))
+    #     print("PyUnitReport version: {}".format(pyu_version))
+    #     exit(0)
 
-    args = parser.parse_args()
-
-    if args.version:
-        print("HttpRunner version: {}".format(ate_version))
-        print("PyUnitReport version: {}".format(pyu_version))
-        exit(0)
-
-    log_level = getattr(logging, args.log_level.upper())
+    log_level = getattr(logging, 'INFO')
     logging.basicConfig(level=log_level)
 
-    project_name = args.startproject
-    if project_name:
-        project_path = os.path.join(os.getcwd(), project_name)
-        create_scaffold(project_path)
-        exit(0)
+    # project_name = args.startproject
+    # if project_name:
+    #     project_path = os.path.join(os.getcwd(), project_name)
+    #     create_scaffold(project_path)
+    #     exit(0)
 
-    report_name = args.report_name
-    if report_name and len(args.testset_paths) > 1:
-        report_name = None
-        logging.warning("More than one testset paths specified, \
-                        report name is ignored, use generated time instead.")
+    report_name = name
+    # if report_name and len(args.testset_paths) > 1:
+    #     report_name = None
+    #     logging.warning("More than one testset paths specified, \
+    #                     report name is ignored, use generated time instead.")
 
     results = {}
     success = True
 
-    for testset_path in set(args.testset_paths):
-
-        testset_path = testset_path.rstrip('/')
-
+    for testset_path in testset_paths:
         try:
             task_suite = TaskSuite(testset_path)
         except exception.TestcaseNotFound:
             success = False
             continue
 
-        output_folder_name = os.path.basename(os.path.splitext(testset_path)[0])
+        output_folder_name = os.path.dirname(os.path.abspath(__file__))
         kwargs = {
             "output": output_folder_name,
             "report_name": report_name,
-            "failfast": args.failfast
+            "failfast": False
         }
         result = HTMLTestRunner(**kwargs).run(task_suite)
-        results[testset_path] = OrderedDict({
+
+        if len(result.successes) != result.testsRun:
+            success = False
+        results = OrderedDict({
             "total": result.testsRun,
             "successes": len(result.successes),
             "failures": len(result.failures),
             "errors": len(result.errors),
-            "skipped": len(result.skipped)
+            "skipped": len(result.skipped),
+            "success": success,
+            "html_reports": result.reports[1],
+            "reports": result.reports[0]
         })
 
-        if len(result.successes) != result.testsRun:
-            success = False
+        # for task in task_suite.tasks:
+        #     task.print_output()
 
-        for task in task_suite.tasks:
-            task.print_output()
-
-    return 0 if success is True else 1
+    return results
 
 def main_locust():
     """ Performance test with locust: parse command line options and run commands.

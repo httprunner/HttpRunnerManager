@@ -43,16 +43,17 @@ def _load_json_file(json_file):
         return json_content
 
 def _load_file(testcase_file_path):
-    file_suffix = os.path.splitext(testcase_file_path)[1]
-    if file_suffix == '.json':
-        return _load_json_file(testcase_file_path)
-    elif file_suffix in ['.yaml', '.yml']:
-        return _load_yaml_file(testcase_file_path)
-    else:
-        # '' or other suffix
-        err_msg = u"file is not in YAML/JSON format: {}".format(testcase_file_path)
-        logging.warning(err_msg)
-        return []
+    return testcase_file_path
+    # file_suffix = os.path.splitext(testcase_file_path)[1]
+    # if file_suffix == '.json':
+    #     return _load_json_file(testcase_file_path)
+    # elif file_suffix in ['.yaml', '.yml']:
+    #     return _load_yaml_file(testcase_file_path)
+    # else:
+    #     # '' or other suffix
+    #     err_msg = u"file is not in YAML/JSON format: {}".format(testcase_file_path)
+    #     logging.warning(err_msg)
+    #     return []
 
 def extract_variables(content):
     """ extract all variable names from content, which is in format $variable
@@ -175,42 +176,42 @@ def load_testcases_by_path(path):
             testset_dict_2
         ]
     """
-    if isinstance(path, (list, set)):
-        testsets = []
+    # if isinstance(path, (list, set)):
+    #     testsets = []
+    #
+    #     for file_path in set(path):
+    #         testset = load_testcases_by_path(file_path)
+    #         if not testset:
+    #             continue
+    #         testsets.extend(testset)
+    #
+    #     return testsets
+    #
+    # if not os.path.isabs(path):
+    #     path = os.path.join(os.getcwd(), path)
+    #
+    # if path in testcases_cache_mapping:
+    #     return testcases_cache_mapping[path]
+    #
+    # if os.path.isdir(path):
+    #     files_list = utils.load_folder_files(path)
+    #     testcases_list = load_testcases_by_path(files_list)
 
-        for file_path in set(path):
-            testset = load_testcases_by_path(file_path)
-            if not testset:
-                continue
-            testsets.extend(testset)
-
-        return testsets
-
-    if not os.path.isabs(path):
-        path = os.path.join(os.getcwd(), path)
-
-    if path in testcases_cache_mapping:
-        return testcases_cache_mapping[path]
-
-    if os.path.isdir(path):
-        files_list = utils.load_folder_files(path)
-        testcases_list = load_testcases_by_path(files_list)
-
-    elif os.path.isfile(path):
-        try:
-            testset = load_test_file(path)
-            if testset["testcases"] or testset["api"]:
-                testcases_list = [testset]
-            else:
-                testcases_list = []
-        except exception.FileFormatError:
+    # elif os.path.isfile(path):
+    try:
+        testset = load_test_file(path)
+        if testset["testcases"] or testset["api"]:
+            testcases_list = [testset]
+        else:
             testcases_list = []
-
-    else:
-        logging.error(u"file not found: {}".format(path))
+    except exception.FileFormatError:
         testcases_list = []
 
-    testcases_cache_mapping[path] = testcases_list
+    # else:
+    #     logging.error(u"file not found: {}".format(path))
+    #     testcases_list = []
+
+    # testcases_cache_mapping[path] = testcases_list
     return testcases_list
 
 def parse_validator(validator):
