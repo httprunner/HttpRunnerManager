@@ -42,15 +42,15 @@
                                         {% endif %}
                                     </span>
                                     {% if "success" not in status %}
-                                        &nbsp<button class="btn btn-default btn-xs">View</button>
+                                        &nbsp<button class="btn btn-danger btn-xs">View</button>
                                     {% endif %}
                                 </td>
                             </tr>
                             {% if "success" != status %}
                                 <tr style="display:none;">
                                     <td class="col-xs-9">
-                                        <p>{{errorType}}</p>
-                                        <p>{{errorMessage}}</p>
+                                        <p class="text-info">{{errorType}}</p>
+                                        <p class="text-danger">{{errorMessage}}</p>
                                     </td>
                                 </tr>
                             {% endif %}
