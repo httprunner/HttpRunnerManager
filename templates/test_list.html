@@ -50,8 +50,6 @@
                             onclick="location='/api/add_config/'">新增配置
                     </button>
                 </dl>
-
-
             </div>
 
             <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
@@ -101,10 +99,10 @@
                         <th class="table-type">所属项目</th>
                         <th class="table-type">所属模块</th>
                         <th class="table-type">创建者</th>
-                        <th class="table-title">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
+                        <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
                                 class="am-icon-close am-text-primary"></i></th>
                         <th class="table-date am-hide-sm-only">创建时间</th>
-                        <th width="163px" class="table-set">操作</th>
+                        <th width="163px" class="table-title">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -132,6 +130,12 @@
                                 <div class="am-btn-toolbar">
                                     <div class="am-btn-group am-btn-group-xs">
                                         {% if foo.type == 1 %}
+                                            <button type="button"
+                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                                    data-am-popover="{content: '运行', trigger: 'hover focus'}"
+                                                    onclick="window.open('/api/run_test/run_single_case/{{ foo.id }}')">
+                                                <span class="am-icon-bug"></span></button>
+
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '编辑', trigger: 'hover focus'}"
@@ -190,6 +194,28 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+{#        function run_single(url, project, module, index) {#}
+{#            var test = {#}
+{#                "project": project,#}
+{#                "module": module,#}
+{#                "index": index,#}
+{#                "type": 'run_by_single',#}
+{#            };#}
+{#            $.ajax({#}
+{#                type: 'post',#}
+{#                url: url,#}
+{#                data: JSON.stringify(test),#}
+{#                contentType: "application/json",#}
+{#                success: function (response) {#}
+{##}
+{#                },#}
+{#                error: function () {#}
+{#                    myAlert('Sorry，服务器可能开小差啦, 请重试!');#}
+{#                }#}
+{#            });#}
+{#        }#}
+    </script>
     <script type="text/javascript">
         function invalid(name) {
             $('#my-invalid').modal({

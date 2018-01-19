@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="text-capitalize">{{title}}</h2>
+                <p class='attribute'><strong>Start Time: </strong>{{headers.start_time}}</p>
+                <p class='attribute'><strong>Duration: </strong>{{headers.duration}}</p>
+                <p class='attribute'><strong>Status: </strong>{{headers.status}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-10">
+                <table class='table table-hover table-responsive'>
+                    <thead>
+                        <tr>
+                            <th>{{testcase_name}}</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eachTestCase, status, errorType, errorMessage in tests_results %}
+                            <tr class='{{status}}'>
+                                <td class="col-xs-9">{{eachTestCase}}</td>
+                                <td class="col-xs-3">
+                                    <span class="label label-{{status}}">
+                                        {% if "success" == status %}
+                                            Pass
+                                        {% elif "info" == status %}
+                                            Skip
+                                        {% elif "danger" == status%}
+                                            Fail
+                                        {% else %}
+                                            Error
+                                        {% endif %}
+                                    </span>
+                                    {% if "success" not in status %}
+                                        &nbsp<button class="btn btn-default btn-xs">View</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if "success" != status %}
+                                <tr style="display:none;">
+                                    <td class="col-xs-9">
+                                        <p>{{errorType}}</p>
+                                        <p>{{errorMessage}}</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        <tr>
+                            <td>
+                               Total Test Runned: {{total_tests}}
+                            </td>
+                            <td>
+                                <span>{{headers.status}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('td').on('click', '.btn', function(e){
+                e.preventDefault();
+                var $this = $(this);
+                var $nextRow = $this.closest('tr').next('tr');
+                $nextRow.slideToggle("fast");
+                $this.text(function(i, text){
+                    if (text === 'View') {
+                        return 'Hide';
+                    } else {
+                        return 'View';
+                    };
+                });
+            });
+        });
+    </script>
+</body>
+</html>
