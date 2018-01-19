@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import traceback
+from collections import OrderedDict
 from datetime import datetime
 from unittest import TestResult, TextTestResult
 from unittest.result import failfast
@@ -18,7 +19,7 @@ def load_template(template):
     file = None
 
     if template is None:
-        print("Template is not specified, load default template instead.")
+        # print("ApiManager.")
         template = DEFAULT_TEMPLATE
     elif not os.path.isfile(template):
         print("Specified template path is not correct, load default template instead.")
@@ -221,7 +222,7 @@ class HtmlTestResult(TextTestResult):
             self.stream.writeln(self.separator1)
             self.stream.writeln(
                 '{} [{:3f}s]: {}'.format(flavour, test_info.elapsed_time,
-                                         test_info.get_description())
+                                         test_info.get_description().decode('utf-8'))
             )
             self.stream.writeln(self.separator2)
             self.stream.writeln('%s' % test_info.get_error_info())
@@ -328,6 +329,13 @@ class HtmlTestResult(TextTestResult):
         for test in tests:
             self._report_testcase(test, test_cases_list)
 
+        report_content = OrderedDict({
+            "title": testRunner.report_title,
+            "headers": report_headers,
+            "testcase_name": testRunner.output,
+            "tests_results": test_cases_list,
+            "total_tests": total_test,
+        })
         html_report_content = render_html(
             testRunner.template,
             title=testRunner.report_title,
@@ -336,7 +344,7 @@ class HtmlTestResult(TextTestResult):
             tests_results=test_cases_list,
             total_tests=total_test
         )
-        return html_report_content
+        return report_content, html_report_content
 
     def _generate_html_file(self, testRunner, all_tests):
         """ Generate file with html report content. """
