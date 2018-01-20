@@ -153,11 +153,11 @@ def case_info_logic(type=True, **kwargs):
         variables = test.pop('variables')
         test.setdefault('variables', key_value_list(**variables))
 
-        setUp = test.pop('setUp')
-        test.setdefault('setUp', key_value_list(**setUp))
+        setup = test.pop('setUp')
+        test.setdefault('setUp', key_value_list(**setup))
 
-        tearDown = test.pop('tearDown')
-        test.setdefault('tearDown', key_value_list(**tearDown))
+        teardown = test.pop('tearDown')
+        test.setdefault('tearDown', key_value_list(**teardown))
 
         kwargs.setdefault('test', test)
         return add_case_data(type, **kwargs)
