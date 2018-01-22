@@ -22,6 +22,7 @@ def run_by_single(id):
         for name in config_test:
             include_request = TestCaseInfo.objects.get(name__exact=name,
                                                        belong_module=ModuleInfo.objects.get(id=module)).request
+
             testcases_list.append(eval(include_request))
         testcases_list.append(eval(request))
         testcases_lists.append(testcases_list)

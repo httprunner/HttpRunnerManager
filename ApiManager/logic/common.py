@@ -142,28 +142,28 @@ def case_info_logic(type=True, **kwargs):
         test.setdefault('validate', key_value_list(name='true', **validate))
 
         extract = test.pop('extract')
-        if extract is not None:
+        if extract:
             test.setdefault('extract', key_value_list(**extract))
 
         request_data = test.get('request').pop('request_data')
         date_type = test.get('request').pop('type')
-        if request_data and date_type is not None:
+        if request_data and date_type:
             test.get('request').setdefault(date_type, key_value_dict(**request_data))
 
         headers = test.get('request').pop('headers')
-        if headers is not None:
+        if headers:
             test.get('request').setdefault('headers', key_value_dict(**headers))
 
         variables = test.pop('variables')
-        if variables is not None:
+        if variables:
             test.setdefault('variables', key_value_list(**variables))
 
         setup = test.pop('setUp')
-        if setup is not None:
+        if setup:
             test.setdefault('setUp', key_value_list(**setup))
 
         teardown = test.pop('tearDown')
-        if teardown is not None:
+        if teardown:
             test.setdefault('tearDown', key_value_list(**teardown))
 
         kwargs.setdefault('test', test)
@@ -197,15 +197,15 @@ def config_info_logic(type=True, **kwargs):
 
         request_data = config.get('request').pop('request_data')
         data_type = config.get('request').pop('type')
-        if request_data and data_type is not None:
+        if request_data and data_type:
             config.get('request').setdefault(data_type, key_value_dict(**request_data))
 
         headers = config.get('request').pop('headers')
-        if headers is not None:
+        if headers:
             config.get('request').setdefault('headers', key_value_dict(**headers))
 
         variables = config.pop('variables')
-        if variables is not None:
+        if variables:
             config.setdefault('variables', key_value_list(**variables))
 
         kwargs.setdefault('config', config)
