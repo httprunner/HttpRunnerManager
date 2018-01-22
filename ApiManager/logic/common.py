@@ -142,22 +142,29 @@ def case_info_logic(type=True, **kwargs):
         test.setdefault('validate', key_value_list(name='true', **validate))
 
         extract = test.pop('extract')
-        test.setdefault('extract', key_value_list(**extract))
+        if extract is not None:
+            test.setdefault('extract', key_value_list(**extract))
 
         request_data = test.get('request').pop('request_data')
-        test.get('request').setdefault(test.get('request').pop('type'), key_value_dict(**request_data))
+        date_type = test.get('request').pop('type')
+        if request_data and date_type is not None:
+            test.get('request').setdefault(date_type, key_value_dict(**request_data))
 
         headers = test.get('request').pop('headers')
-        test.get('request').setdefault('headers', key_value_dict(**headers))
+        if headers is not None:
+            test.get('request').setdefault('headers', key_value_dict(**headers))
 
         variables = test.pop('variables')
-        test.setdefault('variables', key_value_list(**variables))
+        if variables is not None:
+            test.setdefault('variables', key_value_list(**variables))
 
         setup = test.pop('setUp')
-        test.setdefault('setUp', key_value_list(**setup))
+        if setup is not None:
+            test.setdefault('setUp', key_value_list(**setup))
 
         teardown = test.pop('tearDown')
-        test.setdefault('tearDown', key_value_list(**teardown))
+        if teardown is not None:
+            test.setdefault('tearDown', key_value_list(**teardown))
 
         kwargs.setdefault('test', test)
         return add_case_data(type, **kwargs)
@@ -189,13 +196,17 @@ def config_info_logic(type=True, **kwargs):
         config.setdefault('config_info', name)
 
         request_data = config.get('request').pop('request_data')
-        config.get('request').setdefault(config.get('request').pop('type'), key_value_dict(**request_data))
+        data_type = config.get('request').pop('type')
+        if request_data and data_type is not None:
+            config.get('request').setdefault(data_type, key_value_dict(**request_data))
 
         headers = config.get('request').pop('headers')
-        config.get('request').setdefault('headers', key_value_dict(**headers))
+        if headers is not None:
+            config.get('request').setdefault('headers', key_value_dict(**headers))
 
         variables = config.pop('variables')
-        config.setdefault('variables', key_value_list(**variables))
+        if variables is not None:
+            config.setdefault('variables', key_value_list(**variables))
 
         kwargs.setdefault('config', config)
         return add_config_data(type, **kwargs)
