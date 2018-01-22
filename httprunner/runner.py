@@ -10,7 +10,7 @@ class Runner(object):
     def __init__(self, http_client_session=None, request_failure_hook=None):
         self.http_client_session = http_client_session
         self.context = Context()
-        testcase.load_test_dependencies()
+        # testcase.load_test_dependencies()
         self.request_failure_hook = request_failure_hook
 
     def init_config(self, config_dict, level):
