@@ -150,7 +150,6 @@ class Context(object):
                 request_dict
             )
             self.testset_request_config.update(request_dict)
-
         testcase_request_config = utils.deep_update_dict(
             copy.deepcopy(self.testset_request_config),
             request_dict
