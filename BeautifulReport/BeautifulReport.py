@@ -330,10 +330,10 @@ class ReportTestResult(unittest.TestResult):
         :param test:
         :return: (class_name, method_name, method_doc) -> tuple
         """
-        testDoc = test.__dict__['_testMethodDoc']
-        class_name = testDoc
-        method_name = testDoc
-        method_doc = testDoc
+        testDoc = test.__dict__['_testMethodDoc'].split('>')
+        class_name = testDoc[2]
+        method_name = testDoc[1]
+        method_doc = testDoc[0]
         return class_name, method_name, method_doc
 
 
