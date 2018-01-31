@@ -1,95 +1,24 @@
 import logging
 import multiprocessing
-import os
 import sys
-from collections import OrderedDict
 
+from BeautifulReport import BeautifulReport
 from httprunner import exception
 from httprunner.task import TaskSuite
-from pyunitreport import HTMLTestRunner
 
 
-def main_ate(testset_paths, name):
-    # """ API test: parse command line options and run commands.
-    # """
-    # parser = argparse.ArgumentParser(
-    #     description='HTTP test runner, not just about api test and load test.')
-    # parser.add_argument(
-    #     '-V', '--version', dest='version', action='store_true',
-    #     help="show version")
-    # parser.add_argument(
-    #     'testset_paths', nargs='*',
-    #     help="testset file path")
-    # parser.add_argument(
-    #     '--log-level', default='INFO',
-    #     help="Specify logging level, default is INFO.")
-    # parser.add_argument(
-    #     '--report-name',
-    #     help="Specify report name, default is generated time.")
-    # parser.add_argument(
-    #     '--failfast', action='store_true', default=False,
-    #     help="Stop the test run on the first error or failure.")
-    # parser.add_argument(
-    #     '--startproject',
-    #     help="Specify new project name.")
-    #
-    # args = parser.parse_args()
-    #
-    # if args.version:
-    #     print("HttpRunner version: {}".format(ate_version))
-    #     print("PyUnitReport version: {}".format(pyu_version))
-    #     exit(0)
+def main_ate(testset_path, report_name):
+    logging.basicConfig(level='INFO')
 
-    log_level = getattr(logging, 'INFO')
-    logging.basicConfig(level=log_level)
+    try:
+        task_suite = TaskSuite(testset_path)
+    except exception.TestcaseNotFound:
+        logging.error('用例加载失败！')
 
-    # project_name = args.startproject
-    # if project_name:
-    #     project_path = os.path.join(os.getcwd(), project_name)
-    #     create_scaffold(project_path)
-    #     exit(0)
+    result = BeautifulReport(task_suite)
+    result.report(filename='Test Report', description='测试报告', log_path='.')
 
-    report_name = name
-    # if report_name and len(args.testset_paths) > 1:
-    #     report_name = None
-    #     logging.warning("More than one testset paths specified, \
-    #                     report name is ignored, use generated time instead.")
 
-    results = {}
-    success = True
-
-    for testset_path in testset_paths:
-        try:
-            task_suite = TaskSuite(testset_path)
-        except exception.TestcaseNotFound:
-            success = False
-            continue
-
-        output_folder_name = os.path.dirname(os.path.abspath(__file__))
-        kwargs = {
-            "output": output_folder_name,
-            "report_name": report_name,
-            "failfast": False
-        }
-        result = HTMLTestRunner(**kwargs).run(task_suite)
-
-        if len(result.successes) != result.testsRun:
-            success = False
-        results = OrderedDict({
-            "total": result.testsRun,
-            "successes": len(result.successes),
-            "failures": len(result.failures),
-            "errors": len(result.errors),
-            "skipped": len(result.skipped),
-            "success": success,
-            "html_reports": result.reports[1],
-            "reports": result.reports[0]
-        })
-
-        # for task in task_suite.tasks:
-        #     task.print_output()
-
-    return results
 
 def main_locust():
     """ Performance test with locust: parse command line options and run commands.
