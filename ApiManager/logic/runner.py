@@ -5,7 +5,6 @@ from ApiManager.models import TestCaseInfo, ModuleInfo
 
 def run_by_single(id):
     testcases_list = []
-    testcases_lists = []
     obj = TestCaseInfo.objects.get(id=id)
     module = obj.belong_module_id
     include = obj.include
@@ -14,8 +13,7 @@ def run_by_single(id):
     # do not have include
     if include == '' or include is None:
         testcases_list.append(eval(request))
-        testcases_lists.append(testcases_list)
-        return testcases_lists
+        return testcases_list
 
     else:
         config_test = include.split('>')
@@ -25,5 +23,14 @@ def run_by_single(id):
 
             testcases_list.append(eval(include_request))
         testcases_list.append(eval(request))
-        testcases_lists.append(testcases_list)
-        return testcases_lists
+        return testcases_list
+
+
+def run_by_batch(test_list):
+    testcases_lists = []
+    for index in test_list:
+        index = int(index.split('=')[1])
+        testcases_lists.append(run_by_single(index)[0])
+    return testcases_lists
+
+
