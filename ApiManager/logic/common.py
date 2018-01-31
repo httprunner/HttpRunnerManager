@@ -134,8 +134,7 @@ def case_info_logic(type=True, **kwargs):
             return '至少需要一个结果校验！'
 
         name = test.pop('name')
-        test.setdefault('name', name.pop('case_name'))
-
+        test.setdefault('name', name.pop('case_name') + '>' + name.get('module') + '>' + name.get('project'))
         test.setdefault('case_info', name)
 
         validate = test.pop('validate')
