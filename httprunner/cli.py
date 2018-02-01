@@ -16,7 +16,7 @@ def main_ate(testset_path, report_name):
         logging.error('用例加载失败！')
 
     result = BeautifulReport(task_suite)
-    result.report(filename='Test Report', description='测试报告', log_path='.')
+    return result.report(description='Test Report')
 
 
 
