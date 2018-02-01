@@ -209,7 +209,6 @@ class ReportTestResult(unittest.TestResult):
         FIELDS['testError'] = self.error_count
         FIELDS['testSkip'] = self.skipped
         self.FIELDS = FIELDS
-        print(FIELDS)
         return FIELDS
 
     def get_all_result_info_tuple(self, test) -> tuple:
@@ -247,7 +246,8 @@ class ReportTestResult(unittest.TestResult):
         self.success_counter += 1
         self.status = '成功'
         self.case_log = output.split('\n')
-        self._mirrorOutput = True  # print(class_name, method_name, method_doc)
+
+        self._mirrorOutput = True
 
     def addError(self, test, err):
         """
@@ -260,6 +260,7 @@ class ReportTestResult(unittest.TestResult):
         output = self.complete_output()
         logs.append(output)
         logs.extend(self.error_or_failure_text(err))
+
         self.failure_count += 1
         self.add_test_type('失败', logs)
         if self.verbosity > 1:
@@ -343,50 +344,18 @@ class BeautifulReport(ReportTestResult, PATH):
     def __init__(self, suites):
         super(BeautifulReport, self).__init__(suites)
         self.suites = suites
-        self.log_path = None
         self.title = '自动化测试报告'
-        self.filename = 'report.html'
 
-    def report(self, description, filename: str = None, log_path='.'):
-        """
-            生成测试报告,并放在当前运行路径下
-        :param log_path: 生成report的文件存储路径
-        :param filename: 生成文件的filename
-        :param description: 生成文件的注释
-        :return:
-        """
-        if filename:
-            self.filename = filename if filename.endswith('.html') else filename + '.html'
-
+    def report(self, description):
         if description:
             self.title = description
 
-        self.log_path = os.path.abspath(log_path)
         self.suites.run(result=self)
         self.stopTestRun(self.title)
-        self.output_report()
+        return self.output_report()
 
     def output_report(self):
-        """
-            生成测试报告到指定路径下
-        :return:
-        """
-        template_path = self.config_tmp_path
-        override_path = os.path.abspath(self.log_path) if \
-            os.path.abspath(self.log_path).endswith('/') else \
-            os.path.abspath(self.log_path) + '/'
-
-        with open(template_path, 'rb') as file:
-            body = file.readlines()
-        with open(override_path + self.filename, 'wb') as write_file:
-            for item in body:
-                if item.strip().startswith(b'var resultData'):
-                    head = '    var resultData = '
-                    item = item.decode().split(head)
-                    item[1] = head + json.dumps(self.FIELDS, ensure_ascii=False, indent=4)
-                    item = ''.join(item).encode()
-                    item = bytes(item) + b';\n'
-                write_file.write(item)
+        return self.FIELDS
 
     @staticmethod
     def img2base(img_path: str, file_name: str) -> str:
