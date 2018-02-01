@@ -7,24 +7,11 @@ from ApiManager.logic.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, load_case
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
+from ApiManager.logic.runner import run_by_batch
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
-
-
-'''用户注册'''
-
-
-def register(request):
-    pass
-
-
-'''登录'''
-
-
-def login(request):
-    pass
 
 
 '''首页'''
@@ -99,15 +86,19 @@ def add_config(request):
 def run_test(request, mode, id):
     if request.method == 'GET':
         result = main_ate(load_case(mode, id), 'test')
-        report = result.get('reports')
-        return render_to_response('report_view.html', result.get('reports'))
+
+        return render_to_response('template.html', {'resultData': result})
 
 
-'''结果展示'''
+'''批量执行'''
 
 
-def report_view(request, id):
-    return render_to_response('report_view.html', {'report', id})
+def run_batch_test(request):
+    if request.method == 'POST':
+        test_lists = run_by_batch(request.body.split('&'))
+        for test in test_lists:
+            main_ate(test, 'test')
+        return HttpResponse(request.body)
 
 
 '''添加接口'''

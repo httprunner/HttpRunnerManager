@@ -30,7 +30,7 @@ def run_by_batch(test_list):
     testcases_lists = []
     for index in test_list:
         index = int(index.split('=')[1])
-        testcases_lists.append(run_by_single(index)[0])
+        testcases_lists.append(run_by_single(index))
     return testcases_lists
 
 
