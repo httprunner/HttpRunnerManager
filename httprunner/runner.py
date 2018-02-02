@@ -125,14 +125,15 @@ class Runner(object):
             extracted_variables_mapping = resp_obj.extract_response(extractors)
             self.context.bind_extracted_variables(extracted_variables_mapping)
 
+            err_msg = u"<br />请求地址: {}\n".format(url)
+            err_msg += u"<br />请求参数: {}\n".format(parsed_request)
+            err_msg += u"<br />返回状态码: {}\n".format(resp.status_code)
+            err_msg += u"<br />返回报文: {}\n".format(resp.text)
+
+
             try:
-                self.context.validate(validators, resp_obj)
+                self.context.validate(validators, resp_obj, err_msg)
             except (exception.ParamsError, exception.ResponseError, exception.ValidationError):
-                err_msg = u"Exception occured.\n"
-                err_msg += u"HTTP request url: {}\n".format(url)
-                err_msg += u"HTTP request kwargs: {}\n".format(parsed_request)
-                err_msg += u"HTTP response status_code: {}\n".format(resp.status_code)
-                err_msg += u"HTTP response content: \n{}".format(resp.text)
                 logging.error(err_msg)
                 raise
             finally:

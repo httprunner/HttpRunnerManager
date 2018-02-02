@@ -206,7 +206,7 @@ class Context(object):
         validator["expect"] = expect_value
         return validator
 
-    def do_validation(self, validator_dict):
+    def do_validation(self, validator_dict, err_msg):
         """ validate with functions
         """
         comparator = utils.get_uniform_comparator(validator_dict["comparator"])
@@ -225,15 +225,15 @@ class Context(object):
 
             validate_func(validator_dict["check_value"], validator_dict["expect"])
         except (AssertionError, TypeError):
-            err_msg = "\n" + "\n".join([
-                "\tcheck item name: %s;" % check_item,
-                "\tcheck item value: %s (%s);" % (check_value, type(check_value).__name__),
-                "\tcomparator: %s;" % comparator,
-                "\texpected value: %s (%s)." % (expect_value, type(expect_value).__name__)
+            err_msg = err_msg + "\n".join([
+                "<br />\t校验参数: %s;" % check_item,
+                "\t实际返回值: %s" % (check_value),
+                "\t比较类型: %s;" % comparator,
+                "\t期望值: %s" % (expect_value)
             ])
             raise exception.ValidationError(err_msg)
 
-    def validate(self, validators, resp_obj):
+    def validate(self, validators, resp_obj, err_msg):
         """ check validators with the context variable mapping.
         @param (list) validators
         @param (object) resp_obj
@@ -243,6 +243,6 @@ class Context(object):
                 testcase.parse_validator(validator),
                 resp_obj
             )
-            self.do_validation(validator_dict)
+            self.do_validation(validator_dict, err_msg)
 
         return True
