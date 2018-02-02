@@ -7,7 +7,7 @@ from ApiManager.logic.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, load_case
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
-from ApiManager.logic.runner import run_by_batch
+from ApiManager.logic.runner import run_by_batch, get_result
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
@@ -86,7 +86,6 @@ def add_config(request):
 def run_test(request, mode, id):
     if request.method == 'GET':
         result = main_ate(load_case(mode, id), 'test')
-
         return render_to_response('template.html', {'resultData': result})
 
 
@@ -95,10 +94,10 @@ def run_test(request, mode, id):
 
 def run_batch_test(request):
     if request.method == 'POST':
-        test_lists = run_by_batch(request.body.split('&'))
-        for test in test_lists:
-            main_ate(test, 'test')
-        return HttpResponse(request.body)
+        test_lists = run_by_batch(request.body.decode('ascii').split('&'))
+        result = get_result(test_lists)
+
+        return render_to_response('template.html', {'resultData': result})
 
 
 '''添加接口'''
