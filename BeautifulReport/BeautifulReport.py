@@ -197,7 +197,10 @@ class ReportTestResult(unittest.TestResult):
         FIELDS['testPass'] = self.success_counter
         for item in self.result_list:
             item = json.loads(str(MakeResultJson(item)))
+            if item.get('log') :
+                item['log'] = [item.pop('log')[-1]]
             testResult.append(item)
+
         FIELDS['testResult'] = testResult
         FIELDS['testAll'] = len(self.result_list)
         FIELDS['testName'] = title if title else self.default_report_name
