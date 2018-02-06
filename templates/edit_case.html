@@ -136,18 +136,49 @@
                             <label for="method"
                                    style="font-size: 14px;"><code>&nbsp;</code>Method:</label>
                             <select class="form-control" name="method" id="method">
-                                <option>POST</option>
-                                <option>GET</option>
-                                <option>PUT</option>
-                                <option>DELETE</option>
+                                <option>{{ request.request.method }}</option>
+                                {% if request.request.method == 'GET' %}
+                                    <option>POST</option>
+                                    <option>PUT</option>
+                                    <option>DELETE</option>
+                                {% elif request.request.method == 'POST' %}
+                                    <option>GET</option>
+                                    <option>PUT</option>
+                                    <option>DELETE</option>
+                                {% elif request.request.method == 'PUT' %}
+                                    <option>GET</option>
+                                    <option>POST</option>
+                                    <option>DELETE</option>
+                                {% elif request.request.method == 'DELETE' %}
+                                    <option>GET</option>
+                                    <option>POST</option>
+                                    <option>DELETE</option>
+
+                                {% endif %}
                             </select>
                         </div>
                         <div class="form-group has-warning ">
                             <label for="DataType"
                                    style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
                             <select class="form-control" name="DataType" id="DataType">
-                                <option>data</option>
-                                <option>json</option>
+                                {% if 'data' in request.request.keys %}
+                                    <option>data</option>
+                                    <option>json</option>
+                                    <option>params</option>
+                                {% elif 'json' in request.request.keys %}
+                                    <option>json</option>
+                                    <option>data</option>
+                                    <option>params</option>
+                                {% elif 'params' in request.request.keys %}
+                                    <option>params</option>
+                                    <option>data</option>
+                                    <option>json</option>
+                                {% else %}
+                                    <option>data</option>
+                                    <option>json</option>
+                                    <option>params</option>
+
+                                {% endif %}
                             </select>
                         </div>
 
@@ -155,7 +186,6 @@
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">del data</button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
-                        </form>
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>request:</caption>
@@ -169,6 +199,35 @@
                                 <tbody>
                                 {% if 'data' in request.request.keys %}
                                     {% for key, value in request.request.data.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                       style="width:55px">
+                                            </td>
+                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                       style="width:100%; border: none"></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elif 'params' in request.request.keys %}
+                                    {% for key, value in request.request.params.items %}
+                                        <tr>
+                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                       style="width:55px">
+                                            </td>
+                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
+                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                       style="width:100%; border: none"></td>
+                                        </tr>
+                                    {% endfor %}
+
+                                {% elif 'json' in request.request.keys %}
+                                    {% for key, value in request.request.params.items %}
                                         <tr>
                                             <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
                                                        style="width:55px">
