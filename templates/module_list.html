@@ -24,7 +24,7 @@
                         </div>
                     </div>
 
-                     <div class="form-group">
+                    <div class="form-group">
                         <label class="control-label col-sm-3" for="belong_project"
                                style="font-weight: inherit; font-size: small ">所属项目：</label>
                         <div class="col-sm-9">
@@ -112,6 +112,9 @@
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_module/'">新增模块
                 </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                        onclick="my_submit('#test_list')">运行
+                </button>
             </dl>
         </div>
 
@@ -171,7 +174,7 @@
                     <tr>
                         <td><input type="checkbox"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="#">{{ foo.module_name }}</a></td>
+                        <td>{{ foo.module_name }}</td>
                         <td>{{ foo.test_user }}</td>
                         <td>{{ foo.belong_project.pro_name }}</td>
                         {% if foo.status == 1 %}
@@ -183,7 +186,12 @@
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
-                                   <button type="button"
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '运行', trigger: 'hover focus'}"
+                                            onclick="window.open('/api/run_test/run_by_module/{{ foo.id }}')">
+                                        <span class="am-icon-bug"></span></button>
+                                    <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
                                             onclick="edit('{{ foo.id }}','{{ foo.module_name }}', '{{ foo.belong_project.pro_name }}'
