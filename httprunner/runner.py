@@ -134,7 +134,7 @@ class Runner(object):
             try:
                 self.context.validate(validators, resp_obj, err_msg)
             except (exception.ParamsError, exception.ResponseError, exception.ValidationError):
-                logging.error(err_msg)
+                logging.error(err_msg.replace('<br />',''))
                 raise
             finally:
                 setup_teardown(teardown_actions)
