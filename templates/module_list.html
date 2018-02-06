@@ -113,7 +113,7 @@
                         onclick="location='/api/add_module/'">新增模块
                 </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#test_list')">运行
+                        onclick="my_submit('#module_list')">运行
                 </button>
             </dl>
         </div>
@@ -153,7 +153,7 @@
         </div>
 
 
-        <form class="am-form am-g">
+        <form class="am-form am-g" id='module_list' name="module_list" method="post" action="/api/run_batch_test/">
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                 <tr class="am-success">
@@ -172,7 +172,7 @@
 
                 {% for foo in module %}
                     <tr>
-                        <td><input type="checkbox"/></td>
+                        <td><input type="checkbox" name="module_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ foo.module_name }}</td>
                         <td>{{ foo.test_user }}</td>
@@ -239,6 +239,10 @@
         </div>
     </div>
     <script type="text/javascript">
+        function my_submit(id) {
+            $(id).submit()
+        }
+
         function edit(id, module_name, belong_project, test_user, lifting_time, simple_desc, other_desc) {
             $('#index').val(id);
             $('#module_name').val(module_name);
