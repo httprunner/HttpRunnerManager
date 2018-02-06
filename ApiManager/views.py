@@ -80,7 +80,7 @@ def add_config(request):
         return render_to_response('add_config.html', {'project': project})
 
 
-'''运行用例'''
+'''单个点击执行'''
 
 
 def run_test(request, mode, id):
@@ -90,21 +90,19 @@ def run_test(request, mode, id):
             result = main_ate(run_by_single(id), 'Test')
         elif mode == 'run_by_module':
             test_lists = run_by_module(id)
-            print(test_lists)
             result = get_result(test_lists)
         else:
             result = {}
         return render_to_response('template.html', {'resultData': result})
 
 
-'''批量执行'''
+'''多选执行'''
 
 
 def run_batch_test(request):
     if request.method == 'POST':
         test_lists = run_by_batch(request.body.decode('ascii').split('&'))
         result = get_result(test_lists)
-
         return render_to_response('template.html', {'resultData': result})
 
 
