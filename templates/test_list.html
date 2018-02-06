@@ -121,9 +121,9 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>config</td>
                             {% endif %}
-                            <td><a href="">{{ foo.name }}</a></td>
-                            <td><a href="">{{ foo.belong_project }}</a></td>
-                            <td><a href="">{{ foo.belong_module.module_name }}</a></td>
+                            <td><a href="/api/edit_case/{{ foo.id }}">{{ foo.name }}</a></td>
+                            <td>{{ foo.belong_project }}</td>
+                            <td>{{ foo.belong_module.module_name }}</td>
                             <td>{{ foo.author }}</td>
                             {% if foo.status == 1 %}
                                 <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
@@ -138,7 +138,7 @@
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                                    onclick="window.open('/api/run_test/run_single_case/{{ foo.id }}')">
+                                                    onclick="window.open('/api/run_test/run_by_test/{{ foo.id }}')">
                                                 <span class="am-icon-bug"></span></button>
 
                                             <button type="button"
