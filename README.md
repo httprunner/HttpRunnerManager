@@ -14,8 +14,9 @@ Key Features
 - 接口管理：待开发
 - 用例管理：分为添加config与test子功能，config定义全部变量和base_url，request等相关信息
 - test为用例，业务组织方式：在include输入框中以 config>case1>case2...或者case1>case2
-- 报告管理：待开发
+- 报告管理：运行完后前端显示，也可运行完后选择打开
 - mock服务：待开发
 - 任务调度：待开发
+- 运行方式：可单个test，单个module，单个project，也可选择多个批量运行
 
 
