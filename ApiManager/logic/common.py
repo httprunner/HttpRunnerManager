@@ -1,5 +1,4 @@
 from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data
-from ApiManager.logic.runner import run_by_single
 from ApiManager.models import ModuleInfo
 
 '''前端test信息转字典'''
@@ -48,19 +47,6 @@ def key_value_list(name='false', **kwargs):
     if not lists:
         return None
     return lists
-
-
-'''加载用例'''
-
-
-def load_case(mode, id):
-    id = int(id)
-    if mode == 'run_single_case':
-        return run_by_single(id)
-    elif mode == 'run_by_module':
-        pass
-    elif mode == 'run_by_project':
-        pass
 
 
 '''动态加载模块'''
