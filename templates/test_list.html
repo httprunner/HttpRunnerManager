@@ -113,7 +113,7 @@
                     {% for foo in test %}
                         <tr>
                             {% if foo.type == 1 %}
-                                <td><input type="checkbox" name="{{ foo.id }}" value="{{ foo.id }}"/></td>
+                                <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td>test</td>
                             {% elif foo.type == 2 %}
