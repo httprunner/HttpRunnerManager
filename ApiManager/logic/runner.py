@@ -1,7 +1,7 @@
 from ApiManager.models import TestCaseInfo, ModuleInfo
 from httprunner.cli import main_ate
 
-'''通过单个test运行'''
+'''通过test id组装case 供其他方法调用'''
 
 
 def run_by_single(id):
@@ -26,7 +26,7 @@ def run_by_single(id):
         return testcases_list
 
 
-'''通过单个模块运行'''
+'''单个模块组装所有test'''
 
 
 def run_by_module(id):
@@ -38,14 +38,18 @@ def run_by_module(id):
     return testcases_lists
 
 
-'''批量运行'''
+'''test批量组装'''
 
 
 def run_by_batch(test_list):
     testcases_lists = []
     for index in test_list:
-        index = int(index.split('=')[1])
-        testcases_lists.append(run_by_single(index))
+        form_test = index.split('=')
+        id = int(form_test[1])
+        if 'test' in form_test[0]:
+            testcases_lists.append(run_by_single(id))
+        elif 'module' in form_test[0]:
+            testcases_lists.extend(run_by_module(id))
     return testcases_lists
 
 
