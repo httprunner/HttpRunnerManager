@@ -9,11 +9,11 @@ from httprunner.task import TaskSuite
 
 def main_ate(testset_path, report_name):
     logging.basicConfig(level='INFO')
-
+    task_suite = None
     try:
         task_suite = TaskSuite(testset_path)
     except exception.TestcaseNotFound:
-        logging.error('用例加载失败！')
+        logging.error('TestCase not Fund')
 
     result = BeautifulReport(task_suite)
     return result.report(description='Test Report')
