@@ -7,7 +7,7 @@ from ApiManager.logic.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
-from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module
+from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
@@ -91,8 +91,9 @@ def run_test(request, mode, id):
         elif mode == 'run_by_module':
             test_lists = run_by_module(id)
             result = get_result(test_lists)
-        else:
-            result = {}
+        elif mode == 'run_by_project':
+            test_lists = run_by_project(id)
+            result = get_result(test_lists)
         return render_to_response('template.html', {'resultData': result})
 
 
