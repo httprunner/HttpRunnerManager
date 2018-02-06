@@ -4,10 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, load_case
+    set_filter_session, get_ajax_msg
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
-from ApiManager.logic.runner import run_by_batch, get_result
+from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
@@ -85,7 +85,15 @@ def add_config(request):
 
 def run_test(request, mode, id):
     if request.method == 'GET':
-        result = main_ate(load_case(mode, id), 'test')
+        id = int(id)
+        if mode == 'run_by_test':
+            result = main_ate(run_by_single(id), 'Test')
+        elif mode == 'run_by_module':
+            test_lists = run_by_module(id)
+            print(test_lists)
+            result = get_result(test_lists)
+        else:
+            result = {}
         return render_to_response('template.html', {'resultData': result})
 
 
