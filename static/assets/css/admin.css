@@ -88,7 +88,7 @@ gallery.html css
 .page-404{background: #fff;border: none;width: 200px;margin: 0 auto}
 .sideMenu{padding: 0px;margin: 0px }
 .sideMenu h3{height: 32px;line-height: 32px;color: #aeb2b7;cursor: pointer;padding: 0 0 0 10px;margin: 20px 0 0 0;border-top-left-radius: 3px;border-top-right-radius: 3px;font-weight: 400;width: 100% }
-.sideMenu h3 em{float: right;display: block;width: 40px;height: 32px;background: url(../i/icoAdd.png) 16px 12px no-repeat;cursor: pointer}
+.sideMenu h3 em{float: right;display: block;width: 40px;height: 32px;/*background: url(../i/icoAdd.png) 16px 12px no-repeat;*/cursor: pointer}
 .sideMenu h3.on em{background-position: 16px -57px}
 .sideMenu h3.on{color: #ff6c60;background: #35404d}
 .sideMenu h3 a{color: #aeb2b7 }

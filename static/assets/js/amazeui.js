@@ -614,7 +614,7 @@
             me.cache[id] = (function() {
               var name = id;
               var string = /^[\w\-]+$/.test(id) ?
-                me.get(id) : (name = 'template(string)', id); // no warnings
+                me.get(id) : (name = 'template.html(string)', id); // no warnings
 
               var line = 1;
               var body = ('try { ' + (me.variable ?
