@@ -78,15 +78,13 @@ def get_result(test_lists):
         result = main_ate(test_lists[index], 'test')
         if index == 0:
             results['beginTime'] = result.pop('beginTime')
-        result['totalTime'] = float(result.get('totalTime').replace('s', ''))
         results['testName'] = result.pop('testName')
         results['testSkip'] = results.pop('testSkip', 0) + result.pop('testSkip')
         results['testError'] = results.pop('testError', 0) + result.pop('testError')
         results['testPass'] = results.pop('testPass', 0) + result.pop('testPass')
-        results['totalTime'] = results.pop('totalTime', 0.0) + result['totalTime']
+        results['endTime'] = result.pop('endTime')
         results['testAll'] = results.pop('testAll', 0) + result.pop('testAll')
         for value in result.pop('testResult'):
             results['testResult'].append(value)
         results['testFail'] = results.pop('testFail', 0) + result.pop('testFail')
-    results['totalTime'] = str(results.get('totalTime')) + 's'
     return results
