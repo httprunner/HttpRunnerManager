@@ -197,7 +197,7 @@ class ReportTestResult(unittest.TestResult):
         FIELDS['testPass'] = self.success_counter
         for item in self.result_list:
             item = json.loads(str(MakeResultJson(item)))
-            if item.get('log') :
+            if item.get('log'):
                 item['log'] = [item.pop('log')[-1]]
             testResult.append(item)
 
@@ -206,9 +206,9 @@ class ReportTestResult(unittest.TestResult):
         FIELDS['testName'] = title if title else self.default_report_name
         FIELDS['testFail'] = self.failure_count
         FIELDS['beginTime'] = self.begin_time
-        end_time = int(time.time())
-        start_time = int(time.mktime(time.strptime(self.begin_time, '%Y-%m-%d %H:%M:%S')))
-        FIELDS['totalTime'] = str(end_time - start_time) + 's'
+        end_time = float(time.time())
+        start_time = float(time.mktime(time.strptime(self.begin_time, '%Y-%m-%d %H:%M:%S')))
+        FIELDS['totalTime'] = str(round((end_time - start_time), 3)) + 's'
         FIELDS['testError'] = self.error_count
         FIELDS['testSkip'] = self.skipped
         self.FIELDS = FIELDS
