@@ -174,7 +174,11 @@
                     <tr>
                         <td><input type="checkbox" name="module_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ foo.module_name }}</td>
+                        <td><a href="#"
+                               onclick="edit('{{ foo.id }}','{{ foo.module_name }}', '{{ foo.belong_project.pro_name }}'
+                                       , '{{ foo.test_user }}','{{ foo.lifting_time }}'
+                                       , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')">{{ foo.module_name }}</a>
+                        </td>
                         <td>{{ foo.test_user }}</td>
                         <td>{{ foo.belong_project.pro_name }}</td>
                         {% if foo.status == 1 %}
@@ -240,7 +244,7 @@
     </div>
     <script type="text/javascript">
         function my_submit(id) {
-           if ($("input:checked").size() == 0) {
+            if ($("input:checked").size() == 0) {
                 myAlert("请至少选择一个模块运行！");
             } else {
                 $(id).submit()
