@@ -1,12 +1,12 @@
-# HttpRunnerManager
-==========
+HttpRunnerManager
+=================
 
 Design Philosophy
 -----------------
 
-基于HttpRunner的接口自动化测试平台: `Django`_, `Bootstrap`_ and `Python`.目前不支持HttpRunner api功能
+基于HttpRunner的接口自动化测试平台: `Requests`_, `unittest`_ and `Django`_.目前不支持HttpRunner api功能
 请更改HttpRunnerManager/settings.py DATABASES相关配置(NAME,USER,PASSWORD,HOST,PORT)，推荐mysql 5.7+
-部署后打开网址：http://localhost:8000/api/index (注意，端口号是由自己定义！)
+部署后打开网址：http://localhost:8000/api/index
 
 Key Features
 ------------
