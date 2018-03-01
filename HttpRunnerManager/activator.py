@@ -1,3 +1,5 @@
+import traceback
+
 from django.shortcuts import HttpResponse
 
 
@@ -23,6 +25,6 @@ def process(request, **kwargs):
         result = fun(request)
     except (ImportError, AttributeError):
         # 导入失败时，自定义404错误
-        return HttpResponse('404 Not Found')
+        return HttpResponse(traceback.format_exc())
 
     return result
