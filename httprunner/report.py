@@ -51,7 +51,7 @@ def get_summary(result, html_report_name=None):
             'duration': result.duration
         }
         summary["records"] = result.records
-        summary["time"]["start_at"] = summary["time"].pop("start_at").strftime('%Y-%m-%d-%H-%M-%S')
+        summary["time"]["start_at"] = summary["time"].pop("start_at").strftime('%Y-%m-%d %H:%M:%S')
 
     if html_report_name:
         summary["html_report_name"] = html_report_name
