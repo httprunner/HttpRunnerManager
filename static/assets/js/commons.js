@@ -94,11 +94,13 @@ function case_ajax(type) {
     var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
+    var setup = $("#form_setup").serializeJSON();
+    var teardown = $("#form_teardown").serializeJSON();
     var test = {
         "test": {
             "name": caseInfo,
             "variables": variables,
-            "setUp": {},
+            "setup": setup,
             "request": {
                 "url": url.url,
                 "method": method.method,
@@ -106,7 +108,7 @@ function case_ajax(type) {
                 "type": dataType.DataType,
                 "request_data": request_data
             },
-            "tearDown": {},
+            "teardown": teardown,
             "extract": extract,
             "validate": validate
 
