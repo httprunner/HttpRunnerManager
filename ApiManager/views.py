@@ -84,7 +84,6 @@ def add_config(request):
 
 def run_test(request, mode, id):
     if request.method == 'GET':
-        id = int(id)
         if mode == 'run_by_test':
             result = main_ate(run_by_single(id))
         elif mode == 'run_by_module':
