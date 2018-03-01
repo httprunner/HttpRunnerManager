@@ -1,7 +1,6 @@
-
 # Create your tests here.
-import os,django
-
+import django
+import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HttpRunnerManager.settings")
 

@@ -15,7 +15,8 @@
                     <div class="am-form-group am-cf">
                         <div class="zuo">模块名称：</div>
                         <div class="you">
-                            <input type="text" name="module_name" class="am-input-sm" id="module_name" placeholder="请输入模块名称">
+                            <input type="text" name="module_name" class="am-input-sm" id="module_name"
+                                   placeholder="请输入模块名称">
                         </div>
                     </div>
 
@@ -24,7 +25,7 @@
                         <div class="you">
                             <select data-am-selected="{searchBox: 1}" name="belong_project" style="display: none;">
                                 {% for foo in  data %}
-                                    <option  value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                    <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
                                 {% endfor %}
 
                             </select>
@@ -42,7 +43,7 @@
                     <div class="am-form-group am-cf">
                         <div class="zuo">提测时间：</div>
                         <div class="you">
-                            <input type="text"  class="am-input-sm" name="lifting_time" placeholder="提测时间">
+                            <input type="text" class="am-input-sm" name="lifting_time" placeholder="提测时间">
                         </div>
                     </div>
 
@@ -62,9 +63,11 @@
 
                     <div class="am-form-group am-cf">
                         <div class="you" style="margin-left: 11%;">
-                            <button type="button" class="am-btn am-btn-success am-radius" onclick="info_ajax('#add_module')">点 击 提 交</button>&nbsp;
+                            <button type="button" class="am-btn am-btn-success am-radius"
+                                    onclick="info_ajax('#add_module')">点 击 提 交
+                            </button>&nbsp;
                             &raquo; &nbsp;
-                            <a type="submit"  href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
+                            <a type="submit" href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
 
                         </div>
                     </div>

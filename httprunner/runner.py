@@ -1,12 +1,11 @@
 from unittest.case import SkipTest
 
-from httprunner import exception, logger, response, testcase, utils
+from httprunner import exception, logger, response, utils
 from httprunner.client import HttpSession
 from httprunner.context import Context
 
 
 class Runner(object):
-
     def __init__(self, config_dict=None, http_client_session=None):
         self.http_client_session = http_client_session
         self.context = Context()
@@ -181,7 +180,7 @@ class Runner(object):
         for variable in output_variables_list:
             if variable not in variables_mapping:
                 logger.log_warning(
-                    "variable '{}' can not be found in variables mapping, failed to ouput!"\
+                    "variable '{}' can not be found in variables mapping, failed to ouput!" \
                         .format(variable)
                 )
                 continue

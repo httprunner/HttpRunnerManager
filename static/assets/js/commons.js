@@ -14,9 +14,9 @@ function show_module(module_info) {
 function info_ajax(id) {
     var data = $(id).serializeJSON();
     var url;
-    if(id === '#add_project') {
+    if (id === '#add_project') {
         url = '/api/add_project/';
-    }else if (id === '#add_module') {
+    } else if (id === '#add_module') {
         url = '/api/add_module/';
     } else if (id === '#list_pro') {
         url = '/api/project_list/1/';

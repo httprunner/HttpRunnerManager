@@ -1,14 +1,14 @@
 import re
 from collections import OrderedDict
 
-from httprunner import exception, logger, utils
 from requests.structures import CaseInsensitiveDict
+
+from httprunner import exception, logger, utils
 
 text_extractor_regexp_compile = re.compile(r".*\(.*\).*")
 
 
 class ResponseObject(object):
-
     def __init__(self, resp_obj):
         """ initialize with a requests.Response object
         @param (requests.Response instance) resp_obj

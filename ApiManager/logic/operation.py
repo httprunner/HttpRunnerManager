@@ -19,7 +19,7 @@ def add_project_data(type, **kwargs):
         else:
             if kwargs.get('project_name') != project_opt.get_pro_name('', type=False, id=kwargs.get(
                     'index')) and project_opt.get_pro_name(
-                    kwargs.get('project_name')) > 0:
+                kwargs.get('project_name')) > 0:
                 return '该项目已存在， 请重新命名'
             project_opt.update_project(kwargs.pop('index'), kwargs.pop('project_name'), kwargs.pop('responsible_name'),
                                        kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),

@@ -7,12 +7,13 @@ from colorlog import ColoredFormatter
 init(autoreset=True)
 
 log_colors_config = {
-    'DEBUG':    'cyan',
-    'INFO':     'green',
-    'WARNING':  'yellow',
-    'ERROR':    'red',
+    'DEBUG': 'cyan',
+    'INFO': 'green',
+    'WARNING': 'yellow',
+    'ERROR': 'red',
     'CRITICAL': 'red',
 }
+
 
 def setup_logger(log_level):
     """setup root logger with ColoredFormatter."""
@@ -42,13 +43,16 @@ def coloring(text, color="WHITE"):
     fore_color = getattr(Fore, color.upper())
     return fore_color + text
 
+
 def color_print(msg, color="WHITE"):
     fore_color = getattr(Fore, color.upper())
     print(fore_color + msg)
 
+
 def log_with_color(level):
     """ log with color by different level
     """
+
     def wrapper(text):
         color = log_colors_config[level.upper()]
         getattr(logging, level.lower())(coloring(text, color))

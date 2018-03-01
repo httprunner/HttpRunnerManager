@@ -1,5 +1,4 @@
 import io
-import json
 import os
 import platform
 import time
@@ -24,7 +23,7 @@ def get_platform():
     }
 
 
-def get_summary(result, html_report_name = None):
+def get_summary(result, html_report_name=None):
     """ get summary from test result
     """
     summary = {

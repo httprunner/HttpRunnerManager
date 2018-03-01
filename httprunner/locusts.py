@@ -3,10 +3,10 @@ import multiprocessing
 import os
 import sys
 
+from locust.main import main
+
 from httprunner.logger import color_print
 from httprunner.testcase import load_test_file
-
-from locust.main import main
 
 
 def parse_locustfile(file_path):
@@ -30,6 +30,7 @@ def parse_locustfile(file_path):
 
     return locustfile_path
 
+
 def gen_locustfile(testcase_file_path):
     """ generate locustfile from template.
     """
@@ -51,10 +52,12 @@ def gen_locustfile(testcase_file_path):
 
     return locustfile_path
 
+
 def start_master(sys_argv):
     sys_argv.append("--master")
     sys.argv = sys_argv
     main()
+
 
 def start_slave(sys_argv):
     if "--slave" not in sys_argv:
@@ -62,6 +65,7 @@ def start_slave(sys_argv):
 
     sys.argv = sys_argv
     main()
+
 
 def run_locusts_on_cpu_cores(sys_argv, cpu_cores_num_value):
     processes = []

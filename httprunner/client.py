@@ -4,15 +4,17 @@ import time
 
 import requests
 import urllib3
-from httprunner import logger
-from httprunner.exception import ParamsError
 from requests import Request, Response
 from requests.exceptions import (InvalidSchema, InvalidURL, MissingSchema,
                                  RequestException)
 
+from httprunner import logger
+from httprunner.exception import ParamsError
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 absolute_http_url_regexp = re.compile(r"^https?://", re.I)
+
 
 def get_charset_from_content_type(content_type):
     """ extract charset encoding type from Content-Type
@@ -30,6 +32,7 @@ def get_charset_from_content_type(content_type):
     index = content_type.index("charset=") + len("charset=")
     return content_type[index:]
 
+
 def prepare_kwargs(method, kwargs):
     if method == "POST":
         content_type = kwargs.get("headers", {}).get("content-type")
@@ -43,8 +46,8 @@ def prepare_kwargs(method, kwargs):
             if charset:
                 kwargs["data"] = kwargs["data"].encode(charset)
 
-class ApiResponse(Response):
 
+class ApiResponse(Response):
     def raise_for_status(self):
         if hasattr(self, 'error') and self.error:
             raise self.error
@@ -64,6 +67,7 @@ class HttpSession(requests.Session):
     part of the URL will be prepended with the HttpSession.base_url which is normally inherited
     from a HttpRunner class' host property.
     """
+
     def __init__(self, base_url=None, *args, **kwargs):
         super(HttpSession, self).__init__(*args, **kwargs)
         self.base_url = base_url if base_url else ""
@@ -141,7 +145,7 @@ class HttpSession(requests.Session):
         self.meta_data["response_time"] = int((time.time() - self.meta_data["request_time"]) * 1000)
         self.meta_data["elapsed"] = response.elapsed.total_seconds()
 
-        self.meta_data["url"] = (response.history and response.history[0] or response)\
+        self.meta_data["url"] = (response.history and response.history[0] or response) \
             .request.path_url
 
         self.meta_data["request_headers"] = response.request.headers
