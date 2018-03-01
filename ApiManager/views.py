@@ -13,7 +13,6 @@ from httprunner.cli import main_ate
 
 # Create your views here.
 
-
 '''首页'''
 
 
@@ -87,14 +86,14 @@ def run_test(request, mode, id):
     if request.method == 'GET':
         id = int(id)
         if mode == 'run_by_test':
-            result = main_ate(run_by_single(id), 'Test')
+            result = main_ate(run_by_single(id))
         elif mode == 'run_by_module':
             test_lists = run_by_module(id)
             result = get_result(test_lists)
         elif mode == 'run_by_project':
             test_lists = run_by_project(id)
             result = get_result(test_lists)
-        return render_to_response('template.html', {'resultData': result})
+        return render_to_response('report_template.html', result)
 
 
 '''多选执行'''
@@ -104,7 +103,7 @@ def run_batch_test(request):
     if request.method == 'POST':
         test_lists = run_by_batch(request.body.decode('ascii').split('&'))
         result = get_result(test_lists)
-        return render_to_response('template.html', {'resultData': result})
+        return render_to_response('report_template.html', result)
 
 
 '''添加接口'''
@@ -206,7 +205,7 @@ def edit_config(request, id):
 '''测试代码'''
 
 
-def test_get(request):
+def test_api(request):
     if request.method == 'GET':
         if request.GET.get('username') == 'lcc':
             return HttpResponse(json.dumps({'status': 'ok'}))
@@ -215,7 +214,7 @@ def test_get(request):
     elif request.method == 'POST':
 
         if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
-            a = {'login': 'success'}
+            a = {'login': 'success', 'status': True}
             return HttpResponse(json.dumps(a))
         elif json.loads(request.body.decode('utf-8')).get('username') == 'yinquanwang':
             return HttpResponse('this is a json post request')

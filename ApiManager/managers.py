@@ -102,14 +102,14 @@ class ModuleInfoManager(models.Manager):
 class TestCaseInfoManager(models.Manager):
     def insert_case(self, belong_module, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
-        self.create(name=kwargs.get('test').get('name').split('->')[0], belong_project=case_info.pop('project'),
+        self.create(name=kwargs.get('test').get('name'), belong_project=case_info.pop('project'),
                     belong_module=belong_module,
                     author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
 
     def update_case(self, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
         obj = self.get(id=int(case_info.pop('test_index')))
-        obj.name = kwargs.get('test').get('name').split('->')[0]
+        obj.name = kwargs.get('test').get('name')
         obj.author = case_info.pop('author')
         obj.include = case_info.pop('include')
         obj.request = kwargs
