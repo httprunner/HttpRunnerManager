@@ -120,7 +120,8 @@ def case_info_logic(type=True, **kwargs):
             return '至少需要一个结果校验！'
 
         name = test.pop('name')
-        test.setdefault('name', name.pop('case_name') + '->' + name.get('module') + '->' + name.get('project'))
+        test.setdefault('name', name.pop('case_name'))
+
         test.setdefault('case_info', name)
 
         validate = test.pop('validate')
@@ -143,13 +144,13 @@ def case_info_logic(type=True, **kwargs):
         if variables:
             test.setdefault('variables', key_value_list(**variables))
 
-        setup = test.pop('setUp')
+        setup = test.pop('setup')
         if setup:
-            test.setdefault('setUp', key_value_list(**setup))
+            test.setdefault('setup', key_value_list(**setup))
 
-        teardown = test.pop('tearDown')
+        teardown = test.pop('teardown')
         if teardown:
-            test.setdefault('tearDown', key_value_list(**teardown))
+            test.setdefault('teardown', key_value_list(**teardown))
 
         kwargs.setdefault('test', test)
         return add_case_data(type, **kwargs)

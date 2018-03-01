@@ -75,16 +75,16 @@ def run_by_batch(test_list):
 def get_result(test_lists):
     results = {'testResult': []}
     for index in range(len(test_lists)):
-        result = main_ate(test_lists[index], 'test')
-        if index == 0:
-            results['beginTime'] = result.pop('beginTime')
-        results['testName'] = result.pop('testName')
-        results['testSkip'] = results.pop('testSkip', 0) + result.pop('testSkip')
-        results['testError'] = results.pop('testError', 0) + result.pop('testError')
-        results['testPass'] = results.pop('testPass', 0) + result.pop('testPass')
-        results['endTime'] = result.pop('endTime')
-        results['testAll'] = results.pop('testAll', 0) + result.pop('testAll')
-        for value in result.pop('testResult'):
-            results['testResult'].append(value)
-        results['testFail'] = results.pop('testFail', 0) + result.pop('testFail')
+        result = main_ate(test_lists[index])
+        # if index == 0:
+        #     results['beginTime'] = result.pop('beginTime')
+        # results['testName'] = result.pop('testName')
+        # results['testSkip'] = results.pop('testSkip', 0) + result.pop('testSkip')
+        # results['testError'] = results.pop('testError', 0) + result.pop('testError')
+        # results['testPass'] = results.pop('testPass', 0) + result.pop('testPass')
+        # results['endTime'] = result.pop('endTime')
+        # results['testAll'] = results.pop('testAll', 0) + result.pop('testAll')
+        # for value in result.pop('testResult'):
+        #     results['testResult'].append(value)
+        # results['testFail'] = results.pop('testFail', 0) + result.pop('testFail')
     return results

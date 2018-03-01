@@ -69,7 +69,7 @@ def add_module_data(type, **kwargs):
 def add_case_data(type, **kwargs):
     case_info = kwargs.get('test').get('case_info')
     case_opt = TestCaseInfo.objects
-    name = kwargs.get('test').get('name').split('->')[0]
+    name = kwargs.get('test').get('name')
     module = case_info.get('module')
     project = case_info.get('project')
     try:
