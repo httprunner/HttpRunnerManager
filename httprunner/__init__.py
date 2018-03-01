@@ -1,1 +1,1 @@
-__version__ = '0.8.8'
+from httprunner.task import HttpRunner

@@ -1,13 +1,15 @@
 import ast
 import io
+import itertools
 import json
-import logging
 import os
+import random
 import re
 from collections import OrderedDict
 
 import yaml
-from httprunner import exception, utils
+
+from httprunner import exception, logger, utils
 
 variable_regexp = r"\$([\w_]+)"
 function_regexp = r"\$\{([\w_]+\([\$\w_ =,]*\))\}"
@@ -28,6 +30,7 @@ def _load_yaml_file(yaml_file):
         check_format(yaml_file, yaml_content)
         return yaml_content
 
+
 def _load_json_file(json_file):
     """ load json file and check file content format
     """
@@ -36,24 +39,70 @@ def _load_json_file(json_file):
             json_content = json.load(data_file)
         except exception.JSONDecodeError:
             err_msg = u"JSONDecodeError: JSON file format error: {}".format(json_file)
-            logging.error(err_msg)
+            logger.log_error(err_msg)
             raise exception.FileFormatError(err_msg)
 
         check_format(json_file, json_content)
         return json_content
 
-def _load_file(testcase_file_path):
-    return testcase_file_path
-    # file_suffix = os.path.splitext(testcase_file_path)[1]
-    # if file_suffix == '.json':
-    #     return _load_json_file(testcase_file_path)
-    # elif file_suffix in ['.yaml', '.yml']:
-    #     return _load_yaml_file(testcase_file_path)
-    # else:
-    #     # '' or other suffix
-    #     err_msg = u"file is not in YAML/JSON format: {}".format(testcase_file_path)
-    #     logging.warning(err_msg)
-    #     return []
+
+def _load_csv_file(csv_file):
+    """ load csv file and check file content format
+    @param
+        csv_file: csv file path
+        e.g. csv file content:
+            username,password
+            test1,111111
+            test2,222222
+            test3,333333
+    @return
+        list of parameter, each parameter is in dict format
+        e.g.
+        [
+            {'username': 'test1', 'password': '111111'},
+            {'username': 'test2', 'password': '222222'},
+            {'username': 'test3', 'password': '333333'}
+        ]
+    """
+    csv_content_list = []
+    parameter_list = None
+    collums_num = 0
+    with io.open(csv_file, encoding='utf-8') as data_file:
+        for line in data_file:
+            line_data = line.strip().split(",")
+            if line_data == [""]:
+                # ignore empty line
+                continue
+
+            if not parameter_list:
+                # first line will always be parameter name
+                expected_filename = "{}.csv".format("-".join(line_data))
+                if not csv_file.endswith(expected_filename):
+                    raise exception.FileFormatError("CSV file name does not match with headers: {}".format(csv_file))
+
+                parameter_list = line_data
+                collums_num = len(parameter_list)
+                continue
+
+            # from the second line
+            if len(line_data) != collums_num:
+                err_msg = "CSV file collums does match with headers.\n"
+                err_msg += "\tcsv file path: {}\n".format(csv_file)
+                err_msg += "\terror line content: {}".format(line_data)
+                raise exception.FileFormatError(err_msg)
+            else:
+                data = {}
+                for index, parameter_name in enumerate(parameter_list):
+                    data[parameter_name] = line_data[index]
+
+                csv_content_list.append(data)
+
+    return csv_content_list
+
+
+def load_file(file_path):
+    return file_path
+
 
 def extract_variables(content):
     """ extract all variable names from content, which is in format $variable
@@ -69,6 +118,7 @@ def extract_variables(content):
         return re.findall(variable_regexp, content)
     except TypeError:
         return []
+
 
 def extract_functions(content):
     """ extract all functions from string content, which are in format ${fun()}
@@ -86,6 +136,7 @@ def extract_functions(content):
     except TypeError:
         return []
 
+
 def parse_string_value(str_value):
     """ parse string to number if possible
     e.g. "123" => 123
@@ -100,6 +151,7 @@ def parse_string_value(str_value):
     except SyntaxError:
         # e.g. $var, ${func}
         return str_value
+
 
 def parse_function(content):
     """ parse function name and args from string content.
@@ -133,6 +185,7 @@ def parse_function(content):
 
     return function_meta
 
+
 def load_test_dependencies():
     """ load all api and suite definitions.
         default api folder is "$CWD/tests/api/".
@@ -164,6 +217,7 @@ def load_test_dependencies():
         suite["function_meta"] = function_meta
         test_def_overall_dict["suite"][function_meta["func_name"]] = suite
 
+
 def load_testcases_by_path(path):
     """ load testcases from file path
     @param path: path could be in several type
@@ -176,28 +230,6 @@ def load_testcases_by_path(path):
             testset_dict_2
         ]
     """
-    # if isinstance(path, (list, set)):
-    #     testsets = []
-    #
-    #     for file_path in set(path):
-    #         testset = load_testcases_by_path(file_path)
-    #         if not testset:
-    #             continue
-    #         testsets.extend(testset)
-    #
-    #     return testsets
-    #
-    # if not os.path.isabs(path):
-    #     path = os.path.join(os.getcwd(), path)
-    #
-    # if path in testcases_cache_mapping:
-    #     return testcases_cache_mapping[path]
-    #
-    # if os.path.isdir(path):
-    #     files_list = utils.load_folder_files(path)
-    #     testcases_list = load_testcases_by_path(files_list)
-
-    # elif os.path.isfile(path):
     try:
         testset = load_test_file(path)
         if testset["testcases"] or testset["api"]:
@@ -207,12 +239,8 @@ def load_testcases_by_path(path):
     except exception.FileFormatError:
         testcases_list = []
 
-    # else:
-    #     logging.error(u"file not found: {}".format(path))
-    #     testcases_list = []
-
-    # testcases_cache_mapping[path] = testcases_list
     return testcases_list
+
 
 def parse_validator(validator):
     """ parse validator, validator maybe in two format
@@ -265,6 +293,7 @@ def parse_validator(validator):
         "comparator": comparator
     }
 
+
 def merge_validator(api_validators, test_validators):
     """ merge api_validators with test_validators
     @params:
@@ -299,6 +328,7 @@ def merge_validator(api_validators, test_validators):
         api_validators_mapping.update(test_validators_mapping)
         return list(api_validators_mapping.values())
 
+
 def merge_extractor(api_extrators, test_extracors):
     """ merge api_extrators with test_extracors
     @params:
@@ -321,7 +351,7 @@ def merge_extractor(api_extrators, test_extracors):
         extractor_dict = OrderedDict()
         for api_extrator in api_extrators:
             if len(api_extrator) != 1:
-                logging.warning("incorrect extractor: {}".format(api_extrator))
+                logger.log_warning("incorrect extractor: {}".format(api_extrator))
                 continue
 
             var_name = list(api_extrator.keys())[0]
@@ -329,7 +359,7 @@ def merge_extractor(api_extrators, test_extracors):
 
         for test_extrator in test_extracors:
             if len(test_extrator) != 1:
-                logging.warning("incorrect extractor: {}".format(test_extrator))
+                logger.log_warning("incorrect extractor: {}".format(test_extrator))
                 continue
 
             var_name = list(test_extrator.keys())[0]
@@ -340,6 +370,7 @@ def merge_extractor(api_extrators, test_extracors):
             extractor_list.append({key: value})
 
         return extractor_list
+
 
 def extend_test_api(test_block_dict):
     """ update test block api with api definition
@@ -366,11 +397,11 @@ def extend_test_api(test_block_dict):
     test_validators = test_block_dict.get("validate") or test_block_dict.get("validators", [])
 
     api_extrators = test_info.get("extract") \
-        or test_info.get("extractors") \
-        or test_info.get("extract_binds", [])
+                    or test_info.get("extractors") \
+                    or test_info.get("extract_binds", [])
     test_extracors = test_block_dict.get("extract") \
-        or test_block_dict.get("extractors") \
-        or test_block_dict.get("extract_binds", [])
+                     or test_block_dict.get("extractors") \
+                     or test_block_dict.get("extract_binds", [])
 
     test_block_dict.update(test_info)
     test_block_dict["validate"] = merge_validator(
@@ -381,6 +412,7 @@ def extend_test_api(test_block_dict):
         api_extrators,
         test_extracors
     )
+
 
 def load_test_file(file_path):
     """ load testset file, get testset data structure.
@@ -396,12 +428,11 @@ def load_test_file(file_path):
     testset = {
         "name": "",
         "config": {
-            "path": file_path
+            # "path": file_path
         },
-        "api": {},
         "testcases": []
     }
-    tests_list = _load_file(file_path)
+    tests_list = load_file(file_path)
 
     for item in tests_list:
         for key in item:
@@ -433,6 +464,7 @@ def load_test_file(file_path):
 
     return testset
 
+
 def get_testinfo_by_reference(ref_name, ref_type):
     """ get test content by reference name
     @params:
@@ -460,6 +492,7 @@ def get_testinfo_by_reference(ref_name, ref_type):
 
     return test_info
 
+
 def get_test_definition(name, ref_type):
     """ get expected api or suite.
     @params:
@@ -482,6 +515,7 @@ def get_test_definition(name, ref_type):
             raise exception.ParamsError("ref_type can only be api or suite!")
 
     return test_info
+
 
 def substitute_variables_with_mapping(content, mapping):
     """ substitute variables in content with mapping
@@ -536,24 +570,87 @@ def substitute_variables_with_mapping(content, mapping):
 
     return content
 
+
 def check_format(file_path, content):
     """ check testcase format if valid
     """
     if not content:
         # testcase file content is empty
         err_msg = u"Testcase file content is empty: {}".format(file_path)
-        logging.error(err_msg)
+        logger.log_error(err_msg)
         raise exception.FileFormatError(err_msg)
 
     elif not isinstance(content, (list, dict)):
         # testcase file content does not match testcase format
         err_msg = u"Testcase file content format invalid: {}".format(file_path)
-        logging.error(err_msg)
+        logger.log_error(err_msg)
         raise exception.FileFormatError(err_msg)
 
 
-class TestcaseParser(object):
+def gen_cartesian_product(*args):
+    """ generate cartesian product for lists
+    @param
+        (list) args
+            [{"a": 1}, {"a": 2}],
+            [
+                {"x": 111, "y": 112},
+                {"x": 121, "y": 122}
+            ]
+    @return
+        cartesian product in list
+        [
+            {'a': 1, 'x': 111, 'y': 112},
+            {'a': 1, 'x': 121, 'y': 122},
+            {'a': 2, 'x': 111, 'y': 112},
+            {'a': 2, 'x': 121, 'y': 122}
+        ]
+    """
+    if not args:
+        return []
+    elif len(args) == 1:
+        return args[0]
 
+    product_list = []
+    for product_item_tuple in itertools.product(*args):
+        product_item_dict = {}
+        for item in product_item_tuple:
+            product_item_dict.update(item)
+
+        product_list.append(product_item_dict)
+
+    return product_list
+
+
+def gen_cartesian_product_parameters(parameters, testset_path):
+    """ parse parameters and generate cartesian product
+    @params
+        (list) parameters: parameter name and fetch method
+            e.g.
+                [
+                    {"user_agent": "Random"},
+                    {"app_version": "Sequential"}
+                ]
+        (str) testset_path: testset file path, used for locating csv file
+    @return cartesian product in list
+    """
+    parameters_content_list = []
+    for parameter in parameters:
+        parameter_name, fetch_method = list(parameter.items())[0]
+        parameter_file_path = os.path.join(
+            os.path.dirname(testset_path),
+            "{}.csv".format(parameter_name)
+        )
+        csv_content_list = load_file(parameter_file_path)
+
+        if fetch_method.lower() == "random":
+            random.shuffle(csv_content_list)
+
+        parameters_content_list.append(csv_content_list)
+
+    return gen_cartesian_product(*parameters_content_list)
+
+
+class TestcaseParser(object):
     def __init__(self, variables={}, functions={}, file_path=None):
         self.update_binded_variables(variables)
         self.bind_functions(functions)
@@ -584,6 +681,16 @@ class TestcaseParser(object):
         if item_type == "function":
             if item_name in self.functions:
                 return self.functions[item_name]
+
+            try:
+                # check if builtin functions
+                item_func = eval(item_name)
+                if callable(item_func):
+                    # is builtin function
+                    return item_func
+            except (NameError, TypeError):
+                # is not builtin function, continue to search
+                pass
         elif item_type == "variable":
             if item_name in self.variables:
                 return self.variables[item_name]
@@ -597,7 +704,7 @@ class TestcaseParser(object):
             raise exception.ParamsError(
                 "{} is not defined in bind {}s!".format(item_name, item_type))
 
-    def eval_content_functions(self, content):
+    def _eval_content_functions(self, content):
         functions_list = extract_functions(content)
         for func_content in functions_list:
             function_meta = parse_function(func_content)
@@ -607,8 +714,8 @@ class TestcaseParser(object):
 
             args = function_meta.get('args', [])
             kwargs = function_meta.get('kwargs', {})
-            args = self.parse_content_with_bindings(args)
-            kwargs = self.parse_content_with_bindings(kwargs)
+            args = self.eval_content_with_bindings(args)
+            kwargs = self.eval_content_with_bindings(kwargs)
             eval_value = func(*args, **kwargs)
 
             func_content = "${" + func_content + "}"
@@ -624,7 +731,7 @@ class TestcaseParser(object):
 
         return content
 
-    def eval_content_variables(self, content):
+    def _eval_content_variables(self, content):
         """ replace all variables of string content with mapping value.
         @param (str) content
         @return (str) parsed content
@@ -655,7 +762,7 @@ class TestcaseParser(object):
 
         return content
 
-    def parse_content_with_bindings(self, content):
+    def eval_content_with_bindings(self, content):
         """ parse content recursively, each variable and function in content will be evaluated.
 
         @param (dict) content in any data structure
@@ -683,18 +790,20 @@ class TestcaseParser(object):
                 "body": {"name": "user", "password": "123456"}
             }
         """
+        if content is None:
+            return None
 
         if isinstance(content, (list, tuple)):
             return [
-                self.parse_content_with_bindings(item)
+                self.eval_content_with_bindings(item)
                 for item in content
             ]
 
         if isinstance(content, dict):
             evaluated_data = {}
             for key, value in content.items():
-                eval_key = self.parse_content_with_bindings(key)
-                eval_value = self.parse_content_with_bindings(value)
+                eval_key = self.eval_content_with_bindings(key)
+                eval_value = self.eval_content_with_bindings(value)
                 evaluated_data[eval_key] = eval_value
 
             return evaluated_data
@@ -703,13 +812,13 @@ class TestcaseParser(object):
             return content
 
         # content is in string format here
-        content = "" if content is None else content.strip()
+        content = content.strip()
 
         # replace functions with evaluated value
-        # Notice: eval_content_functions must be called before eval_content_variables
-        content = self.eval_content_functions(content)
+        # Notice: _eval_content_functions must be called before _eval_content_variables
+        content = self._eval_content_functions(content)
 
         # replace variables with binding value
-        content = self.eval_content_variables(content)
+        content = self._eval_content_variables(content)
 
         return content

@@ -1,17 +1,18 @@
-import logging
+from unittest.case import SkipTest
 
-from httprunner import exception, response, testcase, utils
+from httprunner import exception, logger, response, testcase, utils
 from httprunner.client import HttpSession
 from httprunner.context import Context
 
 
 class Runner(object):
 
-    def __init__(self, http_client_session=None, request_failure_hook=None):
+    def __init__(self, config_dict=None, http_client_session=None):
         self.http_client_session = http_client_session
         self.context = Context()
-        # testcase.load_test_dependencies()
-        self.request_failure_hook = request_failure_hook
+
+        config_dict = config_dict or {}
+        self.init_config(config_dict, "testset")
 
     def init_config(self, config_dict, level):
         """ create/update context variables binds
@@ -66,11 +67,36 @@ class Runner(object):
 
         return parsed_request
 
-    def _run_test(self, testcase_dict):
+    def _handle_skip_feature(self, testcase_dict):
+        """ handle skip feature for testcase
+            - skip: skip current test unconditionally
+            - skipIf: skip current test if condition is true
+            - skipUnless: skip current test unless condition is true
+        """
+        skip_reason = None
+
+        if "skip" in testcase_dict:
+            skip_reason = testcase_dict["skip"]
+
+        elif "skipIf" in testcase_dict:
+            skip_if_condition = testcase_dict["skipIf"]
+            if self.context.eval_content(skip_if_condition):
+                skip_reason = "{} evaluate to True".format(skip_if_condition)
+
+        elif "skipUnless" in testcase_dict:
+            skip_unless_condition = testcase_dict["skipUnless"]
+            if not self.context.eval_content(skip_unless_condition):
+                skip_reason = "{} evaluate to False".format(skip_unless_condition)
+
+        if skip_reason:
+            raise SkipTest(skip_reason)
+
+    def run_test(self, testcase_dict):
         """ run single testcase.
         @param (dict) testcase_dict
             {
                 "name": "testcase description",
+                "skip": "skip this test unconditionally",
                 "times": 3,
                 "requires": [],         # optional, override
                 "function_binds": {},   # optional, override
@@ -85,7 +111,7 @@ class Runner(object):
                     },
                     "body": '{"name": "user", "password": "123456"}'
                 },
-                "extract": [], # optional
+                "extract": [],       # optional
                 "validate": [],      # optional
                 "setup": [],         # optional
                 "teardown": []       # optional
@@ -101,147 +127,65 @@ class Runner(object):
         except KeyError:
             raise exception.ParamsError("URL or METHOD missed!")
 
-        run_times = int(testcase_dict.get("times", 1))
         extractors = testcase_dict.get("extract", [])
         validators = testcase_dict.get("validate", [])
         setup_actions = testcase_dict.get("setup", [])
         teardown_actions = testcase_dict.get("teardown", [])
 
+        self._handle_skip_feature(testcase_dict)
+
         def setup_teardown(actions):
             for action in actions:
-                self.context.exec_content_functions(action)
+                self.context.eval_content(action)
 
-        for _ in range(run_times):
-            setup_teardown(setup_actions)
+        setup_teardown(setup_actions)
 
-            resp = self.http_client_session.request(
-                method,
-                url,
-                name=group_name,
-                **parsed_request
-            )
-            resp_obj = response.ResponseObject(resp)
+        resp = self.http_client_session.request(
+            method,
+            url,
+            name=group_name,
+            **parsed_request
+        )
+        resp_obj = response.ResponseObject(resp)
 
-            extracted_variables_mapping = resp_obj.extract_response(extractors)
-            self.context.bind_extracted_variables(extracted_variables_mapping)
+        extracted_variables_mapping = resp_obj.extract_response(extractors)
+        self.context.bind_extracted_variables(extracted_variables_mapping)
 
-            err_msg = u"<br />请求地址: {}\n".format(url)
-            err_msg += u"<br />请求参数: {}\n".format(parsed_request)
-            err_msg += u"<br />返回状态码: {}\n".format(resp.status_code)
-            err_msg += u"<br />返回报文: {}\n".format(resp.text)
+        try:
+            self.context.validate(validators, resp_obj)
+        except (exception.ParamsError, exception.ResponseError, exception.ValidationError):
+            # log request
+            err_req_msg = "request: \n"
+            err_req_msg += "headers: {}\n".format(parsed_request.pop("headers", {}))
+            for k, v in parsed_request.items():
+                err_req_msg += "{}: {}\n".format(k, v)
+            logger.log_error(err_req_msg)
 
+            # log response
+            err_resp_msg = "response: \n"
+            err_resp_msg += "status_code: {}\n".format(resp.status_code)
+            err_resp_msg += "headers: {}\n".format(resp.headers)
+            err_resp_msg += "body: {}\n".format(resp.text)
+            logger.log_error(err_resp_msg)
 
-            try:
-                self.context.validate(validators, resp_obj, err_msg)
-            except (exception.ParamsError, exception.ResponseError, exception.ValidationError):
-                logging.error(err_msg.replace('<br />',''))
-                raise
-            finally:
-                setup_teardown(teardown_actions)
+            raise
+        finally:
+            setup_teardown(teardown_actions)
 
-        return True
-
-    def _run_testset(self, testset, variables_mapping=None):
-        """ run single testset, including one or several testcases.
-        @param
-            (dict) testset
-                {
-                    "name": "testset description",
-                    "config": {
-                        "name": "testset description",
-                        "requires": [],
-                        "function_binds": {},
-                        "variables": [],
-                        "request": {}
-                    },
-                    "testcases": [
-                        {
-                            "name": "testcase description",
-                            "variables": [],    # optional, override
-                            "request": {},
-                            "extract": {},      # optional
-                            "validate": {}      # optional
-                        },
-                        testcase12
-                    ]
-                }
-            (dict) variables_mapping:
-                passed in variables mapping, it will override variables in config block
-
-        @return (dict) test result of testset
-            {
-                "success": True,
-                "output": {}    # variables mapping
-            }
+    def extract_output(self, output_variables_list):
+        """ extract output variables
         """
-        success = True
-        config_dict = testset.get("config", {})
+        variables_mapping = self.context.testcase_variables_mapping
 
-        variables = config_dict.get("variables", [])
-        variables_mapping = variables_mapping or {}
-        config_dict["variables"] = utils.override_variables_binds(variables, variables_mapping)
-
-        self.init_config(config_dict, level="testset")
-        testcases = testset.get("testcases", [])
-        for testcase_dict in testcases:
-            try:
-                self._run_test(testcase_dict)
-            except exception.MyBaseError as ex:
-                success = False
-                if self.request_failure_hook:
-                    self.request_failure_hook.fire(
-                        request_type=testcase_dict.get("request", {}).get("method"),
-                        name=testcase_dict.get("request", {}).get("url"),
-                        response_time=0,
-                        exception=ex
-                    )
-                else:
-                    logging.exception(
-                        "Exception occured in testcase: {}".format(testcase_dict.get("name")))
-                break
-
-        output_variables_list = config_dict.get("output", [])
-
-        return {
-            "success": success,
-            "output": self.generate_output(output_variables_list)
-        }
-
-    def run(self, path, mapping=None):
-        """ run specified testset path or folder path.
-        @param
-            path: path could be in several type
-                - absolute/relative file path
-                - absolute/relative folder path
-                - list/set container with file(s) and/or folder(s)
-            (dict) mapping:
-                passed in variables mapping, it will override variables in config block
-        """
-        success = True
-        mapping = mapping or {}
         output = {}
-        testsets = testcase.load_testcases_by_path(path)
-        for testset in testsets:
-            try:
-                result = self._run_testset(testset, mapping)
-                assert result["success"]
-                output.update(result["output"])
-            except AssertionError:
-                success = False
+        for variable in output_variables_list:
+            if variable not in variables_mapping:
+                logger.log_warning(
+                    "variable '{}' can not be found in variables mapping, failed to ouput!"\
+                        .format(variable)
+                )
+                continue
 
-        return {
-            "success": success,
-            "output": output
-        }
-
-    def generate_output(self, output_variables_list):
-        """ generate and print output
-        """
-        variables_mapping = self.context.get_testcase_variables_mapping()
-        output = {
-            variable: variables_mapping[variable]
-            for variable in output_variables_list
-        }
-        utils.print_output(output)
+            output[variable] = variables_mapping[variable]
 
         return output

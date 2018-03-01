@@ -2,15 +2,14 @@ import hashlib
 import hmac
 import imp
 import importlib
-import logging
+import io
 import os.path
 import random
-import re
 import string
 import types
 from collections import OrderedDict
 
-from httprunner import exception
+from httprunner import exception, logger
 from requests.structures import CaseInsensitiveDict
 
 try:
@@ -120,7 +119,7 @@ def query_json(json_content, query, delimiter='.'):
 def get_uniform_comparator(comparator):
     """ convert comparator alias to uniform name
     """
-    if comparator in ["eq", "equals", "=="]:
+    if comparator in ["eq", "equals", "==", "is"]:
         return "equals"
     elif comparator in ["lt", "less_than"]:
         return "less_than"
@@ -265,13 +264,21 @@ def lower_dict_keys(origin_dict):
     }
 
 def lower_config_dict_key(config_dict):
-    """ convert key in config dict to lower case, convertion will occur in two places:
+    """ convert key in config dict to lower case, convertion will occur in three places:
         1, all keys in config dict;
         2, all keys in config["request"]
+        3, all keys in config["request"]["headers"]
     """
+    # convert keys in config dict
     config_dict = lower_dict_keys(config_dict)
+
     if "request" in config_dict:
+        # convert keys in config["request"]
         config_dict["request"] = lower_dict_keys(config_dict["request"])
+
+        # convert keys in config["request"]["headers"]
+        if "headers" in config_dict["request"]:
+            config_dict["request"]["headers"] = lower_dict_keys(config_dict["request"]["headers"])
 
     return config_dict
 
@@ -351,15 +358,15 @@ def print_output(output):
 
     content += "============================================\n"
 
-    logging.debug(content)
+    logger.log_debug(content)
 
 def create_scaffold(project_path):
-    logging.info(" Start to create new project: {}".format(project_path))
-
     if os.path.isdir(project_path):
         folder_name = os.path.basename(project_path)
-        logging.warning(u" Folder {} exists, please specify a new folder name.".format(folder_name))
+        logger.log_warning(u"Folder {} exists, please specify a new folder name.".format(folder_name))
         return
+
+    logger.color_print("Start to create new project: {}\n".format(project_path), "GREEN")
 
     def create_path(path, ptype):
         if ptype == "folder":
@@ -367,7 +374,7 @@ def create_scaffold(project_path):
         elif ptype == "file":
             open(path, 'w').close()
 
-        logging.info("\tcreated {}: {}".format(ptype, path))
+        return "created {}: {}\n".format(ptype, path)
 
     path_list = [
         (project_path, "folder"),
@@ -377,4 +384,22 @@ def create_scaffold(project_path):
         (os.path.join(project_path, "tests", "testcases"), "folder"),
         (os.path.join(project_path, "tests", "debugtalk.py"), "file")
     ]
-    [create_path(p[0], p[1]) for p in path_list]
+
+    msg = ""
+    for p in path_list:
+        msg += create_path(p[0], p[1])
+
+    logger.color_print(msg, "BLUE")
+
+def load_dot_env_file(path):
+    """ load .env file and set to os.environ
+    """
+    if not os.path.isfile(path):
+        return
+
+    logger.log_info("Loading environment variables from {}".format(path))
+    with io.open(path, 'r', encoding='utf-8') as fp:
+        for line in fp:
+            variable, value = line.split("=")
+            os.environ[variable] = value
+            logger.log_debug("Loaded variable: {}".format(variable))
