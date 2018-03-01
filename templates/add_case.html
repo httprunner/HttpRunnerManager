@@ -79,6 +79,10 @@
                 <div class="am-tab-panel am-fade" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="removeRow('variables')">del variables</button>
+                    <button class="btn btn-info" value="添 加" onclick="addNewRow('setup')">add setup</button>
+                    <button class="btn btn-danger" value="删 除" onclick="removeRow('setup')">del setup</button>
+                    <button class="btn btn-info" value="添 加" onclick="addNewRow('teardown')">add teardown</button>
+                    <button class="btn btn-danger" value="删 除" onclick="removeRow('teardown')">del teardown</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -93,10 +97,40 @@
                             </tbody>
                         </table>
                     </form>
+
+                    <form id="form_setup">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="setup">
+                                <caption>setUp:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <form id="form_teardown">
+                            <table class="table table-hover table-condensed table-bordered table-striped" id="teardown">
+                                <caption>tearDown:</caption>
+                                <thead>
+                                <tr class="active text-success">
+                                    <th width="5%" align="center">Option</th>
+                                    <th width="40%" align="center">Key</th>
+                                    <th width="55%" align="center">Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </form>
                 </div>
                 <div class="am-tab-panel am-fade" id="tab3">
                     <div class="form-inline">
-                         <div class="form-group has-success">
+                        <div class="form-group has-success">
                             <label for="url" style="font-size: 14px;">Api Url:</label>
                             <input type="text" class="form-control am-input-sm " placeholder="api url"
                                    name="url"
@@ -127,7 +161,6 @@
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">del data</button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
-                        {% comment %}  </form>{% endcomment %}
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>request:</caption>
@@ -220,16 +253,7 @@
         function addNewRow(id) {
             var tabObj = document.getElementById(id);//获取添加数据的表格
             var rowsNum = tabObj.rows.length;  //获取当前行数
-            var attribute = 'variables';
-            if (id === 'data') {
-                attribute = 'data';
-            } else if (id === 'header') {
-                attribute = 'header';
-            } else if (id === 'extract') {
-                attribute = 'extract';
-            } else if (id === 'validate') {
-                attribute = 'validate';
-            }
+            var attribute = id;
             var style = 'width:100%; border: none';
             var ids = 'nodename' + rowsNum;
             var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='" + ids + "' value='' style='" + style + "' />";
@@ -255,16 +279,7 @@
 
         /*表格删除行*/
         function removeRow(id) {
-            var attribute = 'variables';
-            if (id === 'data') {
-                attribute = 'data';
-            } else if (id === 'header') {
-                attribute = 'header';
-            } else if (id === 'extract') {
-                attribute = 'extract';
-            } else if (id === 'validate') {
-                attribute = 'validate';
-            }
+            var attribute = id;
             var chkObj = document.getElementsByName(attribute);
             var tabObj = document.getElementById(id);
             for (var k = 0; k < chkObj.length; k++) {
