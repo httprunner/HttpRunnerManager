@@ -59,7 +59,7 @@ def run_by_batch(test_list):
     testcase_lists = []
     for index in test_list:
         form_test = index.split('=')
-        id = int(form_test[1])
+        id = form_test[1]
         if 'test' in form_test[0]:
             testcase_lists.append(run_by_single(id))
         elif 'module' in form_test[0]:
@@ -73,18 +73,42 @@ def run_by_batch(test_list):
 
 
 def get_result(test_lists):
-    results = {'testResult': []}
+    summary = {
+        "success": True,
+        "stat": {
+            'testsRun': 0,
+            'successes': 0,
+            'failures': 0,
+            'errors': 0,
+            'skipped': 0,
+            'expectedFailures': 0,
+            'unexpectedSuccesses': 0
+        },
+        "platform": {},
+        "time": {
+            'start_at': '',
+            'duration': 0.0,
+        },
+        "records": [],
+    }
     for index in range(len(test_lists)):
         result = main_ate(test_lists[index])
-        # if index == 0:
-        #     results['beginTime'] = result.pop('beginTime')
-        # results['testName'] = result.pop('testName')
-        # results['testSkip'] = results.pop('testSkip', 0) + result.pop('testSkip')
-        # results['testError'] = results.pop('testError', 0) + result.pop('testError')
-        # results['testPass'] = results.pop('testPass', 0) + result.pop('testPass')
-        # results['endTime'] = result.pop('endTime')
-        # results['testAll'] = results.pop('testAll', 0) + result.pop('testAll')
-        # for value in result.pop('testResult'):
-        #     results['testResult'].append(value)
-        # results['testFail'] = results.pop('testFail', 0) + result.pop('testFail')
-    return results
+
+        if index == 0:
+            summary["time"]["start_at"] = result["time"].pop("start_at")
+
+        if "html_report_name" in result.keys():
+            summary["html_report_name"] = result.pop("html_report_name")
+
+        summary["success"] = summary.pop("success") and result.pop("success")
+
+        for key, value in result["stat"].items():
+            summary["stat"][key] = summary["stat"].get(key) + value
+
+        summary["platform"] = result.pop("platform")
+
+        summary["time"]["duration"] = summary["time"].pop("duration") + result["time"]["duration"]
+
+        summary["records"].extend(result.pop("records"))
+
+    return summary
