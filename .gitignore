@@ -1,6 +1,11 @@
 # Created by .ignore support plugin (hsz.mobi)
 .gitignore
 .idea/
-examples/__pycache__/
+ApiManager/__pycache__/
+ApiManager/logic/__pycache__/
+ApiManager/migrations/__pycache__/
+HttpRunnerManager/__pycache__/
 httprunner/__pycache__/
-lib/DBOpt.jar
+pyunitreport/__pycache__/
+BeautifulReport/__pycache__/
+Test Report.html
