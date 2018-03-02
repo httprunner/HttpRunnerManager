@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- /.website title -->
+    <title>登 录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% load staticfiles %}
+    <!-- CSS Files -->
+    <link href="{% static "/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet" media="screen"/>
+    <!-- Colors -->
+    <link href="{% static "/assets/css/css-index.css" %}" rel="stylesheet" media="screen">
+    <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
+
+
+</head>
+
+<body data-spy="scroll" data-target="#navbar-scroll">
+
+<!-- /.preloader -->
+<div id="preloader" style="background: #fff url({% static "assets/img/loading.GIF" %}) no-repeat center center;"></div>
+<div id="top"></div>
+
+<!-- /.parallax full screen background image -->
+<div class="fullscreen landing parallax" style="background-image:url({% static "assets/img/bg.jpg" %});"
+     data-img-width="2000" data-img-height="1333" data-diff="100">
+
+    <div class="overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7">
+
+                    <!-- /.logo -->
+                    <div class="logo wow fadeInDown"><a href=""><img src="{% static "assets/img/logo.png" %}"
+                                                                     alt="logo"></a></div>
+
+                    <!-- /.main title -->
+                    <h1 class="wow fadeInLeft">
+                        HTTP Runner Manager, Landing Page
+                    </h1>
+
+                    <!-- /.header paragraph -->
+                    <div class="landing-text wow fadeInUp">
+                        <p>Take full reuse of Python's existing powerful libraries: Requests, unittest and Locust. And
+                            achieve the goal of API automation test, production environment monitoring, and API
+                            performance test, with a concise and elegant manner.
+
+                        </p>
+                    </div>
+
+                    <!-- /.header button -->
+                    <div class="head-btn wow fadeInLeft">
+                        <a href="https://github.com/HttpRunner/HttpRunnerManager" class="btn-default">Download</a>
+                    </div>
+
+
+                </div>
+
+                <!-- /.signup form -->
+                <div class="col-md-5">
+
+                    <div class="signup-header wow fadeInUp">
+                        <h3 class="form-title text-center">GET STARTED</h3>
+                        <form class="form-header" action="/api/login/" role="form" method="POST" id="login_form">
+                            <div class="form-group">
+                                <input class="form-control input-lg" name="account" id="account" type="text"
+                                       placeholder="Your Account">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control input-lg" name="password" id="password" type="password"
+                                       placeholder="Password">
+                            </div>
+                            <div class="form-group last">
+                                <input type="submit" class="btn btn-warning btn-block btn-lg" value="Login">
+                            </div>
+                            <p style="font-size: medium" class="privacy text-center">Do not hava account? Please <a
+                                    href="/api/register/" style="color: darkblue">Register</a>.</p>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.javascript files -->
+<script src="{% static "assets/js/jquery.min.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+<script src="{% static "assets/js/custom.js" %}"></script>
+<script src="{% static "assets/js/jquery.sticky.js" %}"></script>
+<script src="{% static "assets/js/wow.min.js" %}"></script>
+<script src="{% static "assets/js/owl.carousel.min.js" %}"></script>
+<script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $('form').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            submitHandler: function(validator, form, submitButton) {
+            $.post(form.attr('action'), form.serialize(), function(result) {
+                if (result.valid == true || result.valid == 'true') {
+                    window.location.reload();
+                } else {
+                    $('#errors').html('The account is not found').removeClass('hide');
+                    $('#loginForm').bootstrapValidator('disableSubmitButtons', false);
+                }
+            }, 'json');
+        },
+            fields: {
+                account: {
+                    message: '用户名验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
