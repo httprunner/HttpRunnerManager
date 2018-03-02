@@ -124,4 +124,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-SESSION_COOKIE_AGE = 60 * 5
+SESSION_COOKIE_AGE = 5 * 60
