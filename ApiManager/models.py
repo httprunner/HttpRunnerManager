@@ -34,7 +34,7 @@ class UserInfo(BaseTable):
     password = models.CharField(max_length=20)
     email = models.EmailField()
     status = models.IntegerField(default=1)
-    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    # user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
     objects = UserInfoManager()
 
 
