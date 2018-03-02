@@ -48,7 +48,7 @@ def register(request):
 
 def index(request):
     if request.session.get('login_status'):
-        return render_to_response('index.html')
+        return render_to_response('index.html', {'account': request.session["now_account"]})
     else:
         return render_to_response("login.html")
 
