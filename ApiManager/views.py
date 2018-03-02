@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg
+    set_filter_session, get_ajax_msg, register_info_logic
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
 from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
@@ -28,8 +28,10 @@ def login(request):
 
 
 def register(request):
-    if request.method == 'POST':
-        return HttpResponseRedirect('/api/login/')
+    if request.is_ajax():
+        user_info = json.loads(request.body.decode('utf-8'))
+        msg = register_info_logic(**user_info)
+        return HttpResponse(get_ajax_msg(msg, '恭喜您，账号已成功注册'))
     elif request.method == 'GET':
         return render_to_response("register.html")
 
