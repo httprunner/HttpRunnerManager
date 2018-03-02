@@ -1,4 +1,5 @@
-from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data
+from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
+    add_register_data
 from ApiManager.models import ModuleInfo
 
 '''前端test信息转字典'''
@@ -224,3 +225,14 @@ def get_ajax_msg(msg, success):
         return success
     else:
         return msg
+
+
+'''注册信息逻辑判断'''
+
+
+def register_info_logic(**kwargs):
+    return add_register_data(**kwargs)
+
+
+
+
