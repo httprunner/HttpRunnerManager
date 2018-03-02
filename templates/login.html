@@ -12,7 +12,11 @@
     <link href="{% static "/assets/css/css-index.css" %}" rel="stylesheet" media="screen">
     <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
 
-
+    <style>
+        .has-error .checkbox, .has-error .checkbox-inline, .has-error .control-label, .has-error .help-block, .has-error .radio, .has-error .radio-inline, .has-error.checkbox label, .has-error.checkbox-inline label, .has-error.radio label, .has-error.radio-inline label {
+            color: limegreen;
+        }
+    </style>
 </head>
 
 <body data-spy="scroll" data-target="#navbar-scroll">
@@ -71,7 +75,7 @@
                                        placeholder="Password">
                             </div>
                             <div class="form-group last">
-                                <input type="submit" class="btn btn-warning btn-block btn-lg" value="Login">
+                                <input type="submit" id="login_submit" class="btn btn-warning btn-block btn-lg" value="Login">
                             </div>
                             <p style="font-size: medium" class="privacy text-center">Do not hava account? Please <a
                                     href="/api/register/" style="color: darkblue">Register</a>.</p>
@@ -102,16 +106,6 @@
                 invalid: 'glyphicon glyphicon-remove',
                 validating: 'glyphicon glyphicon-refresh'
             },
-            submitHandler: function(validator, form, submitButton) {
-            $.post(form.attr('action'), form.serialize(), function(result) {
-                if (result.valid == true || result.valid == 'true') {
-                    window.location.reload();
-                } else {
-                    $('#errors').html('The account is not found').removeClass('hide');
-                    $('#loginForm').bootstrapValidator('disableSubmitButtons', false);
-                }
-            }, 'json');
-        },
             fields: {
                 account: {
                     message: '用户名验证失败',
