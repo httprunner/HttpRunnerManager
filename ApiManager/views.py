@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
@@ -12,6 +12,27 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
+
+'''登录'''
+
+
+def login(request):
+    if request.method == 'POST':
+
+        return HttpResponseRedirect('/api/index/')
+    elif request.method == 'GET':
+        return render_to_response("login.html")
+
+
+'''注册'''
+
+
+def register(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect('/api/login/')
+    elif request.method == 'GET':
+        return render_to_response("register.html")
+
 
 '''首页'''
 
@@ -79,7 +100,7 @@ def add_config(request):
         return render_to_response('add_config.html', {'project': project})
 
 
-'''单个点击执行'''
+'''单个执行'''
 
 
 def run_test(request, mode, id):
@@ -95,7 +116,7 @@ def run_test(request, mode, id):
         return render_to_response('report_template.html', result)
 
 
-'''多选执行'''
+'''批量执行'''
 
 
 def run_batch_test(request):
