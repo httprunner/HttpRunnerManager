@@ -93,6 +93,5 @@ class TestReports(BaseTable):
     name = models.CharField(max_length=50)
     belong_project = models.CharField(max_length=50)
     belong_module = models.CharField(max_length=50)
-    belong_case = models.CharField(max_length=50)
     reports = models.TextField()
     status = models.IntegerField(default=1)
