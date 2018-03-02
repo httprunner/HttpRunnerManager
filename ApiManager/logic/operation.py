@@ -1,7 +1,27 @@
 from django.core.exceptions import ValidationError
 from django.db import DataError
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
+
+'''用户注册信息落地'''
+
+
+def add_register_data(**kwargs):
+    user_info = UserInfo.objects
+    try:
+        username = kwargs.pop('account')
+        password = kwargs.pop('password')
+        email = kwargs.pop('email')
+
+        if user_info.filter(username__exact=username).filter(status=1).count() > 0:
+            return '该用户名已被注册，请更换用户名'
+        if user_info.filter(email__exact=email).filter(status=1).count() > 0:
+            return '该邮箱已被其他用户注册，请更换邮箱'
+        user_info.create(username=username, password=password, email=email)
+        return 'ok'
+    except DataError:
+        return '字段长度超长，请重新编辑'
+
 
 '''项目数据落地'''
 
