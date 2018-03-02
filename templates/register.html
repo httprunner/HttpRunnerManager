@@ -81,7 +81,7 @@
                                        placeholder="Repassword">
                             </div>
                             <div class="form-group last">
-                                <input type="button" class="btn btn-warning btn-block btn-lg" value="Register"
+                                <input type="submit" class="btn btn-warning btn-block btn-lg" value="Register"
                                        onclick="register_ajax('#register_form')">
                             </div>
                             <p style="font-size: medium" class="privacy text-center">Do hava account? Please <a
@@ -95,7 +95,6 @@
     </div>
 </div>
 
-<!-- /.javascript files -->2
 <script src="{% static "assets/js/jquery.min.js" %}"></script>
 <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
@@ -118,9 +117,6 @@
                 account: {
                     message: '用户名验证失败',
                     validators: {
-                        notEmpty: {
-                            message: '用户名不能为空'
-                        },
                         stringLength: {
                             min: 3,
                             max: 15,
@@ -134,17 +130,10 @@
                 },
                 password: {
                     validators: {
-                        notEmpty: {
-                            message: '密码不能为空'
-                        },
                         stringLength: {
                             min: 6,
                             max: 18,
                             message: '密码长度必须在6到18位之间'
-                        },
-                        different: {
-                            field: 'account',
-                            message: '密码不能和用户名相同'
                         },
                         regexp: {
                             regexp: /^[a-z0-9_-]{3,16}$/,
@@ -155,9 +144,6 @@
                 repassword: {
                     message: '密码无效',
                     validators: {
-                        notEmpty: {
-                            message: '确认密码不能为空'
-                        },
                         identical: {//相同
                             field: 'password',
                             message: '两次密码不一致'
@@ -166,9 +152,6 @@
                 },
                 email: {
                     validators: {
-                        notEmpty: {
-                            message: '邮箱不能为空'
-                        },
                         emailAddress: {
                             message: '邮箱地址格式有误'
                         }
