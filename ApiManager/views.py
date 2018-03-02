@@ -8,7 +8,7 @@ from ApiManager.logic.common import module_info_logic, project_info_logic, case_
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
 from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
 from httprunner.cli import main_ate
 
 # Create your views here.
@@ -18,8 +18,15 @@ from httprunner.cli import main_ate
 
 def login(request):
     if request.method == 'POST':
-
-        return HttpResponseRedirect('/api/index/')
+        username = request.POST.get('account')
+        password = request.POST.get('password')
+        if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
+            request.session["login_status"] = True
+            request.session["now_account"] = username
+            return HttpResponseRedirect('/api/index/')
+        else:
+            request.session["login_status"] = False
+            return render_to_response("login.html")
     elif request.method == 'GET':
         return render_to_response("login.html")
 
@@ -40,34 +47,41 @@ def register(request):
 
 
 def index(request):
-    return render_to_response('index.html')
+    if request.session.get('login_status'):
+        return render_to_response('index.html')
+    else:
+        return render_to_response("login.html")
 
 
 '''添加项目'''
 
 
 def add_project(request):
-    if request.is_ajax():
-        project_info = json.loads(request.body.decode('utf-8'))
-        msg = project_info_logic(**project_info)
-        return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            project_info = json.loads(request.body.decode('utf-8'))
+            msg = project_info_logic(**project_info)
+            return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
-    elif request.method == 'GET':
-        return render_to_response('add_project.html')
+        elif request.method == 'GET':
+            return render_to_response('add_project.html')
+    else:
+        return render_to_response("login.html")
 
 
 '''添加模块'''
 
 
 def add_module(request):
-    if request.is_ajax():
-        module_info = json.loads(request.body.decode('utf-8'))
-        msg = module_info_logic(**module_info)
-        return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
-
-    elif request.method == 'GET':
-
-        return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            project_info = json.loads(request.body.decode('utf-8'))
+            msg = project_info_logic(**project_info)
+            return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
+        elif request.method == 'GET':
+            return render_to_response('add_project.html')
+    else:
+        return render_to_response("login.html")
 
 
 '''
@@ -76,152 +90,179 @@ def add_module(request):
 
 
 def add_case(request):
-    project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
-
-    if request.is_ajax():
-        testcase_lists = json.loads(request.body.decode('utf-8'))
-        msg = case_info_logic(**testcase_lists)
-        return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
-    elif request.method == 'GET':
-        return render_to_response('add_case.html', {'project': project})
+    if request.session.get('login_status'):
+        project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+        if request.is_ajax():
+            testcase_lists = json.loads(request.body.decode('utf-8'))
+            msg = case_info_logic(**testcase_lists)
+            return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
+        elif request.method == 'GET':
+            return render_to_response('add_case.html', {'project': project})
+    else:
+        return render_to_response("login.html")
 
 
 '''添加配置'''
 
 
 def add_config(request):
-    project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+    if request.session.get('login_status'):
+        project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+        if request.is_ajax():
+            testconfig_lists = json.loads(request.body.decode('utf-8'))
+            msg = config_info_logic(**testconfig_lists)
+            return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
 
-    if request.is_ajax():
-        testconfig_lists = json.loads(request.body.decode('utf-8'))
-
-        msg = config_info_logic(**testconfig_lists)
-        return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
-
-    elif request.method == 'GET':
-        return render_to_response('add_config.html', {'project': project})
+        elif request.method == 'GET':
+            return render_to_response('add_config.html', {'project': project})
+    else:
+        return render_to_response("login.html")
 
 
 '''单个执行'''
 
 
 def run_test(request, mode, id):
-    if request.method == 'GET':
-        if mode == 'run_by_test':
-            result = main_ate(run_by_single(id))
-        elif mode == 'run_by_module':
-            test_lists = run_by_module(id)
-            result = get_result(test_lists)
-        elif mode == 'run_by_project':
-            test_lists = run_by_project(id)
-            result = get_result(test_lists)
-        return render_to_response('report_template.html', result)
+    if request.session.get('login_status'):
+        if request.method == 'GET':
+            if mode == 'run_by_test':
+                result = main_ate(run_by_single(id))
+            elif mode == 'run_by_module':
+                test_lists = run_by_module(id)
+                result = get_result(test_lists)
+            elif mode == 'run_by_project':
+                test_lists = run_by_project(id)
+                result = get_result(test_lists)
+            return render_to_response('report_template.html', result)
+    else:
+        return render_to_response("login.html")
 
 
 '''批量执行'''
 
 
 def run_batch_test(request):
-    if request.method == 'POST':
-        test_lists = run_by_batch(request.body.decode('ascii').split('&'))
-        result = get_result(test_lists)
-        return render_to_response('report_template.html', result)
+    if request.session.get('login_status'):
+        if request.method == 'POST':
+            test_lists = run_by_batch(request.body.decode('ascii').split('&'))
+            result = get_result(test_lists)
+            return render_to_response('report_template.html', result)
+    else:
+        return render_to_response("login.html")
 
 
 '''添加接口'''
 
 
 def add_api(request):
-    return render_to_response('add_api.html')
+    if request.session.get('login_status'):
+        return render_to_response('add_api.html')
+    else:
+        return render_to_response("login.html")
 
 
 '''项目列表'''
 
 
 def project_list(request, id):
-    if request.is_ajax():
-        project_info = json.loads(request.body.decode('utf-8'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            project_info = json.loads(request.body.decode('utf-8'))
 
-        if 'status' in project_info.keys():
-            msg = change_status(ProjectInfo, **project_info)
-            return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
+            if 'status' in project_info.keys():
+                msg = change_status(ProjectInfo, **project_info)
+                return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
+            else:
+                msg = project_info_logic(type=False, **project_info)
+                return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
         else:
-            msg = project_info_logic(type=False, **project_info)
-            return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
+            filter_query = set_filter_session(request)
+            pro_list = get_pager_info(
+                ProjectInfo, filter_query, '/api/project_list/', id)
+            return render_to_response('project_list.html',
+                                      {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
     else:
-        filter_query = set_filter_session(request)
-        pro_list = get_pager_info(
-            ProjectInfo, filter_query, '/api/project_list/', id)
-        return render_to_response('project_list.html',
-                                  {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
+        return render_to_response("login.html")
 
 
 '''模块列表'''
 
 
 def module_list(request, id):
-    if request.is_ajax():
-        module_info = json.loads(request.body.decode('utf-8'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            module_info = json.loads(request.body.decode('utf-8'))
 
-        if 'status' in module_info.keys():
-            msg = change_status(ModuleInfo, **module_info)
-            return HttpResponse(get_ajax_msg(msg, '模块状态已更改！'))
+            if 'status' in module_info.keys():
+                msg = change_status(ModuleInfo, **module_info)
+                return HttpResponse(get_ajax_msg(msg, '模块状态已更改！'))
+            else:
+                msg = module_info_logic(type=False, **module_info)
+                return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
         else:
-            msg = module_info_logic(type=False, **module_info)
-            return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
+            filter_query = set_filter_session(request)
+            module_list = get_pager_info(
+                ModuleInfo, filter_query, '/api/module_list/', id)
+            return render_to_response('module_list.html',
+                                      {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
     else:
-        filter_query = set_filter_session(request)
-        module_list = get_pager_info(
-            ModuleInfo, filter_query, '/api/module_list/', id)
-        return render_to_response('module_list.html',
-                                  {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
+        return render_to_response("login.html")
 
 
 '''配置或用例列表'''
 
 
 def test_list(request, id):
-    if request.is_ajax():
-        test_info = json.loads(request.body.decode('utf-8'))
-        if 'status' in test_info.keys():
-            msg = change_status(TestCaseInfo, **test_info)
-            return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            test_info = json.loads(request.body.decode('utf-8'))
+            if 'status' in test_info.keys():
+                msg = change_status(TestCaseInfo, **test_info)
+                return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
+        else:
+            filter_query = set_filter_session(request)
+            test_list = get_pager_info(
+                TestCaseInfo, filter_query, '/api/test_list/', id)
+            return render_to_response('test_list.html',
+                                      {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
     else:
-        filter_query = set_filter_session(request)
-        test_list = get_pager_info(
-            TestCaseInfo, filter_query, '/api/test_list/', id)
-        return render_to_response('test_list.html',
-                                  {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
+        return render_to_response("login.html")
 
 
 '''用例编辑'''
 
 
 def edit_case(request, id):
-    if request.is_ajax():
-        testcase_lists = json.loads(request.body.decode('utf-8'))
-        msg = case_info_logic(**testcase_lists, type=False)
-        return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            testcase_lists = json.loads(request.body.decode('utf-8'))
+            msg = case_info_logic(**testcase_lists, type=False)
+            return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
-    elif request.method == 'GET':
-        test_info = TestCaseInfo.objects.get_case_by_id(int(id))
-        request = eval(test_info[0].request)
-        return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
+        elif request.method == 'GET':
+            test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+            request = eval(test_info[0].request)
+            return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
+    else:
+        return render_to_response("login.html")
 
 
 '''配置编辑'''
 
 
 def edit_config(request, id):
-    if request.is_ajax():
-        testconfig_lists = json.loads(request.body.decode('utf-8'))
-        msg = config_info_logic(type=False, **testconfig_lists)
-        return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            testconfig_lists = json.loads(request.body.decode('utf-8'))
+            msg = config_info_logic(type=False, **testconfig_lists)
+            return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
 
-    elif request.method == 'GET':
-        test_info = TestCaseInfo.objects.get_case_by_id(int(id))
-        request = eval(test_info[0].request)
-        return render_to_response('edit_config.html', {'info': test_info[0], 'request': request['config']})
+        elif request.method == 'GET':
+            test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+            request = eval(test_info[0].request)
+            return render_to_response('edit_config.html', {'info': test_info[0], 'request': request['config']})
+    else:
+        return render_to_response("login.html")
 
 
 '''测试代码'''
