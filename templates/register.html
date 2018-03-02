@@ -12,16 +12,18 @@
     <link href="{% static "/assets/css/css-index.css" %}" rel="stylesheet" media="screen">
     <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
 
-
+    <style>
+        .has-error .checkbox, .has-error .checkbox-inline, .has-error .control-label, .has-error .help-block, .has-error .radio, .has-error .radio-inline, .has-error.checkbox label, .has-error.checkbox-inline label, .has-error.radio label, .has-error.radio-inline label {
+            color: limegreen;
+        }
+    </style>
 </head>
 
 <body data-spy="scroll" data-target="#navbar-scroll">
 
-<!-- /.preloader -->
 <div id="preloader" style="background: #fff url({% static "assets/img/loading.GIF" %}) no-repeat center center;"></div>
 <div id="top"></div>
 
-<!-- /.parallax full screen background image -->
 <div class="fullscreen landing parallax" style="background-image:url({% static "assets/img/bg.jpg" %});"
      data-img-width="2000" data-img-height="1333" data-diff="100">
 
@@ -61,7 +63,7 @@
 
                     <div class="signup-header wow fadeInUp">
                         <h3 class="form-title text-center">GET STARTED</h3>
-                        <form class="form-header" action="/api/register/" role="form" method="POST" id="register_form">
+                        <form class="form-header" role="form" id="register_form">
                             <div class="form-group">
                                 <input class="form-control input-lg" name="account" id="account" type="text"
                                        placeholder="Your Account">
@@ -79,7 +81,8 @@
                                        placeholder="Repassword">
                             </div>
                             <div class="form-group last">
-                                <input type="submit" class="btn btn-warning btn-block btn-lg" value="Register">
+                                <input type="button" class="btn btn-warning btn-block btn-lg" value="Register"
+                                       onclick="register_ajax('#register_form')">
                             </div>
                             <p style="font-size: medium" class="privacy text-center">Do hava account? Please <a
                                     href="/api/login/" style="color: darkblue">Login</a>.</p>
@@ -92,8 +95,9 @@
     </div>
 </div>
 
-<!-- /.javascript files -->
+<!-- /.javascript files -->2
 <script src="{% static "assets/js/jquery.min.js" %}"></script>
+<script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 <script src="{% static "assets/js/custom.js" %}"></script>
 <script src="{% static "assets/js/jquery.sticky.js" %}"></script>
@@ -109,16 +113,6 @@
                 valid: 'glyphicon glyphicon-ok',
                 invalid: 'glyphicon glyphicon-remove',
                 validating: 'glyphicon glyphicon-refresh'
-            },
-            submitHandler: function (validator, form, submitButton) {
-                $.post(form.attr('action'), form.serialize(), function (result) {
-                    if (result.valid == true || result.valid == 'true') {
-                        window.location.reload();
-                    } else {
-                        $('#errors').html('The account is not found').removeClass('hide');
-                        $('#loginForm').bootstrapValidator('disableSubmitButtons', false);
-                    }
-                }, 'json');
             },
             fields: {
                 account: {
@@ -150,7 +144,7 @@
                         },
                         different: {
                             field: 'account',
-                            message: '不能和用户名相同'
+                            message: '密码不能和用户名相同'
                         },
                         regexp: {
                             regexp: /^[a-z0-9_-]{3,16}$/,
@@ -159,17 +153,17 @@
                     }
                 },
                 repassword: {
-                 message: '密码无效',
-                 validators: {
-                     notEmpty: {
-                         message: '确认密码不能为空'
-                     },
-                     identical: {//相同
-                         field: 'password',
-                         message: '两次密码不一致'
-                     },
-                 }
-             },
+                    message: '密码无效',
+                    validators: {
+                        notEmpty: {
+                            message: '确认密码不能为空'
+                        },
+                        identical: {//相同
+                            field: 'password',
+                            message: '两次密码不一致'
+                        },
+                    }
+                },
                 email: {
                     validators: {
                         notEmpty: {
@@ -183,6 +177,33 @@
             }
         });
     });
+
+    /*表单信息异步传输*/
+    function register_ajax(id) {
+        if ($(id).data('bootstrapValidator').isValid()) {
+            var data = $(id).serializeJSON();
+            var url;
+            if (id === "#register_form") {
+                url = '/api/register/';
+            }
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    if(data === '恭喜您，账号已成功注册'){
+                        window.location.href = '/api/login/';
+                    }else {
+                        alert(data);
+                    }
+                },
+                error: function () {
+                    alert('Sorry，服务器可能开小差啦, 请重试!')
+                }
+            });
+        }
+    }
 </script>
 
 </body>
