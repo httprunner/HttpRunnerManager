@@ -64,8 +64,7 @@ def main_hrun():
         exit(0)
 
     result = HttpRunner(args.testset_paths, failfast=args.failfast).run(
-        html_report_name=args.html_report_name,
-        html_report_template=args.html_report_template
+        html_report_name=args.html_report_name
     )
 
     print_output(result["output"])
