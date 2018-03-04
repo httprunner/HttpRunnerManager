@@ -49,7 +49,7 @@ def register(request):
 def log_out(request):
     if request.method == 'GET':
         del request.session['now_account']
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''首页'''
@@ -68,7 +68,7 @@ def index(request):
         }
         return render_to_response('index.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加项目'''
@@ -87,7 +87,7 @@ def add_project(request):
             }
             return render_to_response('add_project.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加模块'''
@@ -106,7 +106,7 @@ def add_module(request):
             }
             return render_to_response('add_module.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''
@@ -127,7 +127,7 @@ def add_case(request):
             }
             return render_to_response('add_case.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加配置'''
@@ -146,7 +146,7 @@ def add_config(request):
             }
             return render_to_response('add_config.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''单个执行'''
@@ -165,7 +165,7 @@ def run_test(request, mode, id):
                 result = get_result(test_lists)
             return render_to_response('report_template.html', result)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''批量执行'''
@@ -188,7 +188,7 @@ def add_api(request):
     if request.session.get('login_status'):
         return render_to_response('add_api.html')
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''项目列表'''
@@ -217,7 +217,7 @@ def project_list(request, id):
             }
             return render_to_response('project_list.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''模块列表'''
@@ -246,7 +246,7 @@ def module_list(request, id):
             }
             return render_to_response('module_list.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''配置或用例列表'''
@@ -271,7 +271,7 @@ def test_list(request, id):
             }
             return render_to_response('test_list.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''用例编辑'''
@@ -294,7 +294,7 @@ def edit_case(request, id):
             }
             return render_to_response('edit_case.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''配置编辑'''
@@ -317,7 +317,7 @@ def edit_config(request, id):
             }
             return render_to_response('edit_config.html', manage_info)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''测试代码'''
