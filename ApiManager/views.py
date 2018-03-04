@@ -48,7 +48,16 @@ def register(request):
 
 def index(request):
     if request.session.get('login_status'):
-        return render_to_response('index.html', {'account': request.session["now_account"]})
+        project_length = ProjectInfo.objects.count()
+        module_length = ModuleInfo.objects.count()
+        test_length = TestCaseInfo.objects.filter(type__exact=1).count()
+        manage_info = {
+            'project_length': project_length,
+            'module_length': module_length,
+            'test_length': test_length,
+            'account':request.session["now_account"]
+        }
+        return render_to_response('index.html', manage_info)
     else:
         return render_to_response("login.html")
 
