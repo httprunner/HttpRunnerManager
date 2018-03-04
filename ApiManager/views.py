@@ -55,7 +55,7 @@ def index(request):
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
-            'account':request.session["now_account"]
+            'account': request.session["now_account"]
         }
         return render_to_response('index.html', manage_info)
     else:
@@ -84,14 +84,13 @@ def add_project(request):
 def add_module(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            project_info = json.loads(request.body.decode('utf-8'))
-            msg = project_info_logic(**project_info)
-            return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
+            module_info = json.loads(request.body.decode('utf-8'))
+            msg = module_info_logic(**module_info)
+            return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
         elif request.method == 'GET':
-            return render_to_response('add_project.html')
+            return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
     else:
         return render_to_response("login.html")
-
 
 '''
 添加用例
