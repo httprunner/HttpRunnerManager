@@ -205,7 +205,7 @@ def project_list(request, id):
             else:
                 msg = project_info_logic(type=False, **project_info)
                 return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
-        elif request.method == 'GET':
+        elif request.method == 'POST':
             filter_query = set_filter_session(request)
             pro_list = get_pager_info(
                 ProjectInfo, filter_query, '/api/project_list/', id)
@@ -234,7 +234,7 @@ def module_list(request, id):
             else:
                 msg = module_info_logic(type=False, **module_info)
                 return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
-        elif request.method == 'GET':
+        elif request.method == 'POST':
             filter_query = set_filter_session(request)
             module_list = get_pager_info(
                 ModuleInfo, filter_query, '/api/module_list/', id)
@@ -259,7 +259,7 @@ def test_list(request, id):
             if 'status' in test_info.keys():
                 msg = change_status(TestCaseInfo, **test_info)
                 return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
-        elif request.method == 'GET':
+        elif request.method == 'POST':
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
                 TestCaseInfo, filter_query, '/api/test_list/', id)
