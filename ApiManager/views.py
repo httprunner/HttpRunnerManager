@@ -43,6 +43,15 @@ def register(request):
         return render_to_response("register.html")
 
 
+'''注销'''
+
+
+def log_out(request):
+    if request.method == 'GET':
+        del request.session['now_account']
+        return render_to_response("login.html")
+
+
 '''首页'''
 
 
