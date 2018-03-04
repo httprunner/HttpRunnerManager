@@ -73,7 +73,10 @@ def add_project(request):
             return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
         elif request.method == 'GET':
-            return render_to_response('add_project.html')
+            manage_info = {
+                'account': request.session["now_account"]
+            }
+            return render_to_response('add_project.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -88,9 +91,14 @@ def add_module(request):
             msg = module_info_logic(**module_info)
             return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
         elif request.method == 'GET':
-            return render_to_response('add_module.html', {'data': ProjectInfo.objects.all().values('pro_name')})
+            manage_info = {
+                'account': request.session["now_account"],
+                'data': ProjectInfo.objects.all().values('pro_name')
+            }
+            return render_to_response('add_module.html', manage_info)
     else:
         return render_to_response("login.html")
+
 
 '''
 添加用例
@@ -99,13 +107,16 @@ def add_module(request):
 
 def add_case(request):
     if request.session.get('login_status'):
-        project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
         if request.is_ajax():
             testcase_lists = json.loads(request.body.decode('utf-8'))
             msg = case_info_logic(**testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
         elif request.method == 'GET':
-            return render_to_response('add_case.html', {'project': project})
+            manage_info = {
+                'account': request.session["now_account"],
+                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+            }
+            return render_to_response('add_case.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -115,14 +126,16 @@ def add_case(request):
 
 def add_config(request):
     if request.session.get('login_status'):
-        project = ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
         if request.is_ajax():
             testconfig_lists = json.loads(request.body.decode('utf-8'))
             msg = config_info_logic(**testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
-
         elif request.method == 'GET':
-            return render_to_response('add_config.html', {'project': project})
+            manage_info = {
+                'account': request.session["now_account"],
+                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+            }
+            return render_to_response('add_config.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -183,12 +196,17 @@ def project_list(request, id):
             else:
                 msg = project_info_logic(type=False, **project_info)
                 return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
-        else:
+        elif request.method == 'GET':
             filter_query = set_filter_session(request)
             pro_list = get_pager_info(
                 ProjectInfo, filter_query, '/api/project_list/', id)
-            return render_to_response('project_list.html',
-                                      {'project': pro_list[1], 'page_list': pro_list[0], 'info': filter_query})
+            manage_info = {
+                'account': request.session["now_account"],
+                'project': pro_list[1],
+                'page_list': pro_list[0],
+                'info': filter_query
+            }
+            return render_to_response('project_list.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -207,12 +225,17 @@ def module_list(request, id):
             else:
                 msg = module_info_logic(type=False, **module_info)
                 return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
-        else:
+        elif request.method == 'GET':
             filter_query = set_filter_session(request)
             module_list = get_pager_info(
                 ModuleInfo, filter_query, '/api/module_list/', id)
-            return render_to_response('module_list.html',
-                                      {'module': module_list[1], 'page_list': module_list[0], 'info': filter_query})
+            manage_info = {
+                'account': request.session["now_account"],
+                'module': module_list[1],
+                'page_list': module_list[0],
+                'info': filter_query
+            }
+            return render_to_response('module_list.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -227,12 +250,17 @@ def test_list(request, id):
             if 'status' in test_info.keys():
                 msg = change_status(TestCaseInfo, **test_info)
                 return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
-        else:
+        elif request.method == 'GET':
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
                 TestCaseInfo, filter_query, '/api/test_list/', id)
-            return render_to_response('test_list.html',
-                                      {'test': test_list[1], 'page_list': test_list[0], 'info': filter_query})
+            manage_info = {
+                'account': request.session["now_account"],
+                'test': test_list[1],
+                'page_list': test_list[0],
+                'info': filter_query
+            }
+            return render_to_response('test_list.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -250,7 +278,12 @@ def edit_case(request, id):
         elif request.method == 'GET':
             test_info = TestCaseInfo.objects.get_case_by_id(int(id))
             request = eval(test_info[0].request)
-            return render_to_response('edit_case.html', {'info': test_info[0], 'request': request['test']})
+            manage_info = {
+                'account': request.session["now_account"],
+                'info': test_info[0],
+                'request': request['test']
+            }
+            return render_to_response('edit_case.html', manage_info)
     else:
         return render_to_response("login.html")
 
@@ -268,7 +301,12 @@ def edit_config(request, id):
         elif request.method == 'GET':
             test_info = TestCaseInfo.objects.get_case_by_id(int(id))
             request = eval(test_info[0].request)
-            return render_to_response('edit_config.html', {'info': test_info[0], 'request': request['config']})
+            manage_info = {
+                'account': request.session["now_account"],
+                'info': test_info[0],
+                'request': request['config']
+            }
+            return render_to_response('edit_config.html', manage_info)
     else:
         return render_to_response("login.html")
 
