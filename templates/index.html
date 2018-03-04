@@ -6,29 +6,29 @@
         <div class="admin-index">
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 100}">
                 <dt class="qs"><i class="am-icon-users"></i></dt>
-                <dd>455</dd>
+                <dd>{{ project_length }}</dd>
                 <dd class="f12">项目数量</dd>
             </dl>
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 300}">
                 <dt class="cs"><i class="am-icon-area-chart"></i></dt>
-                <dd>455</dd>
+                <dd>{{ module_length }}</dd>
                 <dd class="f12">模块数量</dd>
             </dl>
-            <dl data-am-scrollspy="{animation: 'slide-right', delay: 600}">
+           {% comment %} <dl data-am-scrollspy="{animation: 'slide-right', delay: 600}">
                 <dt class="hs"><i class="am-icon-shopping-cart"></i></dt>
                 <dd>455</dd>
                 <dd class="f12">已有接口</dd>
-            </dl>
+            </dl>{% endcomment %}
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 900}">
                 <dt class="ls"><i class="am-icon-cny"></i></dt>
-                <dd>455</dd>
+                <dd>{{ test_length }}</dd>
                 <dd class="f12">用例个数</dd>
             </dl>
         </div>
 
         <!-- Modal -->
 
-        <div class="admin-biaoge">
+        {% comment %}<div class="admin-biaoge">
             <div class="xinxitj">项目概况</div>
             <table class="am-table">
                 <thead>
@@ -293,12 +293,12 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div>{% endcomment %}
 
-        <div class="foods">
+        {% comment %}<div class="foods">
             <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
             <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
-        </div>
+        </div>{% endcomment %}
     </div>
 
 {% endblock %}
