@@ -160,6 +160,8 @@
     </div>
 
     <script>
+        index = 1;
+
         function addNewRow(id) {
             var tabObj = document.getElementById(id);//获取添加数据的表格
             var rowsNum = tabObj.rows.length;  //获取当前行数
@@ -174,26 +176,25 @@
                 attribute = 'validate';
             }
             var style = 'width:100%; border: none';
-            var ids = 'nodename' + rowsNum;
-            var cellHtml1 = "<input type='text' name='cell1_key" + id + rowsNum + "' id='" + ids + "' value='' style='" + style + "' />";
-            var cellHtml2 = "<input type='text' name='cell2_value" + id + rowsNum + "' id='" + ids + "' value='' style='" + style + "' />";
-            var cellHtml3 = "<input type='text' name='cell3_value" + id + rowsNum + "' id='" + ids + "' value='' style='" + style + "' />";
+            var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
+            var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "'  value='' style='" + style + "' />";
+            var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "'  value='' style='" + style + "' />";
             var myNewRow = tabObj.insertRow(rowsNum);
             var newTdObj0 = myNewRow.insertCell(0);
             var newTdObj1 = myNewRow.insertCell(1);
             var newTdObj2 = myNewRow.insertCell(2);
-            newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + rowsNum + "' style='width:55px' />";
+            newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + index + "' style='width:55px' />";
             newTdObj1.innerHTML = cellHtml1;
             if (id !== 'validate') {
                 newTdObj2.innerHTML = cellHtml2;
             } else {
-                newTdObj2.innerHTML = "<select name='cell_2comparator" + id + rowsNum + "' class='form-control' style='height: 25px; font-size: 15px; " +
+                newTdObj2.innerHTML = "<select name='cell_2comparator" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
                     "padding-top: 0px; padding-left: 0px; border: none'> " +
                     "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
                 var newTdObj3 = myNewRow.insertCell(3);
                 newTdObj3.innerHTML = cellHtml3;
             }
-
+            index++;
         }
 
         /*表格删除行*/
