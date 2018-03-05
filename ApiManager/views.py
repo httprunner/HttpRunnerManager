@@ -284,11 +284,13 @@ def edit_case(request, id):
             msg = case_info_logic(**testcase_lists, type=False)
             return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
-        elif request.method == 'GET':
-            test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+        elif request.method == 'POST':
+            id = request.POST.get('id')
+            account = request.POST.get('account')
+            test_info = TestCaseInfo.objects.get_case_by_id(id)
             request = eval(test_info[0].request)
             manage_info = {
-                'account': request.session["now_account"],
+                'account': account,
                 'info': test_info[0],
                 'request': request['test']
             }
@@ -307,11 +309,13 @@ def edit_config(request, id):
             msg = config_info_logic(type=False, **testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
 
-        elif request.method == 'GET':
-            test_info = TestCaseInfo.objects.get_case_by_id(int(id))
+        elif request.method == 'POST':
+            id = request.POST.get('id')
+            account = request.POST.get('account')
+            test_info = TestCaseInfo.objects.get_case_by_id(id)
             request = eval(test_info[0].request)
             manage_info = {
-                'account': request.session["now_account"],
+                'account': account,
                 'info': test_info[0],
                 'request': request['config']
             }
