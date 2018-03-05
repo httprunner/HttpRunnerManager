@@ -138,19 +138,19 @@
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                                    onclick="window.open('/api/run_test/run_by_test/{{ foo.id }}')">
+                                                    onclick="window.location.href('/api/run_test/run_by_test/{{ foo.id }}')">
                                                 <span class="am-icon-bug"></span></button>
 
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                                    onclick="window.open('/api/edit_case/{{ foo.id }}')"> <span
+                                                    onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
                                                     class="am-icon-pencil-square-o"></span></button>
                                         {% elif foo.type == 2 %}
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                                    onclick="window.open('/api/edit_config/{{ foo.id }}')"> <span
+                                                    onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
                                                     class="am-icon-pencil-square-o"></span></button>
                                         {% endif %}
 
@@ -227,5 +227,22 @@
                 }
             });
         }
+
+        function post(URL, PARAMS) {
+            var temp = document.createElement("form");
+            temp.action = URL;
+            temp.method = "post";
+            temp.style.display = "none";
+            for (var x in PARAMS) {
+                var opt = document.createElement("input");
+                opt.name = x;
+                opt.value = PARAMS[x];
+                temp.appendChild(opt);
+            }
+            document.body.appendChild(temp);
+            temp.submit();
+            return temp;
+        }
+
     </script>
 {% endblock %}
