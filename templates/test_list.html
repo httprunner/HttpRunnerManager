@@ -116,12 +116,14 @@
                                 <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td>test</td>
+                                <td><a href="#" onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a></td>
                             {% elif foo.type == 2 %}
                                 <td><input type="checkbox" disabled/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td>config</td>
+                                <td><a href="#" onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a></td>
                             {% endif %}
-                            <td><a href="/api/edit_case/{{ foo.id }}">{{ foo.name }}</a></td>
+
                             <td>{{ foo.belong_project }}</td>
                             <td>{{ foo.belong_module.module_name }}</td>
                             <td>{{ foo.author }}</td>
