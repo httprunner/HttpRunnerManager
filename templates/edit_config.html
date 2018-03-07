@@ -125,15 +125,15 @@
                                    style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
                             <select class="form-control" name="DataType" id="config_data_type">
                                 {% if 'data' in request.request.keys %}
-                                    <option>data</option>
+                                    <option selected>data</option>
                                     <option>json</option>
                                     <option>params</option>
                                 {% elif 'json' in request.request.keys %}
-                                    <option>json</option>
+                                    <option selected>json</option>
                                     <option>data</option>
                                     <option>params</option>
                                 {% elif 'params' in request.request.keys %}
-                                    <option>params</option>
+                                    <option selected>params</option>
                                     <option>data</option>
                                     <option>json</option>
                                 {% else %}
