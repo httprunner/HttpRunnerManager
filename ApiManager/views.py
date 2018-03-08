@@ -152,9 +152,11 @@ def add_config(request):
 '''单个执行'''
 
 
-def run_test(request, mode, id):
+def run_test(request):
     if request.session.get('login_status'):
-        if request.method == 'GET':
+        if request.method == 'POST':
+            mode = request.POST.get('mode')
+            id = request.POST.get('id')
             if mode == 'run_by_test':
                 result = main_ate(run_by_single(id))
             elif mode == 'run_by_module':
@@ -277,7 +279,7 @@ def test_list(request, id):
 '''用例编辑'''
 
 
-def edit_case(request, id):
+def edit_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testcase_lists = json.loads(request.body.decode('utf-8'))
@@ -302,7 +304,7 @@ def edit_case(request, id):
 '''配置编辑'''
 
 
-def edit_config(request, id):
+def edit_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testconfig_lists = json.loads(request.body.decode('utf-8'))
