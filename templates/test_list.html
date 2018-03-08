@@ -116,12 +116,16 @@
                                 <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td>test</td>
-                                <td><a href="#" onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a></td>
+                                <td><a href="#"
+                                       onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
+                                </td>
                             {% elif foo.type == 2 %}
                                 <td><input type="checkbox" disabled/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td>config</td>
-                                <td><a href="#" onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a></td>
+                                <td><a href="#"
+                                       onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
+                                </td>
                             {% endif %}
 
                             <td>{{ foo.belong_project }}</td>
@@ -140,6 +144,7 @@
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '运行', trigger: 'hover focus'}"
+                                                    onclick="post('/api/run_test/', {'id':'{{ foo.id }}', 'mode':'run_by_test'})">
                                                 <span class="am-icon-bug"></span></button>
 
                                             <button type="button"
