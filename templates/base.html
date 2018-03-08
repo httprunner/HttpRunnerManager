@@ -12,11 +12,21 @@
 
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
-    <link href="{% static "/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"/>
-    <link href="{% static "/bootstrap/css/bootstrap-theme.min.css" %}" rel="stylesheet"/>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css"
+          rel="stylesheet"/>
+    <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
     <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.21.0/moment.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+    <script src="{% static "assets/js/amazeui.min.js" %}"></script>
+    <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
+    <script src="{% static "assets/js/app.js" %}"></script>
+    <script src="{% static "assets/js/commons.js" %}"></script>
 </head>
 <body>
 
@@ -37,7 +47,8 @@
     <div class="nav-navicon admin-main admin-sidebar">
 
 
-        <div class="sideMenu am-icon-dashboard" style="color:#aeb2b7; margin: 10px 0 0 0;"> 欢迎您：{{ account }} &nbsp;&nbsp;<a href='/api/log_out/'>注 销</a></div>
+        <div class="sideMenu am-icon-dashboard" style="color:#aeb2b7; margin: 10px 0 0 0;"> 欢迎您：{{ account }} &nbsp;&nbsp;<a
+                href='/api/log_out/'>注 销</a></div>
         <div class="sideMenu">
             <h3 class="am-icon-flag"><em></em> <a href="#">项目管理</a></h3>
             <ul>
@@ -75,31 +86,27 @@
         <ul>
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"> 返回首页 <a
-                        href="/api/index/" class="am-close am-close-spin" >~</a></button>
+                        href="/api/index/" class="am-close am-close-spin">~</a></button>
             </li>
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增模块<a
-                        href="/api/add_module/" class="am-close am-close-spin" >~</a>
+                        href="/api/add_module/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增接口<a
-                        href="/api/add_api/" class="am-close am-close-spin" >~</a>
+                        href="/api/add_api/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增用例<a
-                        href="/api/add_case/" class="am-close am-close-spin" >~</a>
+                        href="/api/add_case/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
         </ul>
     </div>
     {% block content %}{% endblock %}
-    <script src="{% static "assets/js/jquery.min.js" %}"></script>
-    <script src="{% static "assets/js/amazeui.min.js" %}"></script>
-    <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
-    <script src="{% static "assets/js/app.js" %}"></script>
-    <script src="{% static "assets/js/commons.js" %}"></script>
+
     <script type="text/javascript">
         jQuery(".sideMenu").slide({
             titCell: "h3", //鼠标触发对象
