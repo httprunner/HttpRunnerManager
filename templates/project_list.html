@@ -201,7 +201,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                            onclick="window.open('/api/run_test/run_by_project/{{ foo.id }}')">
+                                            onclick="post('/api/run_test/',{'mode':'run_by_project','id':'{{ foo.id }}'})">
                                         <span class="am-icon-bug"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"

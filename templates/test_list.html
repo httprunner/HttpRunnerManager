@@ -140,7 +140,6 @@
                                             <button type="button"
                                                     class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                                     data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                                    onclick="window.location.href('/api/run_test/run_by_test/{{ foo.id }}')">
                                                 <span class="am-icon-bug"></span></button>
 
                                             <button type="button"
@@ -228,22 +227,6 @@
                 onCancel: function () {
                 }
             });
-        }
-
-        function post(URL, PARAMS) {
-            var temp = document.createElement("form");
-            temp.action = URL;
-            temp.method = "post";
-            temp.style.display = "none";
-            for (var x in PARAMS) {
-                var opt = document.createElement("input");
-                opt.name = x;
-                opt.value = PARAMS[x];
-                temp.appendChild(opt);
-            }
-            document.body.appendChild(temp);
-            temp.submit();
-            return temp;
         }
 
     </script>
