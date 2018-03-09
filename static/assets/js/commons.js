@@ -125,7 +125,11 @@ function case_ajax(type) {
         data: JSON.stringify(test),
         contentType: "application/json",
         success: function (data) {
-            myAlert(data)
+            if (data === 'session invalid') {
+                window.location.href = "/api/login";
+            } else {
+                myAlert(data)
+            }
         },
         error: function () {
             myAlert('Sorry，服务器可能开小差啦, 请重试!');
@@ -163,7 +167,11 @@ function config_ajax(type) {
         data: JSON.stringify(config),
         contentType: "application/json",
         success: function (data) {
-            myAlert(data)
+            if (data === 'session invalid') {
+                window.location.href = "/api/login";
+            } else {
+                myAlert(data)
+            }
         },
         error: function () {
             myAlert('Sorry，服务器可能开小差啦, 请重试!');
