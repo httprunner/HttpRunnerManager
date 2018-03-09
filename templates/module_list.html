@@ -252,6 +252,9 @@
         }
 
         function edit(id, module_name, belong_project, test_user, lifting_time, simple_desc, other_desc) {
+            lifting_time = lifting_time.replace("年", "-");
+            lifting_time = lifting_time.replace("月", "-");
+            lifting_time = lifting_time.replace("日", "");
             $('#index').val(id);
             $('#module_name').val(module_name);
             $('#belong_project').val(belong_project);
@@ -290,6 +293,19 @@
                 }
             });
         }
+
+        $(function () {
+            $('#lifting_time').datetimepicker(
+                {
+                    format: 'yyyy-mm-dd hh:ii',
+                    language: 'zh-CN',
+                    weekStart: true,
+                    todayBtn: true,
+                    autoclose: true,
+                    todayHighlight: true,
+                    keyboardNavigation: true
+                });
+        })
     </script>
 
 {% endblock %}

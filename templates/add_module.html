@@ -11,58 +11,64 @@
                 <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">新增模块</a></dl>
             </div>
             <div class="fbneirong">
-                <form class="am-form" id="add_module">
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">模块名称：</div>
-                        <div class="you">
-                            <input type="text" name="module_name" class="am-input-sm" id="module_name"
-                                   placeholder="请输入模块名称">
+                <form class="form-horizontal" id="add_module">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="module_name">模块名称：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="module_name"
+                                   aria-describedby="inputSuccess3Status" name="module_name" placeholder="请输入模块名称">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
-
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">所属项目：</div>
-                        <div class="you">
-                            <select data-am-selected="{searchBox: 1}" name="belong_project" style="display: none;">
+                    <div class="form-group">
+                        <label class="control-label col-md-1 text-primary" for="belong_project">所属项目：</label>
+                        <div class="col-md-5">
+                            {#                            <select class="form-control" data-am-selected="{searchBox: 1}" name="belong_project" style="display: none;">#}
+                            <select name="belong_project" class="form-control">
                                 {% for foo in  data %}
                                     <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
                                 {% endfor %}
-
                             </select>
                         </div>
                     </div>
 
-
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">测试人员：</div>
-                        <div class="you">
-                            <input type="text" class="am-input-sm" name="test_user" placeholder="测试人员">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="test_user">测试人员：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="test_user" name="test_user"
+                                   aria-describedby="inputSuccess3Status" placeholder="请输入参与的测试人员">
+                            <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">提测时间：</div>
-                        <div class="you">
-                            <input type="text" class="am-input-sm" name="lifting_time" placeholder="提测时间">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="lifting_time">提测时间：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="lifting_time" name="lifting_time"
+                                   aria-describedby="inputSuccess3Status" placeholder="预计提测时间">
+                            <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">简要描述：</div>
-                        <div class="you">
-                            <textarea class="" rows="2" name="simple_desc"></textarea>
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="simple_desc">简要描述：</label>
+                        <div class="col-md-5">
+                            <textarea type="text" rows="3" class="form-control" id="simple_desc" name="simple_desc"
+                                      aria-describedby="inputSuccess3Status" placeholder="项目简单概述"></textarea>
+                            <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <div class="am-form-group am-cf">
-                        <div class="zuo">其他信息：</div>
-                        <div class="you">
-                            <textarea class="" rows="2" name="other_desc"></textarea>
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="other_desc">其他信息：</label>
+                        <div class="col-md-5">
+                            <textarea type="text" rows="3" class="form-control" id="other_desc" name="other_desc"
+                                      aria-describedby="inputSuccess3Status" placeholder="项目其他相关信息描述"></textarea>
+                            <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
-
                     <div class="am-form-group am-cf">
-                        <div class="you" style="margin-left: 11%;">
+                        <div class="you" style="margin-left: 8%;">
                             <button type="button" class="am-btn am-btn-success am-radius"
                                     onclick="info_ajax('#add_module')">点 击 提 交
                             </button>&nbsp;
@@ -81,5 +87,19 @@
 
         </div>
     </div>
+    <script type="text/javascript">
+        $(function () {
+            $('#lifting_time').datetimepicker(
+                {
+                    format: 'yyyy-mm-dd hh:ii',
+                    language: 'zh-CN',
+                    weekStart: true,
+                    todayBtn: true,
+                    autoclose: true,
+                    todayHighlight: true,
+                    keyboardNavigation: true
+                });
+        })
+    </script>
 
 {% endblock %}

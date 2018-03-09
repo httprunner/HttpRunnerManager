@@ -12,16 +12,15 @@
 
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css"
-          rel="stylesheet"/>
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-datetimepicker.min.css" %}">
     <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
     <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/moment.js/2.21.0/moment.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="{% static "bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-datetimepicker.min.js" %}"></script>
     <script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
     <script src="{% static "assets/js/amazeui.min.js" %}"></script>
     <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
