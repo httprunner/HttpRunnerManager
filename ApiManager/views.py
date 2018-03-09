@@ -323,7 +323,7 @@ def edit_case(request):
             }
             return render_to_response('edit_case.html', manage_info)
     else:
-        return HttpResponseRedirect("/api/login/")
+        return HttpResponse('session invalid')
 
 
 '''配置编辑'''
@@ -348,7 +348,7 @@ def edit_config(request):
             }
             return render_to_response('edit_config.html', manage_info)
     else:
-        return HttpResponseRedirect("/api/login/")
+        return HttpResponse('session invalid')
 
 
 '''测试代码'''
