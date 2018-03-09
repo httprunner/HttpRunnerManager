@@ -6,7 +6,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要删除该用例/配置么？
+                亲，确定要删除该用例么？
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -19,7 +19,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要恢复该用例/配置么？
+                亲，确定要恢复该用例么？
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -29,179 +29,148 @@
     </div>
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
-            <ul class="am-icon-flag on"> 模块列表</ul>
-            <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">模块展示</a></dl>
+            <ul class="am-icon-flag on"> 用例列表</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">用例展示</a></dl>
             <dl>
-                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
-                        onclick="location='/api/add_module/'">新增模块
+                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
+                        onclick="location='/api/add_case/'">新增用例
                 </button>
+                <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
+                        onclick="location='/api/add_config/'">新增配置
+                </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                        onclick="my_submit('#test_list')">运行
+                </button>
+
             </dl>
         </div>
 
-        <div class="admin-biaogelist">
-            <div class="listbiaoti am-cf">
-                <ul class="am-icon-flag on"> 用例列表</ul>
-                <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">用例展示</a></dl>
-                <dl>
-                    <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
-                            onclick="location='/api/add_case/'">新增用例
-                    </button>
-                    <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
-                            onclick="location='/api/add_config/'">新增配置
-                    </button>
-                    <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                            onclick="my_submit('#test_list')">运行
-                    </button>
-
-                </dl>
-            </div>
-
-            <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-                <form id="pro_filter" method="post" action="/api/test_list/1/">
-                    <ul>
-                        <li>
-                            <div class="am-btn-group am-btn-group-xs">
-                                <select name="filter"
-                                        data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                                    {% if info.filter == '1' %}
-                                        <option value="1" selected>有效</option>
-                                        <option value="0">无效</option>
-                                    {% elif info.filter == '0' %}
-                                        <option value="1">有效</option>
-                                        <option value="0" selected>无效</option>
-                                    {% else %}
-                                        <option value="1">有效</option>
-                                        <option value="0">无效</option>
-                                    {% endif %}
-                                </select>
-                            </div>
-                        </li>
-                        <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
-                                                            class="am-form-field am-input-sm am-input-xm"
-                                                            placeholder="创建者"/></li>
-                        <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                            class="am-form-field am-input-sm am-input-xm"
-                                                            placeholder="用例/配置"/></li>
-                        <li>
-                            <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                    style="margin-top: -1px;">搜索
-                            </button>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-
-
-            <form class="am-form am-g" id='test_list' name="test_list" method="post" action="/api/run_batch_test/">
-                <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
-                    <thead>
-                    <tr class="am-success">
-                        <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
-                        <th class="table-title">序号</th>
-                        <th class="table-title">类型</th>
-                        <th class="table-type">名称</th>
-                        <th class="table-type">所属项目</th>
-                        <th class="table-type">所属模块</th>
-                        <th class="table-type">创建者</th>
-                        <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
-                                class="am-icon-close am-text-primary"></i></th>
-                        <th class="table-date am-hide-sm-only">创建时间</th>
-                        <th width="163px" class="table-title">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for foo in test %}
-                        <tr>
-                            {% if foo.type == 1 %}
-                                <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
-                                <td>{{ forloop.counter }}</td>
-                                <td>test</td>
-                                <td><a href="#"
-                                       onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
-                                </td>
-                            {% elif foo.type == 2 %}
-                                <td><input type="checkbox" disabled/></td>
-                                <td>{{ forloop.counter }}</td>
-                                <td>config</td>
-                                <td><a href="#"
-                                       onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
-                                </td>
-                            {% endif %}
-
-                            <td>{{ foo.belong_project }}</td>
-                            <td>{{ foo.belong_module.module_name }}</td>
-                            <td>{{ foo.author }}</td>
-                            {% if foo.status == 1 %}
-                                <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                            {% else %}
-                                <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                            {% endif %}
-                            <td class="am-hide-sm-only">{{ foo.create_time }}</td>
-                            <td>
-                                <div class="am-btn-toolbar">
-                                    <div class="am-btn-group am-btn-group-xs">
-                                        {% if foo.type == 1 %}
-                                            <button type="button"
-                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                                    data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                                    onclick="post('/api/run_test/', {'id':'{{ foo.id }}', 'mode':'run_by_test'})">
-                                                <span class="am-icon-bug"></span></button>
-
-                                            <button type="button"
-                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                                    data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                                    onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
-                                                    class="am-icon-pencil-square-o"></span></button>
-                                        {% elif foo.type == 2 %}
-                                            <button type="button"
-                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                                    data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                                    onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
-                                                    class="am-icon-pencil-square-o"></span></button>
-                                        {% endif %}
-
-                                        <button type="button"
-                                                class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                                data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                                onclick="valid('in_tec{{ foo.id }}')"><span
-                                                class="am-icon-copy"></span></button>
-                                        <button type="button"
-                                                class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
-                                                data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                                onclick="invalid('un_tec{{ foo.id }}')"><span
-                                                class="am-icon-trash-o"></span></button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="am-btn-group am-btn-group-xs">
-                    <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_case/'"><span
-                            class="am-icon-plus"></span> 新增用例
-                    </button>
-                    <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
-                            class="am-icon-plus"></span> 新增配置
-                    </button>
-                    <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
-                    </button>
-                </div>
-
-                <ul class="am-pagination am-fr">
-                    {{ page_list }}
+        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+            <form id="pro_filter" method="post" action="/api/test_list/1/">
+                <ul>
+                    <li>
+                        <div class="am-btn-group am-btn-group-xs">
+                            <select name="filter"
+                                    data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
+                                {% if info.filter == '1' %}
+                                    <option value="1" selected>有效</option>
+                                    <option value="0">无效</option>
+                                {% elif info.filter == '0' %}
+                                    <option value="1">有效</option>
+                                    <option value="0" selected>无效</option>
+                                {% else %}
+                                    <option value="1">有效</option>
+                                    <option value="0">无效</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </li>
+                    <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="创建者"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="用例"/></li>
+                    <li>
+                        <button class="am-btn am-radius am-btn-xs am-btn-success"
+                                style="margin-top: -1px;">搜索
+                        </button>
+                    </li>
                 </ul>
-
-
-                <hr/>
-
             </form>
-            <div class="foods">
-                <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
-                <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
-            </div>
         </div>
+
+
+        <form class="am-form am-g" id='test_list' name="test_list" method="post" action="/api/run_batch_test/">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-title">序号</th>
+                    <th class="table-type">名称</th>
+                    <th class="table-type">所属项目</th>
+                    <th class="table-type">所属模块</th>
+                    <th class="table-type">创建者</th>
+                    <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
+                            class="am-icon-close am-text-primary"></i></th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th width="163px" class="table-title">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in test %}
+                    <tr>
+                        <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="#"
+                               onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
+                        </td>
+                        <td>{{ foo.belong_project }}</td>
+                        <td>{{ foo.belong_module.module_name }}</td>
+                        <td>{{ foo.author }}</td>
+                        {% if foo.status == 1 %}
+                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
+                        {% else %}
+                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
+                        {% endif %}
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '运行', trigger: 'hover focus'}"
+                                            onclick="post('/api/run_test/', {'id':'{{ foo.id }}', 'mode':'run_by_test'})">
+                                        <span class="am-icon-bug"></span></button>
+
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '编辑', trigger: 'hover focus'}"
+                                            onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
+                                            class="am-icon-pencil-square-o"></span></button>
+
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
+                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
+                                            onclick="valid('in_tec{{ foo.id }}')"><span
+                                            class="am-icon-copy"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
+                                            onclick="invalid('un_tec{{ foo.id }}')"><span
+                                            class="am-icon-trash-o"></span></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_case/'"><span
+                        class="am-icon-plus"></span> 新增用例
+                </button>
+                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
+                        class="am-icon-plus"></span> 新增配置
+                </button>
+                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
+                </button>
+            </div>
+
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+
+
+            <hr/>
+
+        </form>
+        <div class="foods">
+            <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
+            <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
+        </div>
+    </div>
     </div>
     <script type="text/javascript">
         function my_submit(id) {
