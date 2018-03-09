@@ -260,7 +260,7 @@ def test_list(request, id):
             test_info = json.loads(request.body.decode('utf-8'))
             if 'status' in test_info.keys():
                 msg = change_status(TestCaseInfo, **test_info)
-                return HttpResponse(get_ajax_msg(msg, '用例或配置状态已更改！'))
+                return HttpResponse(get_ajax_msg(msg, '用例已更改！'))
         else:
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
@@ -272,6 +272,31 @@ def test_list(request, id):
                 'info': filter_query
             }
             return render_to_response('test_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+'''配置列表'''
+
+
+def config_list(request, id):
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            test_info = json.loads(request.body.decode('utf-8'))
+            if 'status' in test_info.keys():
+                msg = change_status(TestCaseInfo, **test_info)
+                return HttpResponse(get_ajax_msg(msg, '配置已更改！'))
+        else:
+            filter_query = set_filter_session(request)
+            test_list = get_pager_info(
+                TestCaseInfo, filter_query, '/api/config_list/', id)
+            manage_info = {
+                'account': request.session["now_account"],
+                'test': test_list[1],
+                'page_list': test_list[0],
+                'info': filter_query
+            }
+            return render_to_response('config_list.html', manage_info)
     else:
         return HttpResponseRedirect("/api/login/")
 
