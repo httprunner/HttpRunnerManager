@@ -401,24 +401,103 @@
                                     <td><select name="cell_2comparatorvalidate{{ forloop.counter }}"
                                                 class="form-control"
                                                 style="height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none">
-                                        <option>equals</option>
-                                        <option>contains</option>
-                                        <option>startswith</option>
-                                        <option>endswith</option>
-                                        <option>regex_match</option>
-                                        <option>type_match</option>
-                                        <option>contained_by</option>
-                                        <option>less_than</option>
-                                        <option>less_than_or_equals</option>
-                                        <option>greater_than</option>
-                                        <option>greater_than_or_equals</option>
-                                        <option>not_equals</option>
-                                        <option>string_equals</option>
-                                        <option>length_equals</option>
-                                        <option>length_greater_than</option>
-                                        <option>length_greater_than_or_equals</option>
-                                        <option>length_less_than</option>
-                                        <option>length_less_than_or_equals</option>
+                                        {% ifequal foo.comparator 'equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>equals</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'contains' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>contains</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'startswith' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>startswith</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'endswith' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>endswith</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'regex_match' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>regex_match</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'type_match' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>type_match</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'contained_by' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>contained_by</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'less_than' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>less_than</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'less_than_or_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>less_than_or_equals</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'greater_than' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>greater_than</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'greater_than_or_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>greater_than_or_equals</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'not_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>not_equals</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'string_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>string_equals</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'length_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>length_equals</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'length_greater_than' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>length_greater_than</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'length_greater_than_or_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>length_greater_than_or_equals</option>
+                                        {% endifequal %}
+
+                                        {% ifequal foo.comparator 'length_less_than' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>length_less_than</option>
+                                        {% endifequal %}
+                                        {% ifequal foo.comparator 'length_less_than_or_equals' %}
+                                            <option selected>{{ foo.comparator }}</option>
+                                        {% else %}
+                                            <option>length_less_than_or_equals</option>
+                                        {% endifequal %}
+
                                     </select></td>
                                     <td><input type="text" name="cell3_valuevalidate{{ forloop.counter }}"
                                                id="nodename{{ forloop.counter }}" value="{{ foo.expected }}"
@@ -515,3 +594,4 @@
         //去重
     </script>
 {% endblock %}
+
