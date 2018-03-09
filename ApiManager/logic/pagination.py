@@ -102,14 +102,19 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
         elif name != '' and user != '':
             obj = obj.filter(module_name__contains=name).filter(test_user__contains=user)
 
-    elif url == '/api/test_list/':
+    elif url == '/api/test_list/' or url == '/api/config_list/':
+        if url == '/api/test_list/':
+            obj = obj.filter(type__exact=1)
+        else:
+            obj = obj.filter(type__exact=2)
+
         if name == '' and user != '':
             obj = obj.filter(author__contains=user)
         elif name != '' and user == '':
             obj = obj.filter(name__contains=name)
         elif name != '' and user != '':
             obj = obj.filter(name__contains=name).filter(author__contains=user)
-
+    obj = obj.order_by('-create_time')
     total = obj.count()
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]
