@@ -11,7 +11,7 @@
             <ul class="am-icon-flag on"> 用例修改</ul>
             <ul>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="window.open('/api/run_test/run_by_test/{{ info.id }}')">运行
+                        onclick="post('/api/run_test/', {'id':'{{ info.id }}', 'mode':'run_by_test'})">运行
                 </button>
             </ul>
             <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">修改用例</a></dl>
