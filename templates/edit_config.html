@@ -190,7 +190,7 @@
                                     {% endfor %}
 
                                 {% elif 'json' in request.request.keys %}
-                                    {% for key, value in request.request.params.items %}
+                                    {% for key, value in request.request.json.items %}
                                         <tr>
                                             <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
                                                        style="width:55px">
