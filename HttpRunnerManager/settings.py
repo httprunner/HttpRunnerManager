@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
+from __future__ import absolute_import, unicode_literals
 
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import djcelery
 from django.conf.global_settings import SESSION_COOKIE_AGE
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ApiManager',
+    'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +128,8 @@ STATICFILES_DIRS = (
 )
 
 SESSION_COOKIE_AGE = 10 * 60
+
+djcelery.setup_loader()
+
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
