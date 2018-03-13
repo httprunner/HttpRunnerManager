@@ -22,6 +22,5 @@ urlpatterns = [
     url(r'^favicon\.ico$', RedirectView.as_view(url='/static/assets/img/favicon.ico')),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/$', process),
     url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<id>(\w+))/$', process),
-    url('^(?P<app>(\w+))/(?P<function>(\w+))/(?P<mode>(\w+))/(?P<id>(\w+))/$', process),
 
 ]
