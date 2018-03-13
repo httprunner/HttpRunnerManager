@@ -9,6 +9,7 @@ from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
 from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
+from ApiManager.tasks import add
 from httprunner.cli import main_ate
 
 # Create your views here.
@@ -349,6 +350,14 @@ def edit_config(request):
             return render_to_response('edit_config.html', manage_info)
     else:
         return HttpResponse('session invalid')
+
+
+'''test celery'''
+
+
+def test_celery(request):
+    add.delay(1, 2)
+    return HttpResponse('ok')
 
 
 '''测试代码'''
