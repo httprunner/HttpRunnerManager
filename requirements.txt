@@ -9,4 +9,4 @@ colorama == 0.3.9
 colorlog == 3.1.2
 celery == 4.1
 eventlet == 0.22.1
-django-celery = 3.2.2
+django-celery == 3.2.2
