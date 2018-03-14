@@ -1,6 +1,7 @@
 from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
-    add_register_data
+    add_register_data, bulk_import_data
 from ApiManager.models import ModuleInfo
+import yaml
 
 '''前端test信息转字典'''
 
@@ -234,5 +235,13 @@ def register_info_logic(**kwargs):
     return add_register_data(**kwargs)
 
 
+'''上传yml文件内容转列表'''
 
 
+def yml_parser(file_path):
+
+    with open(file_path, 'r') as f:
+        s = yaml.load(f)
+    data = {'case_info':s}
+    bulk_import_data(**data)
+    return s
