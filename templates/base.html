@@ -14,18 +14,31 @@
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
     <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-datetimepicker.min.css" %}">
+    <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput.css" %}">
+    <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput-rtl.css" %}">
+    <link rel="stylesheet" href="{% static "bootstrap-fileinput/themes/explorer-fa/theme.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
     <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
 
+
     <script src="{% static "bootstrap/js/jquery.min.js" %}"></script>
     <script src="{% static "bootstrap/js/bootstrap-datetimepicker.min.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/js/fileinput.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/js/locales/zh.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/js/plugins/sortable.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/js/fileinput.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/js/locales/fr.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/themes/explorer-fa/theme.js" %}"></script>
+    <script src="{% static "bootstrap-fileinput/themes/fa/theme.js" %}"></script>
+
     <script src="{% static "assets/js/amazeui.min.js" %}"></script>
     <script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
     <script src="{% static "assets/js/app.js" %}"></script>
     <script src="{% static "assets/js/commons.js" %}"></script>
 </head>
-<body>
+<body class="modal-open">
 
 
 <div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
@@ -117,7 +130,6 @@
         });
     </script>
 </div>
-
 
 </body>
 </html>
