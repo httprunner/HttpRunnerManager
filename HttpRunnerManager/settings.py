@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'HttpRunnerManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'QCMANAGER',
+        'NAME': 'HttpRunner',
         'USER': 'root',
         'PASSWORD': 'lcc123456',
         'HOST': '127.0.0.1',
