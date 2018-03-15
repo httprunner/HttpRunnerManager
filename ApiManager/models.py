@@ -1,13 +1,15 @@
 from django.db import models
 
-# Create your models here.
 from ApiManager.managers import UserTypeManager, UserInfoManager, ProjectInfoManager, ModuleInfoManager, \
     TestCaseInfoManager
 
 
+# Create your models here.
+
+
 class BaseTable(models.Model):
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField('创建时间', auto_now_add=True)
+    update_time = models.DateTimeField('更新时间', auto_now=True)
 
     class Meta:
         abstract = True
@@ -30,10 +32,10 @@ class UserInfo(BaseTable):
         verbose_name = '用户信息'
         db_table = 'UserInfo'
 
-    username = models.CharField(max_length=20)
-    password = models.CharField(max_length=20)
-    email = models.EmailField()
-    status = models.IntegerField(default=1)
+    username = models.CharField('用户名', max_length=20)
+    password = models.CharField('密码', max_length=20)
+    email = models.EmailField('邮箱')
+    status = models.IntegerField('有效/无效', default=1)
     # user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
     objects = UserInfoManager()
 
@@ -43,14 +45,14 @@ class ProjectInfo(BaseTable):
         verbose_name = '项目信息'
         db_table = 'ProjectInfo'
 
-    pro_name = models.CharField(max_length=50)
-    responsible_name = models.CharField(max_length=20)
-    test_user = models.CharField(max_length=100)
-    dev_user = models.CharField(max_length=100)
-    publish_app = models.CharField(max_length=60)
-    simple_desc = models.CharField(max_length=100, null=True)
-    other_desc = models.CharField(max_length=100, null=True)
-    status = models.IntegerField(default=1)
+    pro_name = models.CharField('项目名称', max_length=50)
+    responsible_name = models.CharField('负责人', max_length=20)
+    test_user = models.CharField('测试人员', max_length=100)
+    dev_user = models.CharField('开发人员', max_length=100)
+    publish_app = models.CharField('发布应用', max_length=60)
+    simple_desc = models.CharField('简要描述', max_length=100, null=True)
+    other_desc = models.CharField('其他信息', max_length=100, null=True)
+    status = models.IntegerField('有效/无效', default=1)
     objects = ProjectInfoManager()
 
 
@@ -59,13 +61,13 @@ class ModuleInfo(BaseTable):
         verbose_name = '模块信息'
         db_table = 'ModuleInfo'
 
-    module_name = models.CharField(max_length=50)
+    module_name = models.CharField('模块名称', max_length=50)
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
-    test_user = models.CharField(max_length=50)
-    lifting_time = models.DateTimeField()
-    simple_desc = models.CharField(max_length=100, null=True)
-    other_desc = models.CharField(max_length=100, null=True)
-    status = models.IntegerField(default=1)
+    test_user = models.CharField('测试负责人', max_length=50)
+    lifting_time = models.DateTimeField('提测时间')
+    simple_desc = models.CharField('简要描述', max_length=100, null=True)
+    other_desc = models.CharField('其他信息', max_length=100, null=True)
+    status = models.IntegerField('有效/无效', default=1)
     objects = ModuleInfoManager()
 
 
@@ -74,14 +76,14 @@ class TestCaseInfo(BaseTable):
         verbose_name = '用例信息'
         db_table = 'TestCaseInfo'
 
-    type = models.IntegerField(default=1)
-    name = models.CharField(max_length=50)
-    belong_project = models.CharField(max_length=50)
+    type = models.IntegerField('test/config', default=1)
+    name = models.CharField('用例/配置名称', max_length=50)
+    belong_project = models.CharField('所属项目', max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
-    include = models.CharField(max_length=200, null=True)
-    author = models.CharField(max_length=20)
-    request = models.TextField()
-    status = models.IntegerField(default=1)
+    include = models.CharField('包含config/test', max_length=200, null=True)
+    author = models.CharField('编写人员', max_length=20)
+    request = models.TextField('请求信息')
+    status = models.IntegerField('有效/无效', default=1)
     objects = TestCaseInfoManager()
 
 
