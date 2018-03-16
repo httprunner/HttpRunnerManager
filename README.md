@@ -27,13 +27,13 @@ Deployment Setp
 
 3. 命令行窗口执行pip install -r requirements.txt 安装工程所依赖的库文件
 
-4. 命令行窗口切换到HttpRunnerManager目录，执行python manager.py makemigrations ApiManager 生成数据库迁移脚本
+4. 命令行窗口切换到HttpRunnerManager目录，执行python manage.py makemigrations ApiManager 生成数据库迁移脚本
 
-5. 执行python manager.py migrate. 对应HttpRunner数据库生成相应表结构
+5. 执行python manage.py migrate 对应HttpRunner数据库生成相应表结构
 
-6. 执行python manager.py createsuperuser 根据提示输入用户名，邮箱，密码
+6. 执行python manage.py createsuperuser 根据提示输入用户名，邮箱，密码
 
-7. 执行python manager.py runserver
+7. 执行python manage.py runserver
 
 8. 浏览器输入：http://127.0.0.1:api/register/  注册用户，开始享用
 
