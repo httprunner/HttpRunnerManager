@@ -1,10 +1,11 @@
 import json
+import os
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from ApiManager.logic.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic
+    set_filter_session, get_ajax_msg, register_info_logic, yml_parser
 from ApiManager.logic.operation import change_status
 from ApiManager.logic.pagination import get_pager_info
 from ApiManager.logic.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
@@ -378,3 +379,25 @@ def test_api(request):
             return HttpResponse('this is a json post request')
         else:
             return HttpResponse('this is a post request')
+
+
+def upload(request):
+    """
+    实现文件上传，
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        return HttpResponse('上传失败，请使用POST方法上传文件')
+    elif request.method == 'POST':
+        obj = request.FILES.get('file')
+        temp_save = os.path.join('upload', obj.name)
+        f = open(temp_save, 'wb')
+        for line in obj.chunks():
+            f.write(line)
+        f.close()
+        yml_parser(temp_save)
+
+        return HttpResponse('上传成功')
+
+

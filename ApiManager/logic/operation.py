@@ -147,3 +147,43 @@ def change_status(Model, **kwargs):
     obj.status = kwargs.pop('status')
     obj.save()
     return 'ok'
+
+'''批量导入用例数据落地'''
+
+
+def bulk_import_data(**kwargs):
+
+    case_opt = TestCaseInfo.objects
+
+    case_request_list = kwargs.get('case_info')  # 获取前端导入的文件处理后的数据
+
+    if isinstance(case_request_list, list):
+        pass
+    else:
+        case_request_list = list(case_request_list)
+    case_list_to_insert = []
+    for values in enumerate(case_request_list):
+
+        # print(values[1])
+        if 'config' in values[1]:
+            name = values[1].get('config').get('name')  # case 配置文件的名字
+            type = 2  #设置类型是config类型
+        else:
+            type = 1
+            name = values[1].get('test').get('name')  # case的名字
+        belong_project = '未分类'  # 系统默认项目分类
+        module = '未分类'  # 系统默认模块分类
+        belong_module = ModuleInfo.objects.get_module_name(module, type=False, project=belong_project)
+        author = 'system'
+        request = values[1]
+        if type == 2:
+            case_list_to_insert.append(TestCaseInfo(name=name, type=type, belong_project=belong_project,
+                                                    belong_module=belong_module, author=author, request=request))
+        else:
+            case_list_to_insert.append(TestCaseInfo(name=name, type=type, belong_project=belong_project,
+                                                    belong_module=belong_module, author=author, request=request))
+
+        # print(case_list_to_insert)
+
+    case_opt.bulk_create(case_list_to_insert)
+    # return 'ok'
