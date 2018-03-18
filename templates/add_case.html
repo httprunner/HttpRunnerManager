@@ -39,7 +39,7 @@
                             <div class="col-md-4">
                                 <select name="project" class="form-control" onclick=info_ajax("#form_message")>
                                     {% for foo in project %}
-                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                        <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
