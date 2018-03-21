@@ -52,22 +52,22 @@
                         <div class="form-group has-feedback has-info">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="project" placeholder="所属项目"
-                                       name="project"
-                                       value="{{ info.belong_project }}" readonly>
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                                <select name="project" class="form-control" onchange=info_ajax("#form_message")>
+                                    <!--<option value=请选择>请选择</option>-->
+                                    {% for foo in project %}
+                                    <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                    {% endfor %}
+                                </select>
+
                             </div>
                         </div>
 
                         <div class="form-group has-feedback has-info">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="project" placeholder="所属模块"
-                                       name="module"
-                                       value="{{ info.belong_module.module_name }}" readonly>
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                                <select id="belong_module_id" name="module" class="form-control">
+                                    <option value=请选择>未分类</option>
+                                </select>
                             </div>
                         </div>
 
