@@ -12,16 +12,16 @@
             <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">新增用例</a></dl>
         </div>
 
-        <div class="am-tabs am-margin" data-am-tabs>
-            <ul class="am-tabs-nav am-nav am-nav-tabs">
-                <li class="am-active"><a href="#tab1">messages</a></li>
-                <li><a href="#tab2">variables</a></li>
-                <li><a href="#tab3">request</a></li>
-                <li><a href="#tab4">extract/validate</a></li>
+        <div class="am-tabs am-margin">
+            <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
+                <li><a href="javascript:;" data-target="#tab1">messages</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables</a></li>
+                <li><a href="javascript:;" data-target="#tab3">request</a></li>
+                <li><a href="javascript:;" data-target="#tab4">extract/validate</a></li>
             </ul>
 
             <div class="am-tabs-bd">
-                <div class="am-tab-panel am-fade am-in am-active " id="tab1">
+                <div class="am-tab-panel" id="tab1">
                     <form class="form-horizontal" id="form_message">
                         <div class="form-group has-feedback has-info">
                             <label for="case_name" class="col-md-2 control-label text-info" style="font-size: 14px;">case_name:</label>
@@ -39,7 +39,7 @@
                             <div class="col-md-4">
                                 <select name="project" class="form-control" onclick=info_ajax("#form_message")>
                                     {% for foo in project %}
-                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                        <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -77,7 +77,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="am-tab-panel am-fade" id="tab2">
+                <div class="am-tab-panel" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="removeRow('variables')">del variables</button>
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('setup')">add setup</button>
@@ -129,7 +129,7 @@
                         </table>
                     </form>
                 </div>
-                <div class="am-tab-panel am-fade" id="tab3">
+                <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
                         <div class="form-group has-success">
                             <label for="url" style="font-size: 14px;">Api Url:</label>
@@ -193,7 +193,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="am-tab-panel am-fade" id="tab4">
+                <div class="am-tab-panel" id="tab4">
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('extract')">add extract</button>
                     <button class="btn btn-danger" value="删 除" onclick="removeRow('extract')">del extract</button>
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('validate')">add validate</button>
@@ -291,6 +291,13 @@
                 }
             }
         }
+
+        $("#tab-test").on("click", "li", function () {
+            $(this).addClass("am-active").siblings("li").removeClass("am-active");
+            var target = $(this).children("a").attr("data-target");
+            $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
+        }).find("li").eq(0).trigger("click");
+
     </script>
 
 {% endblock %}

@@ -129,7 +129,7 @@ def add_case(request):
             }
             return render_to_response('add_case.html', manage_info)
     else:
-        return HttpResponseRedirect("/api/login/")
+        return HttpResponse('session invalid')
 
 
 '''添加配置'''
@@ -148,7 +148,7 @@ def add_config(request):
             }
             return render_to_response('add_config.html', manage_info)
     else:
-        return HttpResponseRedirect("/api/login/")
+        return HttpResponse('session invalid')
 
 
 '''单个执行'''
