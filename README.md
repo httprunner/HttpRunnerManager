@@ -35,6 +35,6 @@ Deployment Setp
 
 7. 执行python manage.py runserver
 
-8. 浏览器输入：http://127.0.0.1:api/register/  注册用户，开始享用
+8. 浏览器输入：http://127.0.0.1:8000/api/register/  注册用户，开始享用
 
 9. 浏览器输入http://127.0.0.1:8000/admin/  输入步骤6设置的用户名、密码，登录后台运维管理系统
