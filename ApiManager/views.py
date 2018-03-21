@@ -321,11 +321,12 @@ def edit_case(request):
             manage_info = {
                 'account': account,
                 'info': test_info[0],
-                'request': request['test']
+                'request': request['test'],
+                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
             }
             return render_to_response('edit_case.html', manage_info)
     else:
-        return HttpResponse('session invalid')
+        return HttpResponseRedirect("/api/login/")
 
 
 '''配置编辑'''
@@ -350,7 +351,7 @@ def edit_config(request):
             }
             return render_to_response('edit_config.html', manage_info)
     else:
-        return HttpResponse('session invalid')
+        return HttpResponseRedirect("/api/login/")
 
 
 '''test celery'''

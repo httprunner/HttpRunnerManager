@@ -4124,13 +4124,14 @@
     };
 
     $.fn.fileinput.defaults = {
-        language: 'en',
-        showCaption: true,
-        showBrowse: true,
-        showPreview: false,
-        showRemove: true,
-        showUpload: true,
-        showCancel: true,
+        language: 'zh', //设置语言
+        // language: 'en',
+        showCaption: true,  //是否显示标题
+        showBrowse: true,  //是否显示文件浏览按钮
+        showPreview: false,  //是够显示预览
+        showRemove: true,  //是否显示移除按钮
+        showUpload: true, //是否显示上传按钮
+        showCancel: false,
         showClose: true,
         showUploadedThumbs: true,
         browseOnZoneClick: false,
@@ -4182,7 +4183,7 @@
         allowedPreviewTypes: undefined,
         allowedPreviewMimeTypes: null,
         allowedFileTypes: null,
-        allowedFileExtensions: null,
+        allowedFileExtensions: ['yml'], //接收的文件后缀
         defaultPreviewContent: null,
         customLayoutTags: {},
         customPreviewTags: {},
@@ -4192,16 +4193,16 @@
         previewFileExtSettings: {},
         buttonLabelClass: 'hidden-xs',
         browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>&nbsp;',
-        browseClass: 'btn btn-primary',
+        browseClass: 'btn btn-primary',  //按钮样式
         removeIcon: '<i class="glyphicon glyphicon-trash"></i>',
         removeClass: 'btn btn-default btn-secondary',
         cancelIcon: '<i class="glyphicon glyphicon-ban-circle"></i>',
         cancelClass: 'btn btn-default btn-secondary',
         uploadIcon: '<i class="glyphicon glyphicon-upload"></i>',
         uploadClass: 'btn btn-default btn-secondary',
-        uploadUrl: null,
+        uploadUrl: null,  //上传地址
         uploadUrlThumb: null,
-        uploadAsync: true,
+        uploadAsync: true,  　//默认默认上传
         uploadExtraData: {},
         zoomModalHeight: 480,
         minImageWidth: null,
@@ -4217,7 +4218,7 @@
         maxFileSize: 0,
         maxFilePreviewSize: 25600, // 25 MB
         minFileCount: 0,
-        maxFileCount: 0,
+        maxFileCount: 0,  //y
         validateInitialCount: false,
         msgValidationErrorClass: 'text-danger',
         msgValidationErrorIcon: '<i class="glyphicon glyphicon-exclamation-sign"></i> ',
@@ -4236,7 +4237,7 @@
         elErrorContainer: null,
         errorCloseButton: $h.closeButton('kv-error-close'),
         slugCallback: null,
-        dropZoneEnabled: true,
+        dropZoneEnabled: true,  //是否显示拖拽区域
         dropZoneTitleClass: 'file-drop-zone-title',
         fileActionSettings: {},
         otherActionButtons: '',
@@ -4333,7 +4334,7 @@
     $(document).ready(function () {
         var $input = $('input.file[type=file]');
         if ($input.length) {
-            $input.fileinput();
+            $input.fileinput().on;
         }
     });
 }));
