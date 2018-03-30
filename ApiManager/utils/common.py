@@ -1,4 +1,4 @@
-from ApiManager.logic.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
+from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data, bulk_import_data
 from ApiManager.models import ModuleInfo
 import yaml
@@ -6,18 +6,40 @@ import yaml
 '''前端test信息转字典'''
 
 
-def key_value_dict(**kwargs):
+def key_value_dict(mode=3, **kwargs):
     if not kwargs:
         return None
     sorted_kwargs = sorted(kwargs.items())
     kwargs.clear()
-    half_index = len(sorted_kwargs) // 2
+    if mode == 3:
+        half_index = len(sorted_kwargs) // 3
 
-    for value in range(half_index):
-        key = sorted_kwargs[value][1]
-        value = sorted_kwargs[half_index + value][1]
-        if key != '' and value != '':
-            kwargs.setdefault(key, value)
+        for value in range(half_index):
+            key = sorted_kwargs[value][1]
+            data_type = sorted_kwargs[value + 2 * half_index][1]
+            value = sorted_kwargs[half_index + value][1]
+            if key != '' and value != '':
+                try:
+                    if data_type == 'string':
+                        value = str(value)
+                    elif data_type == 'float':
+                        value = float(value)
+                    elif data_type == 'int':
+                        value = int(value)
+                    else:
+                        value = bool(value)
+                except ValueError:  # 如果类型转换失败，默认字符串保存
+                    pass
+            if key != '' and value != '':
+                kwargs.setdefault(key, value)
+    else:
+        half_index = len(sorted_kwargs) // 2
+
+        for value in range(half_index):
+            key = sorted_kwargs[value][1]
+            value = sorted_kwargs[half_index + value][1]
+            if key != '' and value != '':
+                kwargs.setdefault(key, value)
 
     return kwargs
 
@@ -25,22 +47,53 @@ def key_value_dict(**kwargs):
 '''前端test信息转列表'''
 
 
-def key_value_list(name='false', **kwargs):
+def key_value_list(mode=4, **kwargs):
     if not kwargs:
         return None
     sorted_kwargs = sorted(kwargs.items())
     lists = []
-    if name == 'true':
-        half_index = len(sorted_kwargs) // 3
+    if mode == 4:
+        half_index = len(sorted_kwargs) // 4
         for value in range(half_index):
             check = sorted_kwargs[value][1]
             expected = sorted_kwargs[value + half_index][1]
             comparator = sorted_kwargs[value + 2 * half_index][1]
+            data_type = sorted_kwargs[value + 3 * half_index][1]
             if check != '' and expected != '':
+                try:
+                    if data_type == 'string':
+                        expected = str(expected)
+                    elif data_type == 'float':
+                        expected = float(expected)
+                    elif data_type == 'int':
+                        expected = int(expected)
+                    else:
+                        expected = bool(expected)
+                except ValueError:  # 如果类型转换失败，默认字符串保存
+                    pass
+
                 lists.append({'check': check, 'comparator': comparator, 'expected': expected})
+    elif mode == 3:
+        half_index = len(sorted_kwargs) // 3
+        for value in range(half_index):
+            key = sorted_kwargs[value][1]
+            data_type = sorted_kwargs[value + 2 * half_index][1]
+            value = sorted_kwargs[half_index + value][1]
+            if key != '' and value != '':
+                try:
+                    if data_type == 'string':
+                        value = str(value)
+                    elif data_type == 'float':
+                        value = float(value)
+                    elif data_type == 'int':
+                        value = int(value)
+                    else:
+                        value = bool(value)
+                except ValueError:  # 如果类型转换失败，默认字符串保存
+                    pass
+                lists.append({key: value})
     else:
         half_index = len(sorted_kwargs) // 2
-
         for value in range(half_index):
             key = sorted_kwargs[value][1]
             value = sorted_kwargs[half_index + value][1]
@@ -127,11 +180,11 @@ def case_info_logic(type=True, **kwargs):
         test.setdefault('case_info', name)
 
         validate = test.pop('validate')
-        test.setdefault('validate', key_value_list(name='true', **validate))
+        test.setdefault('validate', key_value_list(**validate))
 
         extract = test.pop('extract')
         if extract:
-            test.setdefault('extract', key_value_list(**extract))
+            test.setdefault('extract', key_value_list(mode=2, **extract))
 
         request_data = test.get('request').pop('request_data')
         date_type = test.get('request').pop('type')
@@ -140,19 +193,19 @@ def case_info_logic(type=True, **kwargs):
 
         headers = test.get('request').pop('headers')
         if headers:
-            test.get('request').setdefault('headers', key_value_dict(**headers))
+            test.get('request').setdefault('headers', key_value_dict(mode=2, **headers))
 
         variables = test.pop('variables')
         if variables:
-            test.setdefault('variables', key_value_list(**variables))
+            test.setdefault('variables', key_value_list(mode=3, **variables))
 
         setup = test.pop('setup')
         if setup:
-            test.setdefault('setup', key_value_list(**setup))
+            test.setdefault('setup', key_value_list(mode=2, **setup))
 
         teardown = test.pop('teardown')
         if teardown:
-            test.setdefault('teardown', key_value_list(**teardown))
+            test.setdefault('teardown', key_value_list(mode=2, **teardown))
 
         kwargs.setdefault('test', test)
         return add_case_data(type, **kwargs)
@@ -239,9 +292,8 @@ def register_info_logic(**kwargs):
 
 
 def yml_parser(file_path):
-
     with open(file_path, 'r') as f:
         s = yaml.load(f)
-    data = {'case_info':s}
+    data = {'case_info': s}
     bulk_import_data(**data)
     return s

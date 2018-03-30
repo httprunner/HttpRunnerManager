@@ -91,8 +91,9 @@
                             <thead>
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
-                                <th width="55%" align="center">Value</th>
+                                <th width="30%" align="center">Key</th>
+                                <th width="5%" align="center">Data Type</th>
+                                <th width="60%" align="center">Value</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -134,7 +135,7 @@
                     <div class="form-inline">
                         <div class="form-group has-success">
                             <label for="url" style="font-size: 14px;">Api Url:</label>
-                            <input type="text" class="form-control am-input-sm " placeholder="api url"
+                            <input type="text" class="form-control" placeholder="api url"
                                    name="url"
                                    id="url">
                         </div>
@@ -159,23 +160,27 @@
                             </select>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">add data</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">del data</button>
+                        <button class="btn btn-info" value="添 加" id="add_data" onclick="addNewRow('data')">add data
+                        </button>
+                        <button class="btn btn-danger" value="删 除" id="del_data" onclick="removeRow('data')">del data
+                        </button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
-                                <caption>request:</caption>
+                                <caption>data:</caption>
                                 <thead>
                                 <tr class="active text-success">
                                     <th width="5%" align="center">Option</th>
-                                    <th width="40%" align="center">Key</th>
-                                    <th width="55%" align="center">Value</th>
+                                    <th width="30%" align="center">Key</th>
+                                    <th width="5%" align="center">Data Type</th>
+                                    <th width="60%" align="center">Value</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
+
                         </form>
 
                         <form id="form_request_headers">
@@ -195,8 +200,10 @@
                     </div>
                 </div>
                 <div class="am-tab-panel" id="tab4">
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('extract')">add extract</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('extract')">del extract</button>
+                    <button class="btn btn-info" value="添 加" onclick="addNewRow('extract')">add extract
+                    </button>
+                    <button class="btn btn-danger" value="删 除" onclick="removeRow('extract')">del extract
+                    </button>
                     <button class="btn btn-info" value="添 加" onclick="addNewRow('validate')">add validate</button>
                     <button class="btn btn-danger" value="删 除" onclick="removeRow('validate')">del validate</button>
                     <form id="form_extract">
@@ -205,7 +212,7 @@
                             <thead>
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
+                                <th width="30%" align="center">Key</th>
                                 <th width="55%" align="center">Value</th>
                             </tr>
                             </thead>
@@ -220,9 +227,10 @@
                             <thead>
                             <tr class="active text-success">
                                 <th width="2%" align="center">Option</th>
-                                <th width="38%" align="center">Check</th>
+                                <th width="35%" align="center">Check</th>
                                 <th width="10%" align="center">Comparator</th>
-                                <th width="50%" align="center">Expected</th>
+                                <th width="5%" align="center">Data Type</th>
+                                <th width="48%" align="center">Expected</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -253,6 +261,7 @@
     </div>
     <script>
         index = 1;
+
         function addNewRow(id) {
             var tabObj = document.getElementById(id);//获取添加数据的表格
             var rowsNum = tabObj.rows.length;  //获取当前行数
@@ -261,20 +270,33 @@
             var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
             var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "' value='' style='" + style + "' />";
             var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "' value='' style='" + style + "' />";
+            var cellDataType = "<select name='cell_data_type" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
+                "padding-top: 0px; padding-left: 0px; border: none'> " +
+                "<option>string</option><option>int</option><option>float</option><option>boolean</option></select>";
+
             var myNewRow = tabObj.insertRow(rowsNum);
             var newTdObj0 = myNewRow.insertCell(0);
             var newTdObj1 = myNewRow.insertCell(1);
             var newTdObj2 = myNewRow.insertCell(2);
+
+
             newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + index + "' style='width:55px' />";
             newTdObj1.innerHTML = cellHtml1;
-            if (id !== 'validate') {
-                newTdObj2.innerHTML = cellHtml2;
-            } else {
+            if (id === 'variables' || id === 'data') {
+                var newTdObj3 = myNewRow.insertCell(3);
+                newTdObj2.innerHTML = cellDataType;
+                newTdObj3.innerHTML = cellHtml3;
+            } else if (id === 'validate') {
+                var newTdObj3 = myNewRow.insertCell(3);
                 newTdObj2.innerHTML = "<select name='cell_2comparator" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
                     "padding-top: 0px; padding-left: 0px; border: none'> " +
                     "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
-                var newTdObj3 = myNewRow.insertCell(3);
-                newTdObj3.innerHTML = cellHtml3;
+
+                newTdObj3.innerHTML = cellDataType;
+                var newTdObj4 = myNewRow.insertCell(4);
+                newTdObj4.innerHTML = cellHtml3;
+            } else {
+                newTdObj2.innerHTML = cellHtml2;
             }
             index++;
 
@@ -298,6 +320,41 @@
             var target = $(this).children("a").attr("data-target");
             $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
         }).find("li").eq(0).trigger("click");
+
+        $('#DataType').on('change', function () {
+            if ($('#DataType').val() == 'json') {
+                $('#add_data').attr('disabled', true);
+                $('#del_data').attr('disabled', true);
+                $('#data').remove();
+                var json_text = "<div class=\"row\" id=\"json-text\" style=\"margin-left: 0px; margin-top: 10px\">\n" +
+                    "<textarea class=\"form-control\" id=\"json-input\" rows=\"8\" style=\"width: 50%\">{ }</textarea>\n</div>";
+                $('#form_request_data').append(json_text);
+
+            } else {
+                var table = '<table class="table table-hover table-condensed table-bordered table-striped" id="data">\n' +
+                    '                                <caption>'+$($('#DataType').val())+':</caption>\n' +
+                    '                                <thead>\n' +
+                    '                                <tr class="active text-success">\n' +
+                    '                                    <th width="5%" align="center">Option</th>\n' +
+                    '                                    <th width="30%" align="center">Key</th>\n' +
+                    '                                    <th width="5%" align="center">Data Type</th>\n' +
+                    '                                    <th width="60%" align="center">Value</th>\n' +
+                    '                                </tr>\n' +
+                    '                                </thead>\n' +
+                    '                                <tbody>\n' +
+                    '                                </tbody>\n' +
+                    '                            </table>';
+
+                $('#add_data').text('add ' + $('#DataType').val());
+                $('#del_data').text('del ' + $('#DataType').val());
+
+                $('#add_data').removeAttr("disabled");
+                $('#del_data').removeAttr("disabled");
+                $('#data').remove();
+                $('#json-text').remove();
+                $('#form_request_data').append(table);
+            }
+        })
 
     </script>
 

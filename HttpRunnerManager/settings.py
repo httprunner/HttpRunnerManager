@@ -28,7 +28,7 @@ SECRET_KEY = '=w+1if4no=o&6!la#5j)3wsu%k@$)6bf+@3=i0h!5)h9h)$*s7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '192.168.66.93', '192.168.66.113']
 
 # Application definition
 
@@ -127,7 +127,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-SESSION_COOKIE_AGE = 10 * 60
+SESSION_COOKIE_AGE = 600 * 60
 
 djcelery.setup_loader()
 
