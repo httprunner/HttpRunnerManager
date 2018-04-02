@@ -202,3 +202,17 @@ function post(URL, PARAMS) {
     temp.submit();
     return temp;
 }
+
+function removeRow(id) {
+    var attribute = id;
+    var chkObj = document.getElementsByName(attribute);
+    var tabObj = document.getElementById(id);
+    for (var k = 0; k < chkObj.length; k++) {
+        if (chkObj[k].checked) {
+            tabObj.deleteRow(k + 1);
+            k = -1;
+        }
+    }
+}
+
+
