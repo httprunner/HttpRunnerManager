@@ -166,6 +166,8 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
+                        <button id="btn-json-viewer" class="btn btn-info" disabled>convert to json</button>
+
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>data:</caption>
@@ -180,6 +182,7 @@
                                 <tbody>
                                 </tbody>
                             </table>
+
 
                         </form>
 
@@ -251,13 +254,6 @@
 
             </div>
         </div>
-        <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
-            <div class="foods">
-                <ul>版权所有@2017 .微汇金融 <a href="http://ci.weihui.com/" target="_blank" title="微汇金融">微汇金融</a></ul>
-                <dl><a href="" title="返回头部" class="am-icon-btn am-icon-arrow-up"></a></dl>
-            </div>
-
-        </table>
     </div>
     <script>
         index = 1;
@@ -325,14 +321,22 @@
             if ($('#DataType').val() == 'json') {
                 $('#add_data').attr('disabled', true);
                 $('#del_data').attr('disabled', true);
+                $('#btn-json-viewer').removeAttr("disabled");
                 $('#data').remove();
-                var json_text = "<div class=\"row\" id=\"json-text\" style=\"margin-left: 0px; margin-top: 10px\">\n" +
-                    "<textarea class=\"form-control\" id=\"json-input\" rows=\"8\" style=\"width: 50%\">{ }</textarea>\n</div>";
+                var json_text = "<span style=\"font-size:10px;\" id=\"json-text\"><body>\n" +
+                    "                                <div style=\"width:45%; float:left; margin-left: 0px; margin-top: 20px; height: 200px\" >\n" +
+                    "                                    <textarea class=\"form-control\" id=\"json-input\" rows=\"10\" style=\"width: 100%\">{\"key\":\"value\"}\n" +
+                    "                                      </textarea></div>\n" +
+                    "\n" +
+                    "                                <div style=\"width:50%; height:200px;overflow:auto;margin-top: 20px; margin-left: 5%; float:left\">\n" +
+                    "                                    <p id=\"json-renderer\" style=\"width: 100%; padding-left: 20px\"></p>\n" +
+                    "                                </div>\n" +
+                    "                            </body></span>";
                 $('#form_request_data').append(json_text);
 
             } else {
                 var table = '<table class="table table-hover table-condensed table-bordered table-striped" id="data">\n' +
-                    '                                <caption>'+$('#DataType').val()+':</caption>\n' +
+                    '                                <caption>' + $('#DataType').val() + ':</caption>\n' +
                     '                                <thead>\n' +
                     '                                <tr class="active text-success">\n' +
                     '                                    <th width="5%" align="center">Option</th>\n' +
@@ -350,12 +354,28 @@
 
                 $('#add_data').removeAttr("disabled");
                 $('#del_data').removeAttr("disabled");
+                $('#btn-json-viewer').attr('disabled', true);
                 $('#data').remove();
                 $('#json-text').remove();
                 $('#form_request_data').append(table);
             }
         })
-
+        $(function () {
+            $('#btn-json-viewer').click(function () {
+                try {
+                    var input = eval('(' + $('#json-input').val() + ')');
+                }
+                catch (error) {
+                    myAlert("Json 格式有误,请重新输入")
+                }
+                var options = {
+                    collapsed: false,
+                    withQuotes: false
+                };
+                $('#json-renderer').jsonViewer(input, options);
+            });
+            $('#btn-json-viewer').click();
+        });
     </script>
 
 {% endblock %}
