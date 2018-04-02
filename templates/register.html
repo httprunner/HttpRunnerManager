@@ -96,7 +96,7 @@
 </div>
 
 <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-<script src="{% static "assets/js/jquery.serializejson.min.js" %}"></script>
+<script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="{% static "assets/js/custom.js" %}"></script>
 <script src="{% static "assets/js/jquery.sticky.js" %}"></script>
@@ -175,9 +175,9 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 success: function (data) {
-                    if(data === '恭喜您，账号已成功注册'){
+                    if (data === '恭喜您，账号已成功注册') {
                         window.location.href = '/api/login/';
-                    }else {
+                    } else {
                         alert(data);
                     }
                 },
