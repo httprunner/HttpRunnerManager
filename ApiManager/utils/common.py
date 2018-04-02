@@ -243,11 +243,11 @@ def config_info_logic(type=True, **kwargs):
 
         headers = config.get('request').pop('headers')
         if headers:
-            config.get('request').setdefault('headers', key_value_dict(**headers))
+            config.get('request').setdefault('headers', key_value_dict(mode=2, **headers))
 
         variables = config.pop('variables')
         if variables:
-            config.setdefault('variables', key_value_list(**variables))
+            config.setdefault('variables', key_value_list(mode=3, **variables))
 
         kwargs.setdefault('config', config)
         return add_config_data(type, **kwargs)
