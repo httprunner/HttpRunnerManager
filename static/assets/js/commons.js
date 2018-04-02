@@ -215,4 +215,47 @@ function removeRow(id) {
     }
 }
 
+index = 0;//全局变量很重要！！
+
+function addNewRow(id) {
+
+    var tabObj = document.getElementById(id);//获取添加数据的表格
+    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var attribute = id;
+    var style = 'width:100%; border: none';
+    var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
+    var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "' value='' style='" + style + "' />";
+    var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "' value='' style='" + style + "' />";
+    var cellDataType = "<select name='cell_data_type" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
+        "padding-top: 0px; padding-left: 0px; border: none'> " +
+        "<option>string</option><option>int</option><option>float</option><option>boolean</option></select>";
+
+    var myNewRow = tabObj.insertRow(rowsNum);
+    var newTdObj0 = myNewRow.insertCell(0);
+    var newTdObj1 = myNewRow.insertCell(1);
+    var newTdObj2 = myNewRow.insertCell(2);
+
+
+    newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + index + "' style='width:55px' />";
+    newTdObj1.innerHTML = cellHtml1;
+    if (id === 'variables' || id === 'data') {
+        var newTdObj3 = myNewRow.insertCell(3);
+        newTdObj2.innerHTML = cellDataType;
+        newTdObj3.innerHTML = cellHtml3;
+    } else if (id === 'validate') {
+        var newTdObj3 = myNewRow.insertCell(3);
+        newTdObj2.innerHTML = "<select name='cell_2comparator" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
+            "padding-top: 0px; padding-left: 0px; border: none'> " +
+            "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
+
+        newTdObj3.innerHTML = cellDataType;
+        var newTdObj4 = myNewRow.insertCell(4);
+        newTdObj4.innerHTML = cellHtml3;
+    } else {
+        newTdObj2.innerHTML = cellHtml2;
+    }
+    index++;
+
+
+}
 
