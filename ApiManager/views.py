@@ -129,7 +129,7 @@ def add_case(request):
             }
             return render_to_response('add_case.html', manage_info)
     else:
-        return HttpResponse('session invalid')
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加配置'''
@@ -148,7 +148,7 @@ def add_config(request):
             }
             return render_to_response('add_config.html', manage_info)
     else:
-        return HttpResponse('session invalid')
+        return HttpResponseRedirect("/api/login/")
 
 
 '''单个执行'''
@@ -182,7 +182,7 @@ def run_batch_test(request):
             result = get_result(test_lists)
             return render_to_response('report_template.html', result)
     else:
-        return render_to_response("login.html")
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加接口'''
