@@ -79,12 +79,12 @@
                     </form>
                 </div>
                 <div class="am-tab-panel" id="tab2">
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('variables')">add variables</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('variables')">del variables</button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('setup')">add setup</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('setup')">del setup</button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('teardown')">add teardown</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('teardown')">del teardown</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('setup')">add setup</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('setup')">del setup</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('teardown')">add teardown</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('teardown')">del teardown</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -160,12 +160,12 @@
                             </select>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" id="add_data" onclick="addNewRow('data')">add data
+                        <button class="btn btn-info" value="添 加" id="add_data" onclick="add_row('data')">add data
                         </button>
-                        <button class="btn btn-danger" value="删 除" id="del_data" onclick="removeRow('data')">del data
+                        <button class="btn btn-danger" value="删 除" id="del_data" onclick="del_row('data')">del data
                         </button>
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
                         <button id="btn-json-viewer" class="btn btn-info" disabled>convert to json</button>
 
                         <form id="form_request_data">
@@ -203,12 +203,12 @@
                     </div>
                 </div>
                 <div class="am-tab-panel" id="tab4">
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('extract')">add extract
+                    <button class="btn btn-info" value="添 加" onclick="add_row('extract')">add extract
                     </button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('extract')">del extract
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('extract')">del extract
                     </button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('validate')">add validate</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('validate')">del validate</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('validate')">add validate</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('validate')">del validate</button>
                     <form id="form_extract">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="extract">
                             <caption>extract:</caption>

@@ -55,7 +55,7 @@
                                 <select name="project" class="form-control" onchange=info_ajax("#form_message")>
                                     <!--<option value=请选择>请选择</option>-->
                                     {% for foo in project %}
-                                    <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
                                     {% endfor %}
                                 </select>
 
@@ -76,7 +76,8 @@
                             <label for="include" class="col-md-2 control-label text-info"
                                    style="font-size: 14px;">include:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="config>case_name1>casename2"
+                                <input type="text" class="form-control" id="dev_name"
+                                       placeholder="config>case_name1>casename2"
                                        name="include"
                                        value="{{ info.include }}">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
@@ -95,12 +96,12 @@
                     </form>
                 </div>
                 <div class="am-tab-panel" id="tab2">
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('variables')">add variables</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('variables')">del variables</button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('setup')">add setup</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('setup')">del setup</button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('teardown')">add teardown</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('teardown')">del teardown</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('setup')">add setup</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('setup')">del setup</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('teardown')">add teardown</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('teardown')">del teardown</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -251,10 +252,10 @@
                             </select>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('data')">add data</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('data')">del data</button>
-                        <button class="btn btn-info" value="添 加" onclick="addNewRow('header')">add headers</button>
-                        <button class="btn btn-danger" value="删 除" onclick="removeRow('header')">del headers</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('data')">add data</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('data')">del data</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
                         <form id="form_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                 <caption>request:</caption>
@@ -346,10 +347,10 @@
                     </div>
                 </div>
                 <div class="am-tab-panel" id="tab4">
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('extract')">add extract</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('extract')">del extract</button>
-                    <button class="btn btn-info" value="添 加" onclick="addNewRow('validate')">add validate</button>
-                    <button class="btn btn-danger" value="删 除" onclick="removeRow('validate')">del validate</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('extract')">add extract</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('extract')">del extract</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('validate')">add validate</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('validate')">del validate</button>
                     <form id="form_extract">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="extract">
                             <caption>extract:</caption>
@@ -523,73 +524,5 @@
             </div>
         </div>
     </div>
-    <script>
-        index = 100;
-
-        function addNewRow(id) {
-            var tabObj = document.getElementById(id);//获取添加数据的表格
-            var rowsNum = tabObj.rows.length;  //获取当前行数
-            var attribute = 'variables';
-            if (id === 'data') {
-                attribute = 'data';
-            } else if (id === 'header') {
-                attribute = 'header';
-            } else if (id === 'extract') {
-                attribute = 'extract';
-            } else if (id === 'validate') {
-                attribute = 'validate';
-            }
-            var style = 'width:100%; border: none';
-            var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
-            var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "'  value='' style='" + style + "' />";
-            var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "'  value='' style='" + style + "' />";
-            var myNewRow = tabObj.insertRow(rowsNum);
-            var newTdObj0 = myNewRow.insertCell(0);
-            var newTdObj1 = myNewRow.insertCell(1);
-            var newTdObj2 = myNewRow.insertCell(2);
-            newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + index + "' style='width:55px' />";
-            newTdObj1.innerHTML = cellHtml1;
-            if (id !== 'validate') {
-                newTdObj2.innerHTML = cellHtml2;
-            } else {
-                newTdObj2.innerHTML = "<select name='cell_2comparator" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
-                    "padding-top: 0px; padding-left: 0px; border: none'> " +
-                    "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
-                var newTdObj3 = myNewRow.insertCell(3);
-                newTdObj3.innerHTML = cellHtml3;
-            }
-            index++;
-
-        }
-
-        /*表格删除行*/
-        function removeRow(id) {
-            var attribute = 'variables';
-            if (id === 'data') {
-                attribute = 'data';
-            } else if (id === 'header') {
-                attribute = 'header';
-            } else if (id === 'extract') {
-                attribute = 'extract';
-            } else if (id === 'validate') {
-                attribute = 'validate';
-            }
-            var chkObj = document.getElementsByName(attribute);
-            var tabObj = document.getElementById(id);
-            for (var k = 0; k < chkObj.length; k++) {
-                if (chkObj[k].checked) {
-                    tabObj.deleteRow(k + 1);
-                    k = -1;
-                }
-            }
-        }
-         $("#tab-test").on("click", "li", function () {
-            $(this).addClass("am-active").siblings("li").removeClass("am-active");
-            var target = $(this).children("a").attr("data-target");
-            $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
-        }).find("li").eq(0).trigger("click");
-
-        //去重
-    </script>
 {% endblock %}
 
