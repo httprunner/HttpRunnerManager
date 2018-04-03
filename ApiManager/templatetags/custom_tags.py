@@ -6,11 +6,5 @@ register = template.Library()
 
 @register.filter(name='data_type')
 def data_type(value):
-    if isinstance(value, str):
-        return 'string'
-    elif isinstance(value, int):
-        return 'int'
-    elif isinstance(value, float):
-        return 'float'
-    elif isinstance(value, bool):
-        return 'boolean'
+    return str(type(value).__name__)
+
