@@ -179,7 +179,7 @@ function config_ajax(type) {
     });
 }
 
-/*alert 弹出*/
+/*提示 弹出*/
 function myAlert(data) {
     $('#my-alert_print').text(data);
     $('#my-alert').modal({
@@ -203,7 +203,7 @@ function post(URL, PARAMS) {
     return temp;
 }
 
-function removeRow(id) {
+function del_row(id) {
     var attribute = id;
     var chkObj = document.getElementsByName(attribute);
     var tabObj = document.getElementById(id);
@@ -215,10 +215,9 @@ function removeRow(id) {
     }
 }
 
-index = 0;//全局变量很重要！！
+index = 100;//全局变量很重要！！
 
-function addNewRow(id) {
-
+function add_row(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
     var rowsNum = tabObj.rows.length;  //获取当前行数
     var attribute = id;
@@ -226,6 +225,7 @@ function addNewRow(id) {
     var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
     var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "' value='' style='" + style + "' />";
     var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "' value='' style='" + style + "' />";
+
     var cellDataType = "<select name='cell_data_type" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
         "padding-top: 0px; padding-left: 0px; border: none'> " +
         "<option>string</option><option>int</option><option>float</option><option>boolean</option></select>";
@@ -255,7 +255,7 @@ function addNewRow(id) {
         newTdObj2.innerHTML = cellHtml2;
     }
     index++;
-
-
 }
+
+
 
