@@ -90,7 +90,7 @@
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
                                 <th width="30%" align="center">Key</th>
-                                <th width="5%" align="center">Data Type</th>
+                                <th width="5%" align="center">Type</th>
                                 <th width="60%" align="center">Value</th>
                             </tr>
                             </thead>
@@ -170,72 +170,124 @@
                                     <option>data</option>
                                     <option>json</option>
                                     <option>params</option>
-
                                 {% endif %}
                             </select>
                         </div>
 
-                        <button class="btn btn-info" value="添 加" onclick="add_row('data')">add data</button>
-                        <button class="btn btn-danger" value="删 除" onclick="del_row('data')">del data</button>
+                        <button class="btn btn-info" value="添 加" onclick="add_row('data')" id="add_data">add data
+                        </button>
+                        <button class="btn btn-danger" value="删 除" onclick="del_row('data')" id="del_data">del data
+                        </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
+                        <button id="btn-json-viewer" class="btn btn-info" >convert to json</button>
                         <form id="config_request_data">
-                            <table class="table table-hover table-condensed table-bordered table-striped" id="data">
-                                <caption>request:</caption>
-                                <thead>
-                                <tr class="active text-success">
-                                    <th width="5%" align="center">Option</th>
-                                    <th width="40%" align="center">Key</th>
-                                    <th width="55%" align="center">Value</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% if 'data' in request.request.keys %}
-                                    {% for key, value in request.request.data.items %}
-                                        <tr>
-                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
-                                                       style="width:55px">
-                                            </td>
-                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
-                                                       style="width:100%; border: none"></td>
-                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
-                                                       style="width:100%; border: none"></td>
-                                        </tr>
-                                    {% endfor %}
-                                {% elif 'params' in request.request.keys %}
-                                    {% for key, value in request.request.params.items %}
-                                        <tr>
-                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
-                                                       style="width:55px">
-                                            </td>
-                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
-                                                       style="width:100%; border: none"></td>
-                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
-                                                       style="width:100%; border: none"></td>
-                                        </tr>
-                                    {% endfor %}
+                            {% if 'json' in request.request.keys %}
+                                <span id="json-text" style="font-size:10px;">
+                                <div style="width:45%; float:left; margin-left: 0px; margin-top: 20px; height: 200px">
+                                    <textarea class="form-control" id="json-input" style="width: 100%"
+                                              rows="10">{{ request.request.json }}</textarea>
+                                </div>
 
-                                {% elif 'json' in request.request.keys %}
-                                    {% for key, value in request.request.json.items %}
-                                        <tr>
-                                            <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
-                                                       style="width:55px">
-                                            </td>
-                                            <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
-                                                       style="width:100%; border: none"></td>
-                                            <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
-                                                       style="width:100%; border: none"></td>
-                                        </tr>
-                                    {% endfor %}
-                                {% endif %}
-                                </tbody>
-                            </table>
+                                <div style="width:50%; height:200px;overflow:auto;margin-top: 20px; margin-left: 5%; float:left">
+                                    <p id="json-renderer" style="width: 100%; padding-left: 20px"></p>
+                                </div>
+                            </span>
+                            {% else %}
+                                <table class="table table-hover table-condensed table-bordered table-striped" id="data">
+                                    <caption>request:</caption>
+                                    <thead>
+                                    <tr class="active text-success">
+                                        <th width="5%" align="center">Option</th>
+                                        <th width="30%" align="center">Key</th>
+                                        <th width="5%" align="center">Type</th>
+                                        <th width="60%" align="center">Value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if 'data' in request.request.keys %}
+                                        {% for key, value in request.request.data.items %}
+                                            <tr>
+                                                <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                           style="width:55px">
+                                                </td>
+                                                <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
+                                                           id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                           style="width:100%; border: none"></td>
+                                                <td><select name='cell_data_typedata{{ forloop.counter }}'
+                                                            class='form-control'
+                                                            style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
+                                                    {% if value|data_type == 'str' %}
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>float</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'int' %}
+                                                        <option>int</option>
+                                                        <option>string</option>
+                                                        <option>float</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'float' %}
+                                                        <option>float</option>
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'bool' %}
+                                                        <option>boolean</option>
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>float</option>
+                                                    {% endif %}
+                                                </select></td>
+                                                <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
+                                                           id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                           style="width:100%; border: none"></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% elif 'params' in request.request.keys %}
+                                        {% for key, value in request.request.params.items %}
+                                            <tr>
+                                                <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                           style="width:55px">
+                                                </td>
+                                                <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
+                                                           id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                           style="width:100%; border: none"></td>
+                                                <td><select name='cell_data_typedata{{ forloop.counter }}'
+                                                            class='form-control'
+                                                            style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
+                                                    {% if value|data_type == 'str' %}
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>float</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'int' %}
+                                                        <option>int</option>
+                                                        <option>string</option>
+                                                        <option>float</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'float' %}
+                                                        <option>float</option>
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>boolean</option>
+                                                    {% elif value|data_type == 'bool' %}
+                                                        <option>boolean</option>
+                                                        <option>string</option>
+                                                        <option>int</option>
+                                                        <option>float</option>
+                                                    {% endif %}
+                                                </select></td>
+                                                <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
+                                                           id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                           style="width:100%; border: none"></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+
                         </form>
 
                         <form id="config_request_headers">
@@ -291,6 +343,66 @@
             $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
         }).find("li").eq(0).trigger("click");
 
+
+        $('#config_data_type').on('change', function () {
+            if ($('#config_data_type').val() == 'json') {
+                $('#add_data').attr('disabled', true);
+                $('#del_data').attr('disabled', true);
+                $('#btn-json-viewer').removeAttr("disabled");
+                $('#data').remove();
+                var json_text = "<span style=\"font-size:10px;\" id=\"json-text\"><body>\n" +
+                    "                                <div style=\"width:45%; float:left; margin-left: 0px; margin-top: 20px; height: 200px\" >\n" +
+                    "                                    <textarea class=\"form-control\" id=\"json-input\" rows=\"10\" style=\"width: 100%\">{\"key\":\"value\"}\n" +
+                    "                                      </textarea></div>\n" +
+                    "\n" +
+                    "                                <div style=\"width:50%; height:200px;overflow:auto;margin-top: 20px; margin-left: 5%; float:left\">\n" +
+                    "                                    <p id=\"json-renderer\" style=\"width: 100%; padding-left: 20px\"></p>\n" +
+                    "                                </div>\n" +
+                    "                            </body></span>";
+                $('#config_request_data').append(json_text);
+
+            } else {
+                var table = '<table class="table table-hover table-condensed table-bordered table-striped" id="data">\n' +
+                    '                                <caption>' + $('#config_data_type').val() + ':</caption>\n' +
+                    '                                <thead>\n' +
+                    '                                <tr class="active text-success">\n' +
+                    '                                    <th width="5%" align="center">Option</th>\n' +
+                    '                                    <th width="30%" align="center">Key</th>\n' +
+                    '                                    <th width="5%" align="center">Type</th>\n' +
+                    '                                    <th width="60%" align="center">Value</th>\n' +
+                    '                                </tr>\n' +
+                    '                                </thead>\n' +
+                    '                                <tbody>\n' +
+                    '                                </tbody>\n' +
+                    '                            </table>';
+
+                $('#add_data').text('add ' + $('#config_data_type').val());
+                $('#del_data').text('del ' + $('#config_data_type').val());
+
+                $('#add_data').removeAttr("disabled");
+                $('#del_data').removeAttr("disabled");
+                $('#btn-json-viewer').attr('disabled', true);
+                $('#data').remove();
+                $('#json-text').remove();
+                $('#config_request_data').append(table);
+            }
+        })
+        $(function () {
+            $('#btn-json-viewer').click(function () {
+                try {
+                    var input = eval('(' + $('#json-input').val() + ')');
+                }
+                catch (error) {
+                    myAlert("Json 格式有误,请重新输入")
+                }
+                var options = {
+                    collapsed: false,
+                    withQuotes: false
+                };
+                $('#json-renderer').jsonViewer(input, options);
+            });
+            $('#btn-json-viewer').click();
+        });
 
     </script>
 {% endblock %}
