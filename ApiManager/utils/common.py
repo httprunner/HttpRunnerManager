@@ -1,7 +1,8 @@
+import yaml
+
+from ApiManager.models import ModuleInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data, bulk_import_data
-from ApiManager.models import ModuleInfo
-import yaml
 
 '''前端test信息转字典'''
 
@@ -187,9 +188,12 @@ def case_info_logic(type=True, **kwargs):
             test.setdefault('extract', key_value_list(mode=2, **extract))
 
         request_data = test.get('request').pop('request_data')
-        date_type = test.get('request').pop('type')
-        if request_data and date_type:
-            test.get('request').setdefault(date_type, key_value_dict(**request_data))
+        data_type = test.get('request').pop('type')
+        if request_data and data_type:
+            if data_type == 'json':
+                test.get('request').setdefault(data_type, request_data)
+            else:
+                test.get('request').setdefault(data_type, key_value_dict(**request_data))
 
         headers = test.get('request').pop('headers')
         if headers:
@@ -239,7 +243,10 @@ def config_info_logic(type=True, **kwargs):
         request_data = config.get('request').pop('request_data')
         data_type = config.get('request').pop('type')
         if request_data and data_type:
-            config.get('request').setdefault(data_type, key_value_dict(**request_data))
+            if data_type == 'json':
+                config.get('request').setdefault(data_type, request_data)
+            else:
+                config.get('request').setdefault(data_type, key_value_dict(**request_data))
 
         headers = config.get('request').pop('headers')
         if headers:

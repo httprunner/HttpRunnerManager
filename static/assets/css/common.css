@@ -1,3 +1,29 @@
 table#variables tr td, table#data tr td, table#header tr td, table#validate tr td, table#extract tr td, table#setup tr td, table#teardown tr td {
     padding: 0px;
 }
+
+.tips {
+
+    color: rgba(0, 0, 0, 0.5);
+
+    padding-left: 10px;
+
+}
+
+.tips_true, .tips_false {
+
+    padding-left: 10px;
+
+}
+
+.tips_true {
+
+    color: green;
+
+}
+
+.tips_false {
+
+    color: red;
+
+}
