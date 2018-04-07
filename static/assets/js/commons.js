@@ -90,7 +90,12 @@ function case_ajax(type) {
     var dataType = $("#DataType").serializeJSON();
     var caseInfo = $("#form_message").serializeJSON();
     var variables = $("#form_variables").serializeJSON();
-    var request_data = $("#form_request_data").serializeJSON();
+    var request_data = null;
+    if (dataType.DataType == 'json') {
+        request_data = eval('(' + $('#json-input').val() + ')');
+    } else {
+        request_data = $("#form_request_data").serializeJSON();
+    }
     var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
@@ -142,7 +147,12 @@ function config_ajax(type) {
     var dataType = $("#config_data_type").serializeJSON();
     var caseInfo = $("#form_config").serializeJSON();
     var variables = $("#config_variables").serializeJSON();
-    var request_data = $("#config_request_data").serializeJSON();
+    var request_data = null;
+    if (dataType.DataType == 'json') {
+        request_data = eval('(' + $('#json-input').val() + ')');
+    } else {
+        request_data = $("#form_request_data").serializeJSON();
+    }
     var headers = $("#config_request_headers").serializeJSON();
     var config = {
         "config": {
@@ -187,15 +197,15 @@ function myAlert(data) {
     });
 }
 
-function post(URL, PARAMS) {
+function post(url, params) {
     var temp = document.createElement("form");
-    temp.action = URL;
+    temp.action = url;
     temp.method = "post";
     temp.style.display = "none";
-    for (var x in PARAMS) {
+    for (var x in params) {
         var opt = document.createElement("input");
         opt.name = x;
-        opt.value = PARAMS[x];
+        opt.value = params[x];
         temp.appendChild(opt);
     }
     document.body.appendChild(temp);
