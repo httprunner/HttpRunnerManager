@@ -4,13 +4,13 @@ import os
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
+from ApiManager.tasks import add
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, yml_parser
 from ApiManager.utils.operation import change_status
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
-from ApiManager.tasks import add
 from httprunner.cli import main_ate
 
 # Create your views here.
@@ -310,7 +310,7 @@ def edit_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testcase_lists = json.loads(request.body.decode('utf-8'))
-            msg = case_info_logic(**testcase_lists, type=False)
+            msg = case_info_logic(type=False, **testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
         elif request.method == 'POST':
