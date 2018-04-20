@@ -1,0 +1,1 @@
+2018-04-20 20:09:11,224 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 499
