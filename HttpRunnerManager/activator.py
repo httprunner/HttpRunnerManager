@@ -1,6 +1,15 @@
+import platform
 import traceback
 
 from django.shortcuts import HttpResponse
+
+
+def isWindows():
+    return True if 'Windows' in platform.system() else False
+
+
+def isLinux():
+    return True if 'Linux' in platform.system() else False
 
 
 def process(request, **kwargs):

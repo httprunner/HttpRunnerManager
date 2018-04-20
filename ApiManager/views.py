@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -13,6 +14,7 @@ from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
 from httprunner.cli import main_ate
 
+logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
 
 '''登录'''
@@ -22,11 +24,14 @@ def login(request):
     if request.method == 'POST':
         username = request.POST.get('account')
         password = request.POST.get('password')
+
         if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
+            logger.info('{username} 登录成功'.format(username=username))
             request.session["login_status"] = True
             request.session["now_account"] = username
             return HttpResponseRedirect('/api/index/')
         else:
+            logger.info('{username} 登录失败, 请检查用户名或者密码'.format(username=username))
             request.session["login_status"] = False
             return render_to_response("login.html")
     elif request.method == 'GET':
@@ -50,6 +55,7 @@ def register(request):
 
 def log_out(request):
     if request.method == 'GET':
+        logger.info('{username}退出'.format(username=request.session['now_account']))
         del request.session['now_account']
         return HttpResponseRedirect("/api/login/")
 
@@ -80,6 +86,7 @@ def add_project(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             project_info = json.loads(request.body.decode('utf-8'))
+            logger.debug('处理前项目信息：{project_info}'.format(project_info=project_info))
             msg = project_info_logic(**project_info)
             return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
@@ -99,6 +106,7 @@ def add_module(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             module_info = json.loads(request.body.decode('utf-8'))
+            logger.debug('处理前模块信息：{module_info}'.format(module_info=module_info))
             msg = module_info_logic(**module_info)
             return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
         elif request.method == 'GET':
@@ -120,6 +128,7 @@ def add_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testcase_lists = json.loads(request.body.decode('utf-8'))
+            logger.debug('处理前用例信息：{testcase_lists}'.format(testcase_lists=testcase_lists))
             msg = case_info_logic(**testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
         elif request.method == 'GET':
@@ -139,6 +148,7 @@ def add_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testconfig_lists = json.loads(request.body.decode('utf-8'))
+            logger.debug('处理前配置信息：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
             msg = config_info_logic(**testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
         elif request.method == 'GET':
@@ -310,6 +320,7 @@ def edit_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testcase_lists = json.loads(request.body.decode('utf-8'))
+            logger.debug('用例更新处理之前数据：{testcase_lists}'.format(testcase_lists=testcase_lists))
             msg = case_info_logic(type=False, **testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
@@ -336,6 +347,7 @@ def edit_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testconfig_lists = json.loads(request.body.decode('utf-8'))
+            logger.error('配置更新处理之前数据：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
             msg = config_info_logic(type=False, **testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
 

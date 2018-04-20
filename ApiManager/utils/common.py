@@ -1,9 +1,12 @@
+import logging
+
 import yaml
 
 from ApiManager.models import ModuleInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data, bulk_import_data
 
+logger = logging.getLogger('HttpRunnerManager')
 '''前端test信息转字典'''
 
 
@@ -30,7 +33,8 @@ def key_value_dict(mode=3, **kwargs):
                     else:
                         value = bool(value)
                 except ValueError:  # 如果类型转换失败，默认字符串保存
-                    pass
+                    logger.error('{data_type}转换失败，默认转换为str类型'.format(data_type=data_type))
+
             if key != '' and value != '':
                 kwargs.setdefault(key, value)
     else:
@@ -71,7 +75,7 @@ def key_value_list(mode=4, **kwargs):
                     else:
                         expected = bool(expected)
                 except ValueError:  # 如果类型转换失败，默认字符串保存
-                    pass
+                    logger.error('{data_type}转换失败，默认转换为str类型'.format(data_type=data_type))
 
                 lists.append({'check': check, 'comparator': comparator, 'expected': expected})
     elif mode == 3:
@@ -91,7 +95,7 @@ def key_value_list(mode=4, **kwargs):
                     else:
                         value = bool(value)
                 except ValueError:  # 如果类型转换失败，默认字符串保存
-                    pass
+                    logger.error('{data_type}转换失败，默认转换为str类型'.format(data_type=data_type))
                 lists.append({key: value})
     else:
         half_index = len(sorted_kwargs) // 2
@@ -273,7 +277,7 @@ def set_filter_session(request):
             filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
                             'name': request.session['name']}
         except KeyError:
-            pass
+            logger.error('session异常！！！')
 
     return filter_query
 
