@@ -1,6 +1,5 @@
 import logging
 
-from django.core.exceptions import ValidationError
 from django.db import DataError
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
@@ -73,27 +72,22 @@ def add_module_data(type, **kwargs):
                     .filter(module_name__exact=module_name).count() < 1:
                 belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
                 module_opt.insert_module(kwargs.pop('module_name'), belong_project, kwargs.pop('test_user'),
-                                         kwargs.pop('lifting_time'), kwargs.pop('simple_desc'),
-                                         kwargs.pop('other_desc'))
+                                         kwargs.pop('simple_desc'),kwargs.pop('other_desc'))
                 logger.info('{module_name}模块添加成功'.format(module_name=module_name))
             else:
                 return '该模块已在项目中存在，请重新编辑'
         else:
             if module_name != module_opt.get_module_name('', type=False, id=kwargs.get('index')) \
                     and module_opt.filter(belong_project__pro_name__exact=belong_project) \
-                    .filter(module_name__exact=module_name).count() > 0:
+                            .filter(module_name__exact=module_name).count() > 0:
                 return '该模块已存在，请重新命名'
             module_opt.update_module(kwargs.pop('index'), kwargs.pop('module_name'), kwargs.get('test_user'),
-                                     kwargs.pop('lifting_time'),
                                      kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
             logger.info('{module_name}模块更新成功'.format(module_name=module_name))
 
     except DataError:
         logger.error('{module_name}模块信息过长：{kwargs}'.format(module_name=module_name, kwargs=kwargs))
         return '字段长度超长，请重新编辑'
-    except ValidationError:
-        logger.error('{module_name}提测时间非法：{kwargs}'.format(module_name=module_name, kwargs=kwargs))
-        return '提测时间格式非法'
     return 'ok'
 
 
@@ -204,7 +198,7 @@ def bulk_import_data(**kwargs):
             case_list_to_insert.append(TestCaseInfo(name=name, type=type, belong_project=belong_project,
                                                     belong_module=belong_module, author=author, request=request))
 
-        # print(case_list_to_insert)
+            # print(case_list_to_insert)
 
     case_opt.bulk_create(case_list_to_insert)
     # return 'ok'

@@ -64,7 +64,6 @@ class ModuleInfo(BaseTable):
     module_name = models.CharField('模块名称', max_length=50)
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
     test_user = models.CharField('测试负责人', max_length=50)
-    lifting_time = models.DateTimeField('提测时间')
     simple_desc = models.CharField('简要描述', max_length=100, null=True)
     other_desc = models.CharField('其他信息', max_length=100, null=True)
     status = models.IntegerField('有效/无效', default=1)

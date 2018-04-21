@@ -12,7 +12,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
 from ApiManager.utils.operation import change_status
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-from httprunner.cli import main_ate
+# from httprunner.cli import main_ate
 
 logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.

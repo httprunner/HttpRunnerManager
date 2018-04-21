@@ -1,5 +1,5 @@
 from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
-from httprunner.cli import main_ate
+# from httprunner.cli import main_ate
 
 '''通过test id组装case 供其他方法调用'''
 

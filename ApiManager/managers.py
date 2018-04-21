@@ -67,16 +67,14 @@ class ProjectInfoManager(models.Manager):
 
 
 class ModuleInfoManager(models.Manager):
-    def insert_module(self, module_name, belong_project, test_user, lifting_time, simple_desc, other_desc):
+    def insert_module(self, module_name, belong_project, test_user, simple_desc, other_desc):
         self.create(module_name=module_name, belong_project=belong_project, test_user=test_user,
-                    lifting_time=lifting_time,
                     simple_desc=simple_desc, other_desc=other_desc)
 
-    def update_module(self, id, module_name, test_user, lifting_time, simple_desc, other_desc):
+    def update_module(self, id, module_name, test_user, simple_desc, other_desc):
         obj = self.get(id=int(id))
         obj.module_name = module_name
         obj.test_user = test_user
-        obj.lifting_time = lifting_time
         obj.simple_desc = simple_desc
         obj.other_desc = other_desc
 

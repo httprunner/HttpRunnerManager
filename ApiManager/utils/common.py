@@ -132,8 +132,6 @@ def module_info_logic(type=True, **kwargs):
         return '请先添加项目'
     if kwargs.get('test_user') is '':
         return '测试人员不能为空'
-    if kwargs.get('lifting_time') is '':
-        return '提测时间不能为空'
     return add_module_data(type, **kwargs)
 
 

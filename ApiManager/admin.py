@@ -29,7 +29,7 @@ class ProjectInfoAdmin(admin.ModelAdmin):
 
 @admin.register(ModuleInfo)
 class ModuleInfoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'module_name', 'belong_project', 'test_user', 'lifting_time', 'simple_desc'
+    list_display = ('id', 'module_name', 'belong_project', 'test_user', 'simple_desc'
                     , 'other_desc', 'status', 'create_time', 'update_time')
     list_per_page = 20
     ordering = ('-create_time',)
