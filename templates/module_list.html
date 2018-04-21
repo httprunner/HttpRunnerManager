@@ -43,16 +43,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="lifting_time"
-                               style="font-weight: inherit; font-size: small ">提测时间：</label>
-                        <div class="col-sm-9">
-                            <input name="lifting_time" type="text" id="lifting_time" class="form-control"
-                                   placeholder="提测时间">
-                        </div>
-                    </div>
-
-
-                    <div class="form-group">
                         <label class="control-label col-sm-3" for="simple_desc"
                                style="font-weight: inherit; font-size: small ">简要描述：</label>
                         <div class="col-sm-9">
@@ -179,8 +169,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td><a href="#"
                                onclick="edit('{{ foo.id }}','{{ foo.module_name }}', '{{ foo.belong_project.pro_name }}'
-                                       , '{{ foo.test_user }}','{{ foo.lifting_time }}'
-                                       , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')">{{ foo.module_name }}</a>
+                                       , '{{ foo.test_user }}', '{{ foo.simple_desc }}', '{{ foo.other_desc }}')">{{ foo.module_name }}</a>
                         </td>
                         <td>{{ foo.test_user }}</td>
                         <td>{{ foo.belong_project.pro_name }}</td>
@@ -250,15 +239,11 @@
             }
         }
 
-        function edit(id, module_name, belong_project, test_user, lifting_time, simple_desc, other_desc) {
-            lifting_time = lifting_time.replace("年", "-");
-            lifting_time = lifting_time.replace("月", "-");
-            lifting_time = lifting_time.replace("日", "");
+        function edit(id, module_name, belong_project, test_user, simple_desc, other_desc) {
             $('#index').val(id);
             $('#module_name').val(module_name);
             $('#belong_project').val(belong_project);
             $('#test_user').val(test_user);
-            $('#lifting_time').val(lifting_time);
             $('#simple_desc').val(simple_desc);
             $('#other_desc').val(other_desc);
             $('#my-edit').modal({
@@ -292,19 +277,6 @@
                 }
             });
         }
-
-        $(function () {
-            $('#lifting_time').datetimepicker(
-                {
-                    format: 'yyyy-mm-dd hh:ii',
-                    language: 'zh-CN',
-                    weekStart: true,
-                    todayBtn: true,
-                    autoclose: true,
-                    todayHighlight: true,
-                    keyboardNavigation: true
-                });
-        })
     </script>
 
 {% endblock %}

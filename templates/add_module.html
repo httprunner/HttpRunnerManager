@@ -42,15 +42,6 @@
                     </div>
 
                     <div class="form-group  has-feedback">
-                        <label class="control-label col-md-1 text-primary" for="lifting_time">提测时间：</label>
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" id="lifting_time" name="lifting_time"
-                                   aria-describedby="inputSuccess3Status" placeholder="预计提测时间">
-                            <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group  has-feedback">
                         <label class="control-label col-md-1 text-primary" for="simple_desc">简要描述：</label>
                         <div class="col-md-5">
                             <textarea type="text" rows="3" class="form-control" id="simple_desc" name="simple_desc"
@@ -81,19 +72,5 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        $(function () {
-            $('#lifting_time').datetimepicker(
-                {
-                    format: 'yyyy-mm-dd hh:ii',
-                    language: 'zh-CN',
-                    weekStart: true,
-                    todayBtn: true,
-                    autoclose: true,
-                    todayHighlight: true,
-                    keyboardNavigation: true
-                });
-        })
-    </script>
 
 {% endblock %}
