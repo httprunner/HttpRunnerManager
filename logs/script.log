@@ -1,0 +1,9 @@
+2018-04-21 14:16:13,908 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-21 14:27:47,619 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULE', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
+2018-04-21 14:27:47,630 [HttpRunnerManager:76] [operation:add_module_data] [INFO]- TEST MODULE模块添加成功
+2018-04-21 14:27:57,097 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULE', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
+2018-04-21 14:28:01,953 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULEFDAF     ', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
+2018-04-21 14:28:01,963 [HttpRunnerManager:76] [operation:add_module_data] [INFO]- TEST MODULEFDAF     模块添加成功
+2018-04-21 14:28:16,797 [HttpRunnerManager:86] [operation:add_module_data] [INFO]- TEST MODULEFDAF     模块更新成功
+2018-04-21 14:28:25,068 [HttpRunnerManager:86] [operation:add_module_data] [INFO]- TEST MODULE模块更新成功
+2018-04-21 14:28:27,995 [HttpRunnerManager:163] [operation:change_status] [INFO]- 3状态已更改！
