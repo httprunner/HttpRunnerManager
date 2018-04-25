@@ -1,5 +1,7 @@
 from django.utils.safestring import mark_safe
 
+from ApiManager.models import ModuleInfo, TestCaseInfo
+
 '''分页类'''
 
 
@@ -81,42 +83,54 @@ def customer_pager(base_url, current_page, total_page):  # 基础页，当前页
 
 def get_pager_info(Model, filter_query, url, id, per_items=10):
     id = int(id)
-    filter = int(filter_query.get('filter'))
+    belong_project = filter_query.get('belong_project')
+    belong_module = filter_query.get('belong_module')
     name = filter_query.get('name')
     user = filter_query.get('user')
-    obj = Model.objects.filter(status__exact=filter)
+
+    obj = Model.objects
 
     if url == '/api/project_list/':
-        if name == '' and user != '':
-            obj = obj.filter(responsible_name__contains=user)
-        elif name != '' and user == '':
-            obj = obj.filter(pro_name__contains=name)
-        elif name != '' and user != '':
-            obj = obj.filter(pro_name__contains=name).filter(responsible_name__contains=user)
+        obj = obj.filter(project_name__contains=name) if name is not '' else obj.filter(responsible_name__contains=user)
 
     elif url == '/api/module_list/':
-        if name == '' and user != '':
-            obj = obj.filter(test_user__contains=user)
-        elif name != '' and user == '':
-            obj = obj.filter(module_name__contains=name)
-        elif name != '' and user != '':
-            obj = obj.filter(module_name__contains=name).filter(test_user__contains=user)
-
-    elif url == '/api/test_list/' or url == '/api/config_list/':
-        if url == '/api/test_list/':
-            obj = obj.filter(type__exact=1)
+        if belong_project is not '':
+            obj = obj.filter(belong_project__project_name__contains=belong_project)
         else:
-            obj = obj.filter(type__exact=2)
+            obj = obj.filter(module_name__contains=name) if name is not '' else obj.filter(test_user__contains=user)
+    else:
+        obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
+        if belong_project and belong_module is not '':
+            obj = obj.filter(belong_project__contains=belong_project).filter(
+                belong_module__module_name__contains=belong_module)
+        else:
+            if belong_project is not '':
+                obj = obj.filter(belong_project__contains=belong_project)
+            elif belong_module is not '':
+                obj = obj.filter(belong_module__module_name__contains=belong_module)
+            else:
+                obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
 
-        if name == '' and user != '':
-            obj = obj.filter(author__contains=user)
-        elif name != '' and user == '':
-            obj = obj.filter(name__contains=name)
-        elif name != '' and user != '':
-            obj = obj.filter(name__contains=name).filter(author__contains=user)
     obj = obj.order_by('-create_time')
     total = obj.count()
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]
+
+    sum = {}
+    if url == '/api/project_list/':
+        for model in info:
+            pro_name = model.project_name
+            module_count = str(ModuleInfo.objects.filter(belong_project__project_name__exact=pro_name).count())
+            test_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=1).count())
+            config_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=2).count())
+            sum.setdefault(model.id, module_count + '/ ' + test_count + '/ ' + config_count)
+    elif url == '/api/module_list/':
+        for model in info:
+            module_name = model.module_name
+            test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1).count())
+            config_count = str(
+                TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2).count())
+            sum.setdefault(model.id, test_count + '/ ' + config_count)
+
     page_list = customer_pager(url, id, page_info.total_page)
-    return page_list, info
+    return page_list, info, sum

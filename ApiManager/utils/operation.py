@@ -1,5 +1,6 @@
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
@@ -38,23 +39,27 @@ def add_project_data(type, **kwargs):
     try:
         if type:
             if project_opt.get_pro_name(project_name) < 1:
-                project_opt.insert_project(kwargs.pop('project_name'), kwargs.pop('responsible_name'),
-                                           kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),
-                                           kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
-                logger.info('{project_name}项目添加成功'.format(project_name=project_name))
+                try:
+                    project_opt.insert_project(**kwargs)
+                except Exception:
+                    logging.error('项目添加异常：{kwargs}'.format(kwargs=kwargs))
+                    return '添加失败，请重试'
+                logger.info('项目添加成功：{kwargs}'.format(kwargs=kwargs))
             else:
                 return '该项目已存在，请重新编辑'
         else:
             if project_name != project_opt.get_pro_name('', type=False, id=kwargs.get(
                     'index')) and project_opt.get_pro_name(project_name) > 0:
                 return '该项目已存在， 请重新命名'
-            project_opt.update_project(kwargs.pop('index'), kwargs.pop('project_name'), kwargs.pop('responsible_name'),
-                                       kwargs.pop('test_user'), kwargs.pop('dev_user'), kwargs.pop('publish_app'),
-                                       kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
-            logger.info('{project_name}项目更新成功'.format(project_name=project_name))
+            try:
+                project_opt.update_project(kwargs.pop('index'), **kwargs)
+            except Exception:
+                logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
+                return '更新失败，请重试'
+            logger.info('项目更新成功：{kwargs}'.format(kwargs=kwargs))
 
     except DataError:
-        logger.error('{project_name}项目信息过长：{kwargs}'.format(project_name=project_name, kwargs=kwargs))
+        logger.error('信息过长：{kwargs}'.format(kwargs=kwargs))
         return '字段长度超长，请重新编辑'
     return 'ok'
 
@@ -68,25 +73,36 @@ def add_module_data(type, **kwargs):
     module_name = kwargs.get('module_name')
     try:
         if type:
-            if module_opt.filter(belong_project__pro_name__exact=belong_project) \
+            if module_opt.filter(belong_project__project_name__exact=belong_project) \
                     .filter(module_name__exact=module_name).count() < 1:
-                belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
-                module_opt.insert_module(kwargs.pop('module_name'), belong_project, kwargs.pop('test_user'),
-                                         kwargs.pop('simple_desc'),kwargs.pop('other_desc'))
-                logger.info('{module_name}模块添加成功'.format(module_name=module_name))
+                try:
+                    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+                except ObjectDoesNotExist:
+                    logging.error('项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+                    return '项目信息读取失败，请重试'
+                kwargs['belong_project'] = belong_project
+                try:
+                    module_opt.insert_module(**kwargs)
+                except Exception:
+                    logging.error('模块添加异常：{kwargs}'.format(kwargs=kwargs))
+                    return '添加失败，请重试'
+                logger.info('模块添加成功：{kwargs}'.format(kwargs=kwargs))
             else:
                 return '该模块已在项目中存在，请重新编辑'
         else:
             if module_name != module_opt.get_module_name('', type=False, id=kwargs.get('index')) \
-                    and module_opt.filter(belong_project__pro_name__exact=belong_project) \
+                    and module_opt.filter(belong_project__project_name__exact=belong_project) \
                             .filter(module_name__exact=module_name).count() > 0:
                 return '该模块已存在，请重新命名'
-            module_opt.update_module(kwargs.pop('index'), kwargs.pop('module_name'), kwargs.get('test_user'),
-                                     kwargs.pop('simple_desc'), kwargs.pop('other_desc'))
-            logger.info('{module_name}模块更新成功'.format(module_name=module_name))
+            try:
+                module_opt.update_module(kwargs.pop('index'), **kwargs)
+            except Exception:
+                logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
+                return '更新失败，请重试'
+            logger.info('模块更新成功：{kwargs}'.format(kwargs=kwargs))
 
     except DataError:
-        logger.error('{module_name}模块信息过长：{kwargs}'.format(module_name=module_name, kwargs=kwargs))
+        logger.error('信息过长：{kwargs}'.format(kwargs=kwargs))
         return '字段长度超长，请重新编辑'
     return 'ok'
 

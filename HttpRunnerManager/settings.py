@@ -196,7 +196,7 @@ LOGGING = {
         'django': {
             'handlers': ['default', 'console'],
             'level': 'INFO',
-            'propagate': False
+            'propagate': True
         },
         'HttpRunnerManager.app': {
             'handlers': ['default', 'console'],

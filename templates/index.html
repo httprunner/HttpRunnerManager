@@ -7,22 +7,22 @@
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 100}">
                 <dt class="qs"><i class="am-icon-users"></i></dt>
                 <dd>{{ project_length }}</dd>
-                <dd class="f12">项目数量</dd>
+                <dd class="f12"><a href="/api/project_list/1/" style="text-decoration: none">项目总计</a></dd>
             </dl>
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 300}">
                 <dt class="cs"><i class="am-icon-area-chart"></i></dt>
                 <dd>{{ module_length }}</dd>
-                <dd class="f12">模块数量</dd>
+                <dd class="f12"><a href="/api/module_list/1/" style="text-decoration: none">模块总计</a></dd>
             </dl>
-            {% comment %} <dl data-am-scrollspy="{animation: 'slide-right', delay: 600}">
-                <dt class="hs"><i class="am-icon-shopping-cart"></i></dt>
-                <dd>455</dd>
-                <dd class="f12">已有接口</dd>
-            </dl>{% endcomment %}
             <dl data-am-scrollspy="{animation: 'slide-right', delay: 900}">
                 <dt class="ls"><i class="am-icon-cny"></i></dt>
                 <dd>{{ test_length }}</dd>
-                <dd class="f12">用例个数</dd>
+                <dd class="f12"><a href="/api/test_list/1/" style="text-decoration: none">用例总计</a></dd>
+            </dl>
+             <dl data-am-scrollspy="{animation: 'slide-right', delay: 600}">
+                <dt class="hs"><i class="am-icon-shopping-cart"></i></dt>
+                <dd>{{ config_length }}</dd>
+               <dd class="f12"><a href="/api/config_list/1/" style="text-decoration: none">配置总计</a></dd>
             </dl>
         </div>
 
@@ -296,6 +296,5 @@
         </div>{% endcomment %}
 
 
-
-</div>
+    </div>
 {% endblock %}

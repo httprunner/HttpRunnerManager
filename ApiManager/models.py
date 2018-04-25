@@ -45,14 +45,13 @@ class ProjectInfo(BaseTable):
         verbose_name = '项目信息'
         db_table = 'ProjectInfo'
 
-    pro_name = models.CharField('项目名称', max_length=50)
+    project_name = models.CharField('项目名称', max_length=50)
     responsible_name = models.CharField('负责人', max_length=20)
     test_user = models.CharField('测试人员', max_length=100)
     dev_user = models.CharField('开发人员', max_length=100)
     publish_app = models.CharField('发布应用', max_length=60)
     simple_desc = models.CharField('简要描述', max_length=100, null=True)
     other_desc = models.CharField('其他信息', max_length=100, null=True)
-    status = models.IntegerField('有效/无效', default=1)
     objects = ProjectInfoManager()
 
 
@@ -66,7 +65,6 @@ class ModuleInfo(BaseTable):
     test_user = models.CharField('测试负责人', max_length=50)
     simple_desc = models.CharField('简要描述', max_length=100, null=True)
     other_desc = models.CharField('其他信息', max_length=100, null=True)
-    status = models.IntegerField('有效/无效', default=1)
     objects = ModuleInfoManager()
 
 
@@ -82,7 +80,6 @@ class TestCaseInfo(BaseTable):
     include = models.CharField('包含config/test', max_length=200, null=True)
     author = models.CharField('编写人员', max_length=20)
     request = models.TextField('请求信息')
-    status = models.IntegerField('有效/无效', default=1)
     objects = TestCaseInfoManager()
 
 
@@ -95,4 +92,3 @@ class TestReports(BaseTable):
     belong_project = models.CharField(max_length=50)
     belong_module = models.CharField(max_length=50)
     reports = models.TextField()
-    status = models.IntegerField(default=1)

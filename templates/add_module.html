@@ -23,10 +23,10 @@
                     <div class="form-group">
                         <label class="control-label col-md-1 text-primary" for="belong_project">所属项目：</label>
                         <div class="col-md-5">
-                            {#                            <select class="form-control" data-am-selected="{searchBox: 1}" name="belong_project" style="display: none;">#}
                             <select name="belong_project" class="form-control">
+                            <option value="请选择">请选择</option>
                                 {% for foo in  data %}
-                                    <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>

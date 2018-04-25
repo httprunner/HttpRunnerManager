@@ -12,7 +12,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
 from ApiManager.utils.operation import change_status
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-# from httprunner.cli import main_ate
+
 
 logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
@@ -68,10 +68,12 @@ def index(request):
         project_length = ProjectInfo.objects.count()
         module_length = ModuleInfo.objects.count()
         test_length = TestCaseInfo.objects.filter(type__exact=1).count()
+        config_length = TestCaseInfo.objects.filter(type__exact=2).count()
         manage_info = {
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
+            'config_length':config_length,
             'account': request.session["now_account"]
         }
         return render_to_response('index.html', manage_info)
@@ -85,8 +87,11 @@ def index(request):
 def add_project(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            project_info = json.loads(request.body.decode('utf-8'))
-            logger.debug('处理前项目信息：{project_info}'.format(project_info=project_info))
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('项目信息解析异常: {project_info}'.format(project_info=project_info))
+                return HttpResponse('项目信息新增异常')
             msg = project_info_logic(**project_info)
             return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
@@ -105,14 +110,16 @@ def add_project(request):
 def add_module(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            module_info = json.loads(request.body.decode('utf-8'))
-            logger.debug('处理前模块信息：{module_info}'.format(module_info=module_info))
+            try:
+                module_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('模块信息解析异常：{module_info}'.format(module_info=module_info))
             msg = module_info_logic(**module_info)
             return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'data': ProjectInfo.objects.all().values('pro_name')
+                'data': ProjectInfo.objects.all().values('project_name')
             }
             return render_to_response('add_module.html', manage_info)
     else:
@@ -164,35 +171,35 @@ def add_config(request):
 '''单个执行'''
 
 
-def run_test(request):
-    if request.session.get('login_status'):
-        if request.method == 'POST':
-            mode = request.POST.get('mode')
-            id = request.POST.get('id')
-            if mode == 'run_by_test':
-                result = main_ate(run_by_single(id))
-            elif mode == 'run_by_module':
-                test_lists = run_by_module(id)
-                result = get_result(test_lists)
-            elif mode == 'run_by_project':
-                test_lists = run_by_project(id)
-                result = get_result(test_lists)
-            return render_to_response('report_template.html', result)
-    else:
-        return HttpResponseRedirect("/api/login/")
-
-
-'''批量执行'''
-
-
-def run_batch_test(request):
-    if request.session.get('login_status'):
-        if request.method == 'POST':
-            test_lists = run_by_batch(request.body.decode('ascii').split('&'))
-            result = get_result(test_lists)
-            return render_to_response('report_template.html', result)
-    else:
-        return HttpResponseRedirect("/api/login/")
+# def run_test(request):
+#     if request.session.get('login_status'):
+#         if request.method == 'POST':
+#             mode = request.POST.get('mode')
+#             id = request.POST.get('id')
+#             if mode == 'run_by_test':
+#                 result = main_ate(run_by_single(id))
+#             elif mode == 'run_by_module':
+#                 test_lists = run_by_module(id)
+#                 result = get_result(test_lists)
+#             elif mode == 'run_by_project':
+#                 test_lists = run_by_project(id)
+#                 result = get_result(test_lists)
+#             return render_to_response('report_template.html', result)
+#     else:
+#         return HttpResponseRedirect("/api/login/")
+#
+#
+# '''批量执行'''
+#
+#
+# def run_batch_test(request):
+#     if request.session.get('login_status'):
+#         if request.method == 'POST':
+#             test_lists = run_by_batch(request.body.decode('ascii').split('&'))
+#             result = get_result(test_lists)
+#             return render_to_response('report_template.html', result)
+#     else:
+#         return HttpResponseRedirect("/api/login/")
 
 
 '''添加接口'''
@@ -211,7 +218,11 @@ def add_api(request):
 def project_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            project_info = json.loads(request.body.decode('utf-8'))
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.debug('项目信息解析异常：{project_info}'.format(project_info=project_info))
+                return HttpResponse('项目信息解析异常')
 
             if 'status' in project_info.keys():
                 msg = change_status(ProjectInfo, **project_info)
@@ -227,7 +238,8 @@ def project_list(request, id):
                 'account': request.session["now_account"],
                 'project': pro_list[1],
                 'page_list': pro_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'sum': pro_list[2]
             }
             return render_to_response('project_list.html', manage_info)
     else:
@@ -240,7 +252,11 @@ def project_list(request, id):
 def module_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            module_info = json.loads(request.body.decode('utf-8'))
+            try:
+                module_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('模块信息解析异常：{module_info}'.format(module_info=module_info))
+                return HttpResponse('模块信息解析异常')
 
             if 'status' in module_info.keys():
                 msg = change_status(ModuleInfo, **module_info)
@@ -256,7 +272,8 @@ def module_list(request, id):
                 'account': request.session["now_account"],
                 'module': module_list[1],
                 'page_list': module_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'sum': module_list[2],
             }
             return render_to_response('module_list.html', manage_info)
     else:
@@ -269,7 +286,12 @@ def module_list(request, id):
 def test_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            test_info = json.loads(request.body.decode('utf-8'))
+            try:
+                test_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('用例信息解析异常：{test_info}'.format(test_info=test_info))
+                return HttpResponse('用例信息解析异常')
+
             if 'status' in test_info.keys():
                 msg = change_status(TestCaseInfo, **test_info)
                 return HttpResponse(get_ajax_msg(msg, '用例已更改！'))

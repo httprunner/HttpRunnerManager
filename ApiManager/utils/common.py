@@ -266,16 +266,14 @@ def config_info_logic(type=True, **kwargs):
 
 
 def set_filter_session(request):
-    filter_query = {'filter': '1', 'user': '', 'name': ''}
-    if request.method == 'POST':
-        request.session['filter'] = request.POST.get('filter')
-        request.session['user'] = request.POST.get('user')
-        request.session['name'] = request.POST.get('name')
-        try:
-            filter_query = {'filter': request.session['filter'], 'user': request.session['user'],
-                            'name': request.session['name']}
-        except KeyError:
-            logger.error('session异常！！！')
+    request.session['user'] = request.POST.get('user', '')
+    request.session['name'] = request.POST.get('name', '')
+    request.session['belong_project'] = request.POST.get('belong_project', '')
+    request.session['belong_module'] = request.POST.get('belong_module', '')
+
+    filter_query = {'user': request.session['user'], 'name': request.session['name'],
+                    'belong_project': request.session['belong_project'],
+                    'belong_module': request.session['belong_module']}
 
     return filter_query
 
@@ -284,10 +282,7 @@ def set_filter_session(request):
 
 
 def get_ajax_msg(msg, success):
-    if msg is 'ok':
-        return success
-    else:
-        return msg
+    return success if msg is 'ok' else msg
 
 
 '''注册信息逻辑判断'''

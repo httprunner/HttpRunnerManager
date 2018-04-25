@@ -32,33 +32,31 @@ class UserInfoManager(models.Manager):
 
 
 class ProjectInfoManager(models.Manager):
-    def insert_project(self, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc):
-        self.create(pro_name=pro_name, responsible_name=responsible_name, test_user=test_user, dev_user=dev_user
-                    , publish_app=publish_app, simple_desc=simple_desc, other_desc=other_desc)
+    def insert_project(self, **kwargs):
+        self.create(**kwargs)
 
-    def update_project(self, id, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc):
+    def update_project(self, id, **kwargs):#如此update_time才会自动更新！！
         obj = self.get(id=int(id))
-        obj.pro_name = pro_name
-        obj.responsible_name = responsible_name
-        obj.test_user = test_user
-        obj.dev_user = dev_user
-        obj.publish_app = publish_app
-        obj.simple_desc = simple_desc
-        obj.other_desc = other_desc
-
+        obj.project_name = kwargs.get('project_name')
+        obj.responsible_name = kwargs.get('responsible_name')
+        obj.test_user = kwargs.get('test_user')
+        obj.dev_user = kwargs.get('dev_user')
+        obj.publish_app = kwargs.get('publish_app')
+        obj.simple_desc = kwargs.get('simple_desc')
+        obj.other_desc = kwargs.get('other_desc')
         obj.save()
 
     def get_pro_name(self, pro_name, type=True, id=None):
         if type:
-            return self.filter(pro_name__exact=pro_name).count()
+            return self.filter(project_name__exact=pro_name).count()
         else:
             if id is not None:
-                return self.get(id=int(id)).pro_name
-            return self.get(pro_name__exact=pro_name)
+                return self.get(id=int(id)).project_name
+            return self.get(project_name__exact=pro_name)
 
     def get_pro_info(self, type=True):
         if type:
-            return self.all().values('pro_name')
+            return self.all().values('project_name')
         else:
             return self.all()
 
@@ -67,16 +65,15 @@ class ProjectInfoManager(models.Manager):
 
 
 class ModuleInfoManager(models.Manager):
-    def insert_module(self, module_name, belong_project, test_user, simple_desc, other_desc):
-        self.create(module_name=module_name, belong_project=belong_project, test_user=test_user,
-                    simple_desc=simple_desc, other_desc=other_desc)
+    def insert_module(self, **kwargs):
+        self.create(**kwargs)
 
-    def update_module(self, id, module_name, test_user, simple_desc, other_desc):
+    def update_module(self, id, **kwargs):
         obj = self.get(id=int(id))
-        obj.module_name = module_name
-        obj.test_user = test_user
-        obj.simple_desc = simple_desc
-        obj.other_desc = other_desc
+        obj.module_name = kwargs.get('module_name')
+        obj.test_user = kwargs.get('test_user')
+        obj.simple_desc = kwargs.get('simple_desc')
+        obj.other_desc = kwargs.get('other_desc')
 
         obj.save()
 
@@ -86,10 +83,10 @@ class ModuleInfoManager(models.Manager):
         else:
             if id is not None:
                 return self.get(id=int(id)).module_name
-            return self.get(belong_project__pro_name__exact=project, module_name__exact=module_name)
+            return self.get(belong_project__project_name__exact=project, module_name__exact=module_name)
 
     def get_module_info(self, belong_project):
-        return self.filter(belong_project__pro_name__exact=belong_project).values_list('module_name',
+        return self.filter(belong_project__project_name__exact=belong_project).values_list('module_name',
                                                                                        flat=True).order_by(
             '-create_time')
 

@@ -17,31 +17,6 @@
         </div>
     </div>
 
-    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-valid">
-        <div class="am-modal-dialog">
-            <div class="am-modal-hd">HttpRunnerManager</div>
-            <div class="am-modal-bd">
-                亲，确定要恢复该用例么？
-            </div>
-            <div class="am-modal-footer">
-                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
-                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
-            </div>
-        </div>
-    </div>
-    <form id="form" action="/api/upload/" method="post" enctype="multipart/form-data">
-        <div class="am-modal am-modal-confirm" tabindex="-1" id="bulk_uploadcase">
-            <div class="am-modal-dialog">
-                <div class="am-modal-hd">
-                    <h5 class="modal-title" id="HttpRunnerManager">HttpRunnerManager</h5>
-                </div>
-                <div class="am-modal-bd" id="uploadfile">
-                    <input id="input-b9" name="file" type="file" class="file">
-                    <div id="kartik-file-errors"></div>
-                </div>
-            </div>
-        </div>
-    </form>
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例列表</ul>
@@ -53,11 +28,11 @@
                 <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_config/'">新增配置
                 </button>
-                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#test_list')">运行
-                </button>
                 <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
                         data-toggle="modal" data-target="#bulk_uploadcase">批量导入
+                </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                        onclick="my_submit('#test_list')">运行
                 </button>
             </dl>
         </div>
@@ -65,33 +40,25 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/test_list/1/">
                 <ul>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
+                                                        name="belong_project"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属项目"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_module }}" type="text"
+                                                        name="belong_module"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属模块"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="用例名称"/></li>
                     <li>
-                        <div class="am-btn-group am-btn-group-xs">
-                            <select name="filter"
-                                    data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                                {% if info.filter == '1' %}
-                                    <option value="1" selected>有效</option>
-                                    <option value="0">无效</option>
-                                {% elif info.filter == '0' %}
-                                    <option value="1">有效</option>
-                                    <option value="0" selected>无效</option>
-                                {% else %}
-                                    <option value="1">有效</option>
-                                    <option value="0">无效</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
                                                         class="am-form-field am-input-sm am-input-xm"
                                                         placeholder="创建者"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="用例"/></li>
-                    <li>
-                        <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                style="margin-top: -1px;">搜索
-                        </button>
+
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">搜索
+                    </button>
                     </li>
                 </ul>
             </form>
@@ -108,9 +75,8 @@
                     <th class="table-type">所属项目</th>
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
-                    <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
-                            class="am-icon-close am-text-primary"></i></th>
-                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th class="table-type">请求方式</th>
+                    <th class="table-type">URL</th>
                     <th width="163px" class="table-title">操作</th>
                 </tr>
                 </thead>
@@ -125,12 +91,8 @@
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
                         <td>{{ foo.author }}</td>
-                        {% if foo.status == 1 %}
-                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                        {% else %}
-                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                        {% endif %}
-                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+                        <td></td>
+                        <td></td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
@@ -145,12 +107,6 @@
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
                                             onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
                                             class="am-icon-pencil-square-o"></span></button>
-
-                                    <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                            onclick="valid('in_tec{{ foo.id }}')"><span
-                                            class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
@@ -170,8 +126,6 @@
                 </button>
                 <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
                         class="am-icon-plus"></span> 新增配置
-                </button>
-                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
                 </button>
             </div>
 
