@@ -1,9 +1,1574 @@
-2018-04-21 14:16:13,908 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
-2018-04-21 14:27:47,619 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULE', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
-2018-04-21 14:27:47,630 [HttpRunnerManager:76] [operation:add_module_data] [INFO]- TEST MODULE模块添加成功
-2018-04-21 14:27:57,097 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULE', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
-2018-04-21 14:28:01,953 [HttpRunnerManager:109] [views:add_module] [DEBUG]- 处理前模块信息：{'module_name': 'TEST MODULEFDAF     ', 'other_desc': 'DD', 'test_user': 'DDD', 'simple_desc': 'DD', 'belong_project': 'Test Space Bug'}
-2018-04-21 14:28:01,963 [HttpRunnerManager:76] [operation:add_module_data] [INFO]- TEST MODULEFDAF     模块添加成功
-2018-04-21 14:28:16,797 [HttpRunnerManager:86] [operation:add_module_data] [INFO]- TEST MODULEFDAF     模块更新成功
-2018-04-21 14:28:25,068 [HttpRunnerManager:86] [operation:add_module_data] [INFO]- TEST MODULE模块更新成功
-2018-04-21 14:28:27,995 [HttpRunnerManager:163] [operation:change_status] [INFO]- 3状态已更改！
+2018-04-24 13:00:27,540 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 71, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 56, in get_pro_name
+    return self.get(project_name__exact=pro_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ProjectInfo matching query does not exist.
+2018-04-24 13:05:46,136 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 23, in process
+    app = __import__("%s.views" % app)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 10, in <module>
+    from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 6, in <module>
+    from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 75
+    kwargs['belong_project'] = belong_project
+         ^
+IndentationError: expected an indented block
+2018-04-24 13:06:24,848 [HttpRunnerManager:75] [operation:add_module_data] [INFO]- 11模块添加成功
+2018-04-24 13:13:47,297 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 162, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-24 13:13:50,749 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_case/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_case() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 142, in add_case
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-24 13:14:12,718 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_case/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_case() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 142, in add_case
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-24 15:26:30,372 [HttpRunnerManager:58] [views:log_out] [INFO]- yinquanwang退出
+2018-04-24 15:26:32,081 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-24 15:51:06,362 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 73, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+AttributeError: 'ProjectInfoManager' object has no attribute 'get_pro_name'
+2018-04-24 15:53:07,108 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 73, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 56, in get_pro_name
+    return self.get(project_name__exact=pro_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ProjectInfo matching query does not exist.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 75, in add_module_data
+    logging.error('{项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+ValueError: unexpected '{' in field name
+2018-04-24 15:53:09,707 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 73, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 56, in get_pro_name
+    return self.get(project_name__exact=pro_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ProjectInfo matching query does not exist.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 75, in add_module_data
+    logging.error('{项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+ValueError: unexpected '{' in field name
+2018-04-24 15:53:25,659 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 73, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 56, in get_pro_name
+    return self.get(project_name__exact=pro_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ProjectInfo matching query does not exist.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 75, in add_module_data
+    logging.error('{项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+ValueError: unexpected '{' in field name
+2018-04-24 15:54:29,565 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_module/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_module() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 73, in add_module_data
+    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 56, in get_pro_name
+    return self.get(project_name__exact=pro_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ProjectInfo matching query does not exist.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 115, in add_module
+    msg = module_info_logic(**module_info)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 135, in module_info_logic
+    return add_module_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 75, in add_module_data
+    logging.error('{项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+ValueError: unexpected '{' in field name
+2018-04-24 16:04:54,917 [HttpRunnerManager:47] [operation:add_project_data] [INFO]- 项目添加成功：{'dev_user': 'dfda', 'other_desc': '', 'project_name': 'fd', 'test_user': 'ddfa', 'simple_desc': '', 'responsible_name': 'da', 'publish_app': 'fda'}
+2018-04-24 16:17:38,518 [HttpRunnerManager:61] [operation:add_project_data] [INFO]- 更新成功：{}
+2018-04-24 16:17:41,282 [HttpRunnerManager:61] [operation:add_project_data] [INFO]- 更新成功：{}
+2018-04-24 16:21:38,821 [HttpRunnerManager:59] [operation:add_project_data] [INFO]- 更新成功：{'publish_app': 'feaw', 'dev_user': 'fda', 'responsible_name': 'fdfd', 'other_desc': 'fda', 'project_name': 'fdaffdfr', 'test_user': 'fddf', 'simple_desc': 'fda'}
+2018-04-24 16:25:07,316 [HttpRunnerManager:102] [operation:add_module_data] [INFO]- 模块更新成功：{'simple_desc': '', 'module_name': '11', 'test_user': '11', 'other_desc': ''}
+2018-04-24 16:25:49,375 [HttpRunnerManager:89] [operation:add_module_data] [INFO]- 模块添加成功：{'simple_desc': '', 'module_name': 'd', 'test_user': 'd', 'other_desc': '', 'belong_project': <ProjectInfo: ProjectInfo object (4)>}
+2018-04-24 16:26:00,319 [HttpRunnerManager:179] [operation:change_status] [INFO]- 4状态已更改！
+2018-04-24 16:26:05,540 [HttpRunnerManager:179] [operation:change_status] [INFO]- 5状态已更改！
+2018-04-24 16:26:42,414 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 162, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-24 16:52:48,072 [HttpRunnerManager:89] [operation:add_module_data] [INFO]- 模块添加成功：{'test_user': '发', 'module_name': '发发 ', 'other_desc': '', 'belong_project': <ProjectInfo: ProjectInfo object (4)>, 'simple_desc': ''}
+2018-04-24 16:55:10,301 [HttpRunnerManager:102] [operation:add_module_data] [INFO]- 模块更新成功：{'module_name': '发发 ', 'other_desc': '', 'simple_desc': '', 'test_user': '发'}
+2018-04-24 16:55:15,486 [HttpRunnerManager:102] [operation:add_module_data] [INFO]- 模块更新成功：{'module_name': '发发 的', 'other_desc': '', 'simple_desc': '', 'test_user': '发'}
+2018-04-24 17:30:33,518 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 242, in project_list
+    return render_to_response('project_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 454, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 452, in parse
+    filter_expression = self.compile_filter(token.contents)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 568, in compile_filter
+    return FilterExpression(token, self)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 668, in __init__
+    "from '%s'" % (token[upto:], token))
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '{{ foo.project_name' from 'sum.pop.{{ foo.project_name'
+2018-04-24 17:50:07,736 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 234, in project_list
+    ProjectInfo, filter_query, '/api/project_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 130, in get_pager_info
+    sum.setdefault(pro_name, module_count+'/'+test_count+'/'+config_count)
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: project_list() missing 1 required positional argument: 'id'
+2018-04-24 17:50:26,853 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 234, in project_list
+    ProjectInfo, filter_query, '/api/project_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 130, in get_pager_info
+    sum.setdefault(pro_name, module_count+'/'+test_count+'/'+config_count)
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: project_list() missing 1 required positional argument: 'id'
+2018-04-24 17:50:27,866 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 234, in project_list
+    ProjectInfo, filter_query, '/api/project_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 130, in get_pager_info
+    sum.setdefault(pro_name, module_count+'/'+test_count+'/'+config_count)
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: project_list() missing 1 required positional argument: 'id'
+2018-04-24 17:51:16,612 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 234, in project_list
+    ProjectInfo, filter_query, '/api/project_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 130, in get_pager_info
+    sum.setdefault(pro_name, module_count+'/'+test_count+'/'+config_count)
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: project_list() missing 1 required positional argument: 'id'
+2018-04-24 17:54:08,496 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/project_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 234, in project_list
+    ProjectInfo, filter_query, '/api/project_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 130, in get_pager_info
+    sum.setdefault(pro_name, module_count+'/')
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: project_list() missing 1 required positional argument: 'id'
+2018-04-24 18:18:38,692 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 276, in module_list
+    return render_to_response('module_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 859, in ifequal
+    return do_ifequal(parser, token, False)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 828, in do_ifequal
+    raise TemplateSyntaxError("%r takes two arguments" % bits[0])
+django.template.exceptions.TemplateSyntaxError: 'ifequal' takes two arguments
+2018-04-25 09:57:37,056 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-25 10:03:38,120 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 278, in module_list
+    return render_to_response('module_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 454, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 452, in parse
+    filter_expression = self.compile_filter(token.contents)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 568, in compile_filter
+    return FilterExpression(token, self)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 663, in __init__
+    self.args_check(filter_name, filter_func, args)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 723, in args_check
+    (name, alen - dlen, plen))
+django.template.exceptions.TemplateSyntaxError: join requires 2 arguments, 1 provided
+2018-04-25 10:03:54,632 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 278, in module_list
+    return render_to_response('module_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 454, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 452, in parse
+    filter_expression = self.compile_filter(token.contents)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 568, in compile_filter
+    return FilterExpression(token, self)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 663, in __init__
+    self.args_check(filter_name, filter_func, args)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 723, in args_check
+    (name, alen - dlen, plen))
+django.template.exceptions.TemplateSyntaxError: join requires 2 arguments, 1 provided
+2018-04-25 10:07:25,373 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 278, in module_list
+    return render_to_response('module_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 454, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 452, in parse
+    filter_expression = self.compile_filter(token.contents)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 568, in compile_filter
+    return FilterExpression(token, self)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 663, in __init__
+    self.args_check(filter_name, filter_func, args)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 723, in args_check
+    (name, alen - dlen, plen))
+django.template.exceptions.TemplateSyntaxError: join requires 2 arguments, 1 provided
+2018-04-25 10:22:12,731 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/run_test/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: run_test() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 185, in run_test
+    test_lists = run_by_project(id)
+  File "D:\HttpRunnerManager\ApiManager\utils\runner.py", line 47, in run_by_project
+    obj = ProjectInfo.objects.get(id=id, status=1)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 394, in get
+    clone = self.filter(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1153, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1015, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'status' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-25 10:33:16,230 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-25 10:56:38,155 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 270, in module_list
+    ModuleInfo, filter_query, '/api/module_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 104, in get_pager_info
+    obj = obj.filter(module_name__contains=name).filter(test_user__contains=user)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1215, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1090, in build_lookup
+    raise ValueError("Cannot use None as a query value")
+ValueError: Cannot use None as a query value
+2018-04-25 11:09:28,161 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/module_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 23, in process
+    app = __import__("%s.views" % app)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 13, in <module>
+    from ApiManager.utils.pagination import get_pager_info
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 96
+    obj =
+         ^
+SyntaxError: invalid syntax
+2018-04-25 11:18:30,827 [HttpRunnerManager:59] [operation:add_project_data] [INFO]- 项目更新成功：{'publish_app': 'feaw', 'responsible_name': 'fdfd', 'dev_user': 'fda', 'project_name': 'ceshi', 'simple_desc': 'fda', 'other_desc': 'fda', 'test_user': 'fddf'}
+2018-04-25 11:23:36,772 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_case/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_case() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 144, in add_case
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-25 11:46:40,776 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 301, in test_list
+    TestCaseInfo, filter_query, '/api/test_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 112, in get_pager_info
+    obj = obj.filter(name__contains=name) if name is not '' else obj.filter(auth__contains=user)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1153, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1015, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'auth' into field. Choices are: author, belong_module, belong_module_id, belong_project, create_time, id, include, name, request, type, update_time
+2018-04-25 12:18:45,549 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 164, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-26 09:31:40,128 [HttpRunnerManager:29] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 09:33:23,950 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 164, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-26 09:39:18,397 [HttpRunnerManager:179] [operation:change_status] [INFO]- 6状态已更改！
+2018-04-26 09:40:19,261 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_case/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_case() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 144, in add_case
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-26 10:29:36,178 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 23, in process
+    app = __import__("%s.views" % app)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 10, in <module>
+    from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 6, in <module>
+    from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 175
+    '''改变状态'''
+             ^
+IndentationError: expected an indented block
+2018-04-26 11:17:41,205 [HttpRunnerManager:27] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 11:19:36,060 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 400, in env_set
+    msg = add_env_data({'env_name': env_name, 'base_url': base_url, 'simple_desc': simple_desc})
+TypeError: add_env_data() takes 0 positional arguments but 1 was given
+2018-04-26 11:19:48,364 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 400, in env_set
+    msg = add_env_data({'env_name': env_name, 'base_url': base_url, 'simple_desc': simple_desc})
+TypeError: add_env_data() takes 0 positional arguments but 1 was given
+2018-04-26 11:20:09,447 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 400, in env_set
+    msg = add_env_data({'env_name': env_name, 'base_url': base_url, 'simple_desc': simple_desc})
+TypeError: add_env_data() takes 0 positional arguments but 1 was given
+2018-04-26 11:42:35,074 [HttpRunnerManager:56] [views:log_out] [INFO]- yinquanwang退出
+2018-04-26 11:42:36,458 [HttpRunnerManager:27] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 11:43:52,849 [HttpRunnerManager:56] [views:log_out] [INFO]- yinquanwang退出
+2018-04-26 11:43:54,364 [HttpRunnerManager:27] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 11:44:52,229 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_list/1/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 416, in env_list
+    EnvInfo, None, '/api/env_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 85, in get_pager_info
+    id = int(id)
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+TypeError: env_list() missing 1 required positional argument: 'id'
+2018-04-26 11:48:10,257 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 415, in env_list
+    EnvInfo, None, '/api/env_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 103, in get_pager_info
+    obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1153, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1015, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'type' into field. Choices are: base_url, create_time, env_name, id, simple_desc, update_time
+2018-04-26 12:21:20,528 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 164, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-26 12:21:55,083 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/add_config/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: add_config() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1683, in add_fields
+    join_info = self.setup_joins(name.split(LOOKUP_SEP), opts, alias, allow_many=allow_m2m)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1448, in setup_joins
+    names, opts, allow_many, fail_on_missing=True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1379, in names_to_path
+    "Choices are: %s" % (name, ", ".join(available)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 164, in add_config
+    'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 742, in values
+    clone = self._values(*fields, **expressions)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 737, in _values
+    clone.query.set_values(fields)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1935, in set_values
+    self.add_fields(field_names, True)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1706, in add_fields
+    "Choices are: %s" % (name, ", ".join(names)))
+django.core.exceptions.FieldError: Cannot resolve keyword 'pro_name' into field. Choices are: create_time, dev_user, id, moduleinfo, other_desc, project_name, publish_app, responsible_name, simple_desc, test_user, update_time
+2018-04-26 13:43:30,273 [HttpRunnerManager:56] [views:log_out] [INFO]- yinquanwang退出
+2018-04-26 13:43:51,127 [HttpRunnerManager:27] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 14:09:44,004 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 23, in process
+    app = __import__("%s.views" % app)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 406
+    else
+        ^
+SyntaxError: invalid syntax
+2018-04-26 14:29:13,912 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in env_set
+    msg = add_env_data(mode, **env_lists)
+TypeError: add_env_data() takes 0 positional arguments but 1 was given
+2018-04-26 14:30:06,769 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 191, in add_env_data
+    EnvInfo.objects.update(index, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+TypeError: update() takes 1 positional argument but 2 were given
+2018-04-26 14:30:26,943 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 191, in add_env_data
+    EnvInfo.objects.update(index, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+TypeError: update() takes 1 positional argument but 2 were given
+2018-04-26 14:30:51,162 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 191, in add_env_data
+    EnvInfo.objects.update(index, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+TypeError: update() takes 1 positional argument but 2 were given
+2018-04-26 14:38:11,525 [HttpRunnerManager:102] [operation:add_module_data] [INFO]- 模块更新成功：{'other_desc': '', 'simple_desc': '', 'test_user': '发', 'module_name': '发发 的'}
+2018-04-26 14:46:26,550 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 139, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view HttpRunnerManager.activator.process didn't return an HttpResponse object. It returned None instead.
+2018-04-26 14:53:24,728 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 139, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view HttpRunnerManager.activator.process didn't return an HttpResponse object. It returned None instead.
+2018-04-26 14:58:19,671 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 404, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 189, in add_env_data
+    if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 153, in get_env_name
+    return self.get(id=int(index)).env_name
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+2018-04-26 14:59:25,392 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 404, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 189, in add_env_data
+    if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 153, in get_env_name
+    return self.get(id=int(index)).env_name
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+2018-04-26 15:00:27,137 [HttpRunnerManager:26] [views:login] [INFO]- yinquanwang 登录成功
+2018-04-26 15:00:34,821 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 404, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 189, in add_env_data
+    if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 153, in get_env_name
+    return self.get(id=int(index)).env_name
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+2018-04-26 15:01:08,734 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 404, in env_set
+    msg = add_env_data(**env_lists)
+  File "D:/HttpRunnerManager\ApiManager\utils\operation.py", line 189, in add_env_data
+    if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
+  File "D:/HttpRunnerManager\ApiManager\managers.py", line 153, in get_env_name
+    return self.get(id=int(index)).env_name
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'NoneType'
+2018-04-26 15:04:49,233 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\utils\deprecation.py", line 97, in __call__
+    response = self.process_response(request, response)
+  File "E:\Python35\lib\site-packages\django\middleware\clickjacking.py", line 26, in process_response
+    if response.get('X-Frame-Options') is not None:
+AttributeError: 'str' object has no attribute 'get'
+2018-04-26 15:06:43,648 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+TypeError: env_set() takes 1 positional argument but 2 were given
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 31, in process
+    result = fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 400, in env_set
+    EnvInfo.objects.delete_env(env_lists.get('id'))
+  File "D:/HttpRunnerManager\ApiManager\managers.py", line 156, in delete_env
+    self.get(id=int(index)).delete()
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: EnvInfo matching query does not exist.
+2018-04-26 15:08:31,678 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\utils\deprecation.py", line 97, in __call__
+    response = self.process_response(request, response)
+  File "E:\Python35\lib\site-packages\django\middleware\clickjacking.py", line 26, in process_response
+    if response.get('X-Frame-Options') is not None:
+AttributeError: 'str' object has no attribute 'get'
+2018-04-26 15:08:59,488 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/env_set/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\utils\deprecation.py", line 97, in __call__
+    response = self.process_response(request, response)
+  File "E:\Python35\lib\site-packages\django\middleware\clickjacking.py", line 26, in process_response
+    if response.get('X-Frame-Options') is not None:
+AttributeError: 'str' object has no attribute 'get'
+2018-04-26 15:16:27,255 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_list/1/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 29, in process
+    result = fun(request, index)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 299, in test_list
+    TestCaseInfo, filter_query, '/api/test_list/', id)
+  File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 140, in get_pager_info
+    return page_list, info, sum
+UnboundLocalError: local variable 'info' referenced before assignment

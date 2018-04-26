@@ -10,6 +10,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, register_info_logic
 from ApiManager.utils.operation import change_status, add_env_data
 from ApiManager.utils.pagination import get_pager_info
+from ApiManager.utils.runner import run_by_single, run_by_module, run_by_project
 
 logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
@@ -169,35 +170,33 @@ def add_config(request):
 
 '''单个执行'''
 
-# def run_test(request):
-#     if request.session.get('login_status'):
-#         if request.method == 'POST':
-#             mode = request.POST.get('mode')
-#             id = request.POST.get('id')
-#             if mode == 'run_by_test':
-#                 result = main_ate(run_by_single(id))
-#             elif mode == 'run_by_module':
-#                 test_lists = run_by_module(id)
-#                 result = get_result(test_lists)
-#             elif mode == 'run_by_project':
-#                 test_lists = run_by_project(id)
-#                 result = get_result(test_lists)
-#             return render_to_response('report_template.html', result)
-#     else:
-#         return HttpResponseRedirect("/api/login/")
-#
-#
-# '''批量执行'''
-#
-#
-# def run_batch_test(request):
-#     if request.session.get('login_status'):
-#         if request.method == 'POST':
-#             test_lists = run_by_batch(request.body.decode('ascii').split('&'))
-#             result = get_result(test_lists)
-#             return render_to_response('report_template.html', result)
-#     else:
-#         return HttpResponseRedirect("/api/login/")
+def run_test(request):
+    if request.session.get('login_status'):
+        if request.method == 'POST':
+            mode = request.POST.get('mode')
+            id = request.POST.get('id')
+            if mode == 'run_by_test':
+                result = main_ate(run_by_single(id))
+            elif mode == 'run_by_module':
+                test_lists = run_by_module(id)
+            elif mode == 'run_by_project':
+                test_lists = run_by_project(id)
+            return render_to_response('report_template.html', result)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+'''批量执行'''
+
+
+def run_batch_test(request):
+    if request.session.get('login_status'):
+        if request.method == 'POST':
+            test_lists = run_by_batch(request.body.decode('ascii').split('&'))
+            result = get_result(test_lists)
+            return render_to_response('report_template.html', result)
+    else:
+        return HttpResponseRedirect("/api/login/")
 
 
 '''添加接口'''

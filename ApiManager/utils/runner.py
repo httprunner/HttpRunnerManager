@@ -1,4 +1,5 @@
 from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
+
 # from httprunner.cli import main_ate
 
 '''通过test id组装case 供其他方法调用'''
@@ -6,7 +7,7 @@ from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
 
 def run_by_single(id):
     testcase_list = []
-    obj = TestCaseInfo.objects.get(id=id, status=1)
+    obj = TestCaseInfo.objects.get(id=id)
     module = obj.belong_module_id
     include = obj.include
     request = obj.request
@@ -32,8 +33,8 @@ def run_by_single(id):
 
 def run_by_module(id):
     testcase_lists = []
-    obj = ModuleInfo.objects.get(id=id, status=1)
-    test_index_list = TestCaseInfo.objects.filter(belong_module=obj, type=1, status=1).values_list('id')
+    obj = ModuleInfo.objects.get(id=id)
+    test_index_list = TestCaseInfo.objects.filter(belong_module=obj, type=1).values_list('id')
     for index in test_index_list:
         testcase_lists.append(run_by_single(index[0]))
     return testcase_lists
@@ -44,8 +45,8 @@ def run_by_module(id):
 
 def run_by_project(id):
     testcase_lists = []
-    obj = ProjectInfo.objects.get(id=id, status=1)
-    module_index_list = ModuleInfo.objects.filter(belong_project=obj, status=1).values_list('id')
+    obj = ProjectInfo.objects.get(id=id)
+    module_index_list = ModuleInfo.objects.filter(belong_project=obj).values_list('id')
     for index in module_index_list:
         module_id = index[0]
         testcase_lists.extend(run_by_module(module_id))
@@ -67,48 +68,3 @@ def run_by_batch(test_list):
         elif 'project' in form_test[0]:
             testcase_lists.extend(run_by_project(id))
     return testcase_lists
-
-
-'''运行并返回报告'''
-
-
-def get_result(test_lists):
-    summary = {
-        "success": True,
-        "stat": {
-            'testsRun': 0,
-            'successes': 0,
-            'failures': 0,
-            'errors': 0,
-            'skipped': 0,
-            'expectedFailures': 0,
-            'unexpectedSuccesses': 0
-        },
-        "platform": {},
-        "time": {
-            'start_at': '',
-            'duration': 0.0,
-        },
-        "records": [],
-    }
-    for index in range(len(test_lists)):
-        result = main_ate(test_lists[index])
-
-        if index == 0:
-            summary["time"]["start_at"] = result["time"].pop("start_at")
-
-        if "html_report_name" in result.keys():
-            summary["html_report_name"] = result.pop("html_report_name")
-
-        summary["success"] = summary.pop("success") and result.pop("success")
-
-        for key, value in result["stat"].items():
-            summary["stat"][key] = summary["stat"].get(key) + value
-
-        summary["platform"] = result.pop("platform")
-
-        summary["time"]["duration"] = summary["time"].pop("duration") + result["time"]["duration"]
-
-        summary["records"].extend(result.pop("records"))
-
-    return summary
