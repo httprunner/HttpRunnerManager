@@ -3,7 +3,7 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
 
 logger = logging.getLogger('HttpRunnerManager')
 '''用户注册信息落地'''
@@ -168,6 +168,35 @@ def add_config_data(type, **kwargs):
     return 'ok'
 
 
+'''环境信息落地'''
+
+
+def add_env_data(**kwargs):
+    index = kwargs.pop('index')
+    env_name = kwargs.get('env_name')
+    if index == 'add':
+        try:
+            if EnvInfo.objects.filter(env_name=env_name).count() < 1:
+                EnvInfo.objects.insert_env(**kwargs)
+                logging.info('环境添加成功：{kwargs}'.format(kwargs=kwargs))
+                return 'ok'
+            else:
+                return 'error'
+        except ObjectDoesNotExist:
+            logging.error('添加环境异常：{kwargs}'.format(kwargs=kwargs))
+    else:
+        try:
+            if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
+                    env_name=env_name).count() > 0:
+                return 'error'
+            else:
+                EnvInfo.objects.update_env(index, **kwargs)
+                logging.info('环境信息更新成功：{kwargs}'.format(kwargs=kwargs))
+                return 'ok'
+        except ObjectDoesNotExist:
+            logging.error('环境信息查询失败：{kwargs}'.format(kwargs=kwargs))
+
+
 '''改变状态'''
 
 
@@ -178,43 +207,3 @@ def change_status(Model, **kwargs):
     obj.save()
     logger.info('{name}状态已更改！'.format(name=name))
     return 'ok'
-
-
-'''批量导入用例数据落地'''
-
-
-def bulk_import_data(**kwargs):
-    case_opt = TestCaseInfo.objects
-
-    case_request_list = kwargs.get('case_info')  # 获取前端导入的文件处理后的数据
-
-    if isinstance(case_request_list, list):
-        pass
-    else:
-        case_request_list = list(case_request_list)
-    case_list_to_insert = []
-    for values in enumerate(case_request_list):
-
-        # print(values[1])
-        if 'config' in values[1]:
-            name = values[1].get('config').get('name')  # case 配置文件的名字
-            type = 2  # 设置类型是config类型
-        else:
-            type = 1
-            name = values[1].get('test').get('name')  # case的名字
-        belong_project = '未分类'  # 系统默认项目分类
-        module = '未分类'  # 系统默认模块分类
-        belong_module = ModuleInfo.objects.get_module_name(module, type=False, project=belong_project)
-        author = 'system'
-        request = values[1]
-        if type == 2:
-            case_list_to_insert.append(TestCaseInfo(name=name, type=type, belong_project=belong_project,
-                                                    belong_module=belong_module, author=author, request=request))
-        else:
-            case_list_to_insert.append(TestCaseInfo(name=name, type=type, belong_project=belong_project,
-                                                    belong_module=belong_module, author=author, request=request))
-
-            # print(case_list_to_insert)
-
-    case_opt.bulk_create(case_list_to_insert)
-    # return 'ok'

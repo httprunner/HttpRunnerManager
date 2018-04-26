@@ -1,18 +1,15 @@
 import json
-import os
 import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
 from ApiManager.tasks import add
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, yml_parser
-from ApiManager.utils.operation import change_status
+    set_filter_session, get_ajax_msg, register_info_logic
+from ApiManager.utils.operation import change_status, add_env_data
 from ApiManager.utils.pagination import get_pager_info
-from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-
 
 logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
@@ -73,7 +70,7 @@ def index(request):
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
-            'config_length':config_length,
+            'config_length': config_length,
             'account': request.session["now_account"]
         }
         return render_to_response('index.html', manage_info)
@@ -134,14 +131,16 @@ def add_module(request):
 def add_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testcase_lists = json.loads(request.body.decode('utf-8'))
-            logger.debug('处理前用例信息：{testcase_lists}'.format(testcase_lists=testcase_lists))
+            try:
+                testcase_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('用例信息解析异常：{testcase_lists}'.format(testcase_lists=testcase_lists))
             msg = case_info_logic(**testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('add_case.html', manage_info)
     else:
@@ -169,7 +168,6 @@ def add_config(request):
 
 
 '''单个执行'''
-
 
 # def run_test(request):
 #     if request.session.get('login_status'):
@@ -388,6 +386,60 @@ def edit_config(request):
         return HttpResponseRedirect("/api/login/")
 
 
+'''环境设置'''
+
+
+def env_set(request):
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                env_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('环境信息解析异常：{env_lists}'.format(env_lists=env_lists))
+                return HttpResponse('环境信息查询异常，请重试')
+            index = env_lists.get('id')
+            EnvInfo.objects.delete_env(index)
+            return HttpResponse('删除成功')
+        elif request.method == 'GET':
+            return render_to_response('env_list.html', {'account': request.session["now_account"]})
+        else:
+            mode = request.POST.get('mode')
+            base_url = request.POST.get('base_url')
+            simple_desc = request.POST.get('simple_desc')
+            env_name = request.POST.get('env_name')
+            env_lists = {
+                'index': mode,
+                'env_name': env_name,
+                'base_url': base_url,
+                'simple_desc': simple_desc}
+            msg = add_env_data(**env_lists)
+            if msg is 'ok':
+                return HttpResponseRedirect('/api/env_list/1/')
+            else:
+                return HttpResponse('环境名称重复')
+
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+'''环境列表'''
+
+
+def env_list(request, id):
+    if request.session.get('login_status'):
+        if request.method == 'GET':
+            env_lists = get_pager_info(
+                EnvInfo, None, '/api/env_list/', id)
+            manage_info = {
+                'account': request.session["now_account"],
+                'env': env_lists[1],
+                'page_list': env_lists[0],
+            }
+            return render_to_response('env_list.html', manage_info)
+    else:
+        return HttpResponseRedirect('/api/login/')
+
+
 '''test celery'''
 
 
@@ -414,25 +466,3 @@ def test_api(request):
             return HttpResponse('this is a json post request')
         else:
             return HttpResponse('this is a post request')
-
-
-def upload(request):
-    """
-    实现文件上传，
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        return HttpResponse('上传失败，请使用POST方法上传文件')
-    elif request.method == 'POST':
-        obj = request.FILES.get('file')
-        temp_save = os.path.join('upload', obj.name)
-        if '\\' in temp_save:
-            temp_save = temp_save.replace('\\\\', '\\')
-        f = open(temp_save, 'wb')
-        for line in obj.chunks():
-            f.write(line)
-        f.close()
-        yml_parser(temp_save)
-
-        return HttpResponse('上传成功')

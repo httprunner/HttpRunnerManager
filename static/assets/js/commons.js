@@ -38,8 +38,7 @@ function info_ajax(id) {
         }
     } else {
         data = {
-            "status": 0,
-            "name": id.substring(6, id.length)
+            "id": id.substring(6, id.length)
         };
         if (id.indexOf('un_pro') > -1) {
             url = '/api/project_list/1/';
@@ -47,18 +46,8 @@ function info_ajax(id) {
             url = '/api/module_list/1/';
         } else if (id.indexOf('un_tec') > -1) {
             url = '/api/test_list/1/';
-        } else {
-            data = {
-                "status": 1,
-                "name": id.substring(6, id.length)
-            };
-            if (id.indexOf('in_pro') > -1) {
-                url = '/api/project_list/1/';
-            } else if (id.indexOf('in_mod') > -1) {
-                url = '/api/module_list/1/';
-            } else if (id.indexOf('in_tec') > -1) {
-                url = '/api/test_list/1/';
-            }
+        } else if(id.indexOf('un_env') > -1) {
+            url = '/api/env_set/'
         }
     }
 
@@ -266,6 +255,4 @@ function add_row(id) {
     }
     index++;
 }
-
-
 

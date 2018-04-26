@@ -83,10 +83,11 @@ def customer_pager(base_url, current_page, total_page):  # 基础页，当前页
 
 def get_pager_info(Model, filter_query, url, id, per_items=10):
     id = int(id)
-    belong_project = filter_query.get('belong_project')
-    belong_module = filter_query.get('belong_module')
-    name = filter_query.get('name')
-    user = filter_query.get('user')
+    if filter_query:
+        belong_project = filter_query.get('belong_project')
+        belong_module = filter_query.get('belong_module')
+        name = filter_query.get('name')
+        user = filter_query.get('user')
 
     obj = Model.objects
 
@@ -98,7 +99,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
             obj = obj.filter(belong_project__project_name__contains=belong_project)
         else:
             obj = obj.filter(module_name__contains=name) if name is not '' else obj.filter(test_user__contains=user)
-    else:
+    elif url != '/api/env_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
         if belong_project and belong_module is not '':
             obj = obj.filter(belong_project__contains=belong_project).filter(
@@ -113,24 +114,27 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
 
     obj = obj.order_by('-create_time')
     total = obj.count()
+
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]
 
     sum = {}
-    if url == '/api/project_list/':
-        for model in info:
-            pro_name = model.project_name
-            module_count = str(ModuleInfo.objects.filter(belong_project__project_name__exact=pro_name).count())
-            test_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=1).count())
-            config_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=2).count())
-            sum.setdefault(model.id, module_count + '/ ' + test_count + '/ ' + config_count)
-    elif url == '/api/module_list/':
-        for model in info:
-            module_name = model.module_name
-            test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1).count())
-            config_count = str(
-                TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2).count())
-            sum.setdefault(model.id, test_count + '/ ' + config_count)
+    page_list = ''
+    if total !=0:
+        if url == '/api/project_list/':
+            for model in info:
+                pro_name = model.project_name
+                module_count = str(ModuleInfo.objects.filter(belong_project__project_name__exact=pro_name).count())
+                test_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=1).count())
+                config_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=2).count())
+                sum.setdefault(model.id, module_count + '/ ' + test_count + '/ ' + config_count)
+        elif url == '/api/module_list/':
+            for model in info:
+                module_name = model.module_name
+                test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1).count())
+                config_count = str(
+                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2).count())
+                sum.setdefault(model.id, test_count + '/ ' + config_count)
+        page_list = customer_pager(url, id, page_info.total_page)
 
-    page_list = customer_pager(url, id, page_info.total_page)
     return page_list, info, sum

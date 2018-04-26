@@ -1,7 +1,7 @@
 from django.db import models
 
 from ApiManager.managers import UserTypeManager, UserInfoManager, ProjectInfoManager, ModuleInfoManager, \
-    TestCaseInfoManager
+    TestCaseInfoManager, EnvInfoManager
 
 
 # Create your models here.
@@ -92,3 +92,14 @@ class TestReports(BaseTable):
     belong_project = models.CharField(max_length=50)
     belong_module = models.CharField(max_length=50)
     reports = models.TextField()
+
+
+class EnvInfo(BaseTable):
+    class Meta:
+        verbose_name = '环境管理'
+        db_table = 'EnvInfo'
+
+    env_name = models.CharField(max_length=40)
+    base_url = models.CharField(max_length=40)
+    simple_desc = models.CharField(max_length=50)
+    objects = EnvInfoManager()

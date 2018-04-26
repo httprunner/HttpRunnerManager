@@ -40,7 +40,7 @@
                                 <select name="project" class="form-control" onchange=info_ajax("#form_message")>
                                     <option value=请选择>请选择</option>
                                     {% for foo in project %}
-                                        <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
+                                        <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -72,7 +72,7 @@
                                    style="font-size: 14px;">author:</label>
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="dev_name" placeholder="创建者" name="author"
-                                       value="">
+                                       value="{{ account }}">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>

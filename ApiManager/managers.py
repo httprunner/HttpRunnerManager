@@ -35,7 +35,7 @@ class ProjectInfoManager(models.Manager):
     def insert_project(self, **kwargs):
         self.create(**kwargs)
 
-    def update_project(self, id, **kwargs):#如此update_time才会自动更新！！
+    def update_project(self, id, **kwargs):  # 如此update_time才会自动更新！！
         obj = self.get(id=int(id))
         obj.project_name = kwargs.get('project_name')
         obj.responsible_name = kwargs.get('responsible_name')
@@ -87,7 +87,7 @@ class ModuleInfoManager(models.Manager):
 
     def get_module_info(self, belong_project):
         return self.filter(belong_project__project_name__exact=belong_project).values_list('module_name',
-                                                                                       flat=True).order_by(
+                                                                                           flat=True).order_by(
             '-create_time')
 
 
@@ -133,3 +133,24 @@ class TestCaseInfoManager(models.Manager):
             return self.filter(id=index).all()
         else:
             return self.get(id=index).name
+
+
+'''环境变量管理'''
+
+
+class EnvInfoManager(models.Manager):
+    def insert_env(self, **kwargs):
+        self.create(**kwargs)
+
+    def update_env(self, index, **kwargs):
+        obj = self.get(id=int(index))
+        obj.env_name = kwargs.pop('env_name')
+        obj.base_url = kwargs.pop('base_url')
+        obj.simple_desc = kwargs.pop('simple_desc')
+        obj.save()
+
+    def get_env_name(self, index):
+        return self.get(id=int(index)).env_name
+
+    def delete_env(self, index):
+        self.get(id=int(index)).delete()
