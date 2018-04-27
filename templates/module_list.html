@@ -168,8 +168,7 @@
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
                                             onclick="edit('{{ foo.id }}','{{ foo.module_name }}', '{{ foo.belong_project.project_name }}'
-                                                    , '{{ foo.test_user }}','{{ foo.lifting_time }}'
-                                                    , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')"> <span
+                                                    , '{{ foo.test_user }}', '{{ foo.simple_desc }}', '{{ foo.other_desc }}')"> <span
                                             class="am-icon-pencil-square-o"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
@@ -220,7 +219,7 @@
             $('#my-edit').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax('#list_module', '/api/module_list/1/')
+                    update_data_ajax('#list_module', '/api/module_list/1/')
                 },
                 onCancel: function () {
                 }

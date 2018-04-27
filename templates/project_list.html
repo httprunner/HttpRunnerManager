@@ -6,7 +6,7 @@
         <div class="am-modal-dialog">
             <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                <form class="form-horizontal" id="list_pro">
+                <form class="form-horizontal" id="list_project">
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="index"
                                style="font-weight: inherit; font-size: small " hidden>索引值：</label>
@@ -236,7 +236,7 @@
             $('#my-edit').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax('#list_pro', '/api/project_list/1/')
+                    update_data_ajax('#list_project', '/api/project_list/1/')
                 },
                 onCancel: function () {
                 }

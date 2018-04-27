@@ -8,7 +8,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import add
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic
-from ApiManager.utils.operation import change_status, add_env_data
+from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single
 from httprunner import HttpRunner
@@ -162,7 +162,7 @@ def add_config(request):
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('add_config.html', manage_info)
     else:
@@ -210,13 +210,11 @@ def project_list(request, id):
             except ValueError:
                 logging.debug('项目信息解析异常：{project_info}'.format(project_info=project_info))
                 return HttpResponse('项目信息解析异常')
-
-            if 'status' in project_info.keys():
-                msg = change_status(ProjectInfo, **project_info)
-                return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
+            if 'mode' in project_info.keys():
+                msg = del_project_data(project_info.pop('id'))
             else:
                 msg = project_info_logic(type=False, **project_info)
-                return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             pro_list = get_pager_info(
@@ -244,13 +242,11 @@ def module_list(request, id):
             except ValueError:
                 logging.error('模块信息解析异常：{module_info}'.format(module_info=module_info))
                 return HttpResponse('模块信息解析异常')
-
-            if 'status' in module_info.keys():
-                msg = change_status(ModuleInfo, **module_info)
-                return HttpResponse(get_ajax_msg(msg, '模块状态已更改！'))
+            if 'mode' in module_info.keys():  # del module
+                msg = del_module_data(module_info.pop('id'))
             else:
                 msg = module_info_logic(type=False, **module_info)
-                return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             module_list = get_pager_info(
@@ -278,10 +274,10 @@ def test_list(request, id):
             except ValueError:
                 logging.error('用例信息解析异常：{test_info}'.format(test_info=test_info))
                 return HttpResponse('用例信息解析异常')
+            if 'mode' in test_info.keys():
+                msg = del_test_data(test_info.pop('id'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
 
-            if 'status' in test_info.keys():
-                msg = change_status(TestCaseInfo, **test_info)
-                return HttpResponse(get_ajax_msg(msg, '用例已更改！'))
         else:
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
@@ -303,10 +299,14 @@ def test_list(request, id):
 def config_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            test_info = json.loads(request.body.decode('utf-8'))
-            if 'status' in test_info.keys():
-                msg = change_status(TestCaseInfo, **test_info)
-                return HttpResponse(get_ajax_msg(msg, '配置已更改！'))
+            try:
+                test_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('配置信息解析异常：{test_info}'.format(test_info=test_info))
+                return HttpResponse('配置信息解析异常')
+            if 'mode' in test_info.keys():
+                msg = del_test_data(test_info.pop('id'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
@@ -389,26 +389,11 @@ def env_set(request):
             except ValueError:
                 logging.error('环境信息解析异常：{env_lists}'.format(env_lists=env_lists))
                 return HttpResponse('环境信息查询异常，请重试')
-            index = env_lists.get('id')
-            EnvInfo.objects.delete_env(index)
-            return HttpResponse('删除成功')
+            msg = env_data_logic(**env_lists)
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
+
         elif request.method == 'GET':
             return render_to_response('env_list.html', {'account': request.session["now_account"]})
-        else:
-            mode = request.POST.get('mode')
-            base_url = request.POST.get('base_url')
-            simple_desc = request.POST.get('simple_desc')
-            env_name = request.POST.get('env_name')
-            env_lists = {
-                'index': mode,
-                'env_name': env_name,
-                'base_url': base_url,
-                'simple_desc': simple_desc}
-            msg = add_env_data(**env_lists)
-            if msg is 'ok':
-                return HttpResponseRedirect('/api/env_list/1/')
-            else:
-                return HttpResponse('环境名称重复')
 
     else:
         return HttpResponseRedirect("/api/login/")

@@ -6,17 +6,17 @@
         <div class="am-modal-dialog">
             <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                <form class="form-horizontal" id="add_env" method="post" action="/api/env_set/">
+                <form class="form-horizontal" id="add_env">
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="mode"
                                style="font-weight: inherit; font-size: small " hidden="">mode：</label>
                         <div class="col-sm-9">
-                            <input name="mode" type="text" class="form-control" id="mode" value="add" hidden="">
+                            <input name="index" type="text" class="form-control" id="mode" value="add" hidden="">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="env_name"
-                               style="font-weight: inherit; font-size: small ">env_name：</label>
+                               style="font-weight: inherit; font-size: small ">环境名称：</label>
                         <div class="col-sm-9">
                             <input name="env_name" type="text" class="form-control" id="env_name"
                                    placeholder="测试环境" value="">
@@ -25,7 +25,7 @@
 
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="base_url"
-                               style="font-weight: inherit; font-size: small ">base_url：</label>
+                               style="font-weight: inherit; font-size: small ">请求地址：</label>
                         <div class="col-sm-9">
                             <input name="base_url" type="text" class="form-control" id="base_url"
                                    placeholder="127.0.0.1:8000" value="">
@@ -117,7 +117,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-
             <ul class="am-pagination am-fr">
                 {{ page_list }}
             </ul>
@@ -130,7 +129,7 @@
             $('#add_env_model').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    $('#add_env').submit()
+                    info_ajax('#add_env', '/api/env_set/')
                 },
                 onCancel: function () {
                 }
@@ -145,7 +144,7 @@
             $('#add_env_model').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    $('#add_env').submit()
+                    update_data_ajax('#add_env', '/api/env_set/')
                 },
                 onCancel: function () {
                 }
@@ -157,7 +156,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    del_data_ajax(id,'/api/env_set/')
+                    del_data_ajax(id, '/api/env_set/')
                 },
                 onCancel: function () {
                 }

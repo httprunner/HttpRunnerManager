@@ -171,9 +171,23 @@ def add_config_data(type, **kwargs):
 '''环境信息落地'''
 
 
-def add_env_data(**kwargs):
+def env_data_logic(**kwargs):
+    id = kwargs.get('id', None)
+    if id:
+        try:
+            EnvInfo.objects.delete_env(id)
+        except ObjectDoesNotExist:
+            return '删除异常，请重试'
+        return 'ok'
     index = kwargs.pop('index')
     env_name = kwargs.get('env_name')
+    if env_name is '':
+        return '环境名称不可为空'
+    elif kwargs.get('base_url') is '':
+        return '请求地址不可为空'
+    elif kwargs.get('simple_desc') is '':
+        return '请添加环境描述'
+
     if index == 'add':
         try:
             if EnvInfo.objects.filter(env_name=env_name).count() < 1:
@@ -181,29 +195,51 @@ def add_env_data(**kwargs):
                 logging.info('环境添加成功：{kwargs}'.format(kwargs=kwargs))
                 return 'ok'
             else:
-                return 'error'
-        except ObjectDoesNotExist:
+                return '环境名称重复'
+        except Exception:
             logging.error('添加环境异常：{kwargs}'.format(kwargs=kwargs))
+            return '环境信息添加异常，请重试'
     else:
         try:
             if EnvInfo.objects.get_env_name(index) != env_name and EnvInfo.objects.filter(
                     env_name=env_name).count() > 0:
-                return 'error'
+                return '环境名称已存在'
             else:
                 EnvInfo.objects.update_env(index, **kwargs)
                 logging.info('环境信息更新成功：{kwargs}'.format(kwargs=kwargs))
                 return 'ok'
         except ObjectDoesNotExist:
             logging.error('环境信息查询失败：{kwargs}'.format(kwargs=kwargs))
+            return '更新失败，请重试'
 
 
-'''改变状态'''
+def del_module_data(id):
+    try:
+        module_name = ModuleInfo.objects.get_module_name('', type=False, id=id)
+        TestCaseInfo.objects.filter(belong_module__module_name=module_name).delete()
+        ModuleInfo.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('{module_name} 模块已删除'.format(module_name=module_name))
+    return 'ok'
 
 
-def change_status(Model, **kwargs):
-    name = kwargs.pop('name')
-    obj = Model.objects.get(id=name)
-    obj.status = kwargs.pop('status')
-    obj.save()
-    logger.info('{name}状态已更改！'.format(name=name))
+def del_project_data(id):
+    try:
+        project_name = ProjectInfo.objects.get_pro_name('', type=False, id=id)
+        belong_modules = ModuleInfo.objects.filter(belong_project__project_name=project_name).values_list('module_name')
+        for obj in belong_modules:
+            TestCaseInfo.objects.filter(belong_module__module_name=obj[0]).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('{project_name} 项目已删除'.format(project_name=project_name))
+    return 'ok'
+
+
+def del_test_data(id):
+    try:
+        TestCaseInfo.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('用例/配置已删除')
     return 'ok'
