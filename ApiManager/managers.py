@@ -130,7 +130,7 @@ class TestCaseInfoManager(models.Manager):
 
     def get_case_by_id(self, index, type=True):
         if type:
-            return self.filter(id=index).all()
+            return self.filter(id=int(index)).all()
         else:
             return self.get(id=index).name
 

@@ -10,7 +10,8 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, register_info_logic
 from ApiManager.utils.operation import change_status, add_env_data
 from ApiManager.utils.pagination import get_pager_info
-from ApiManager.utils.runner import run_by_single, run_by_module, run_by_project
+from ApiManager.utils.runner import run_by_single
+from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
@@ -170,31 +171,20 @@ def add_config(request):
 
 '''单个执行'''
 
+
 def run_test(request):
     if request.session.get('login_status'):
+        kwargs = {
+            "failfast": False,
+        }
+        runner = HttpRunner(**kwargs)
         if request.method == 'POST':
             mode = request.POST.get('mode')
             id = request.POST.get('id')
             if mode == 'run_by_test':
-                result = main_ate(run_by_single(id))
-            elif mode == 'run_by_module':
-                test_lists = run_by_module(id)
-            elif mode == 'run_by_project':
-                test_lists = run_by_project(id)
-            return render_to_response('report_template.html', result)
-    else:
-        return HttpResponseRedirect("/api/login/")
-
-
-'''批量执行'''
-
-
-def run_batch_test(request):
-    if request.session.get('login_status'):
-        if request.method == 'POST':
-            test_lists = run_by_batch(request.body.decode('ascii').split('&'))
-            result = get_result(test_lists)
-            return render_to_response('report_template.html', result)
+                test = run_by_single(id)
+                runner.run(test)
+                return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -338,8 +328,11 @@ def config_list(request, id):
 def edit_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testcase_lists = json.loads(request.body.decode('utf-8'))
-            logger.debug('用例更新处理之前数据：{testcase_lists}'.format(testcase_lists=testcase_lists))
+            try:
+                testcase_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('用例信息解析异常：{testcase_lists}'.format(testcase_lists=testcase_lists))
+                return HttpResponse('用例信息解析异常')
             msg = case_info_logic(type=False, **testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
@@ -352,7 +345,7 @@ def edit_case(request):
                 'account': account,
                 'info': test_info[0],
                 'request': request['test'],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('edit_case.html', manage_info)
     else:

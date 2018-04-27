@@ -6,7 +6,12 @@ from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
 
 
 def run_by_single(id):
-    testcase_list = []
+    testcase_dict = {
+        'name': 'testset description',
+        'config': {},
+        'api': {},
+        'testcases': []
+    }
     obj = TestCaseInfo.objects.get(id=id)
     module = obj.belong_module_id
     include = obj.include
@@ -14,18 +19,19 @@ def run_by_single(id):
 
     # do not have include
     if include == '' or include is None:
-        testcase_list.append(eval(request))
-        return testcase_list
+        request = eval(request).pop('test')
+        testcase_dict['testcases'].append(request)
+        return testcase_dict
 
-    else:
-        config_test = include.split('>')
-        for name in config_test:
-            include_request = TestCaseInfo.objects.get(name__exact=name,
-                                                       belong_module=ModuleInfo.objects.get(id=module),
-                                                       status=1).request
-            testcase_list.append(eval(include_request))
-        testcase_list.append(eval(request))
-        return testcase_list
+        # else:
+        #     config_test = include.split('>')
+        #     for name in config_test:
+        #         include_request = TestCaseInfo.objects.get(name__exact=name,
+        #                                                    belong_module=ModuleInfo.objects.get(id=module),
+        #                                                    status=1).request
+        #         testcase_list.append(eval(include_request))
+        #     testcase_list.append(eval(request))
+        #     return testcase_list
 
 
 '''单个模块组装所有test'''

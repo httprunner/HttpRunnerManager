@@ -53,10 +53,12 @@
                         <div class="form-group has-feedback has-info">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onchange=info_ajax("#form_message")>
-                                    <!--<option value=请选择>请选择</option>-->
-                                    {% for foo in project %}
-                                        <option value={{ foo.pro_name }}>{{ foo.pro_name }}</option>
+                                <select name="project" class="form-control" onchange=info_ajax("#form_message",'/api/edit_case/')>
+                                    <option value="{{ info.belong_project }}">{{ info.belong_project }}</option>
+                                    {% for obj in project %}
+                                        {% ifnotequal info.belong_project obj.project_name %}
+                                            <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
+                                        {% endifnotequal %}
                                     {% endfor %}
                                 </select>
 
@@ -67,7 +69,6 @@
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
                                 <select id="belong_module_id" name="module" class="form-control">
-                                    <option value=请选择>未分类</option>
                                 </select>
                             </div>
                         </div>
@@ -288,7 +289,7 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
-                        <button id="btn-json-viewer" class="btn btn-info" >convert to json</button>
+                        <button id="btn-json-viewer" class="btn btn-info">convert to json</button>
                         <form id="form_request_data">
                             {% if 'json' in request.request.keys %}
                                 <span id="json-text" style="font-size:10px;">

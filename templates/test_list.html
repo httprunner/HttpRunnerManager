@@ -75,8 +75,7 @@
                     <th class="table-type">所属项目</th>
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
-                    <th class="table-type">请求方式</th>
-                    <th class="table-type">URL</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-title">操作</th>
                 </tr>
                 </thead>
@@ -91,8 +90,7 @@
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
                         <td>{{ foo.author }}</td>
-                        <td></td>
-                        <td></td>
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
@@ -110,7 +108,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_tec{{ foo.id }}')"><span
+                                            onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -152,18 +150,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
-                },
-                onCancel: function () {
-                }
-            });
-        }
-
-        function valid(name) {
-            $('#my-valid').modal({
-                relatedTarget: this,
-                onConfirm: function () {
-                    info_ajax(name)
+                    del_data_ajax(name, '/api/test_list/1/')
                 },
                 onCancel: function () {
                 }

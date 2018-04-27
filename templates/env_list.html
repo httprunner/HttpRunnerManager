@@ -72,54 +72,57 @@
                 </button>
             </dl>
         </div>
-
-        <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
-            <thead>
-            <tr class="am-success">
-                <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
-                <th class="table-title">序号</th>
-                <th class="table-type">环境名称</th>
-                <th class="table-type">Host_Port</th>
-                <th class="table-title">简要描述</th>
-                <th class="table-date am-hide-sm-only">创建时间</th>
-                <th width="163px" class="table-set">操作</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            {% for foo in env %}
-                <tr>
-                    <td><input type="checkbox" name="env_{{ foo.id }}" value="{{ foo.id }}"/></td>
-                    <td>{{ forloop.counter }}</td>
-                    <td><a href="#">{{ foo.env_name }}</a></td>
-                    <td>{{ foo.base_url }}</td>
-                    <td>{{ foo.simple_desc }}</td>
-                    <td class="am-hide-sm-only">{{ foo.create_time }}</td>
-                    <td>
-                        <div class="am-btn-toolbar">
-                            <div class="am-btn-group am-btn-group-xs">
-                                <button type="button"
-                                        class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
-                                        data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                        onclick="edit('{{ foo.id }}', '{{ foo.env_name }}', '{{ foo.base_url }}', '{{ foo.simple_desc }}')"> <span
-                                        class="am-icon-pencil-square-o"></span></button>
-                                <button type="button"
-                                        class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
-                                        data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                        onclick="del('un_env{{ foo.id }}')"><span
-                                        class="am-icon-trash-o"></span></button>
-                            </div>
-                        </div>
-                    </td>
+        <form class="am-form am-g">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-title">序号</th>
+                    <th class="table-type">环境名称</th>
+                    <th class="table-type">Host_Port</th>
+                    <th class="table-title">简要描述</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th width="163px" class="table-set">操作</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
 
-        <ul class="am-pagination am-fr">
-            {{ page_list }}
-        </ul>
-        <hr/>
+                {% for foo in env %}
+                    <tr>
+                        <td><input type="checkbox" name="env_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="#"
+                               onclick="edit('{{ foo.id }}', '{{ foo.env_name }}', '{{ foo.base_url }}', '{{ foo.simple_desc }}')">{{ foo.env_name }}</a>
+                        </td>
+                        <td>{{ foo.base_url }}</td>
+                        <td>{{ foo.simple_desc }}</td>
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '编辑', trigger: 'hover focus'}"
+                                            onclick="edit('{{ foo.id }}', '{{ foo.env_name }}', '{{ foo.base_url }}', '{{ foo.simple_desc }}')"> <span
+                                            class="am-icon-pencil-square-o"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
+                                            onclick="del('{{ foo.id }}')"><span
+                                            class="am-icon-trash-o"></span></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+            <hr/>
+        </form>
     </div>
 
     <script type="text/javascript">
@@ -154,7 +157,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(id)
+                    del_data_ajax(id,'/api/env_set/')
                 },
                 onCancel: function () {
                 }

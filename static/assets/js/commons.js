@@ -11,46 +11,22 @@ function show_module(module_info) {
 }
 
 /*表单信息异步传输*/
-function info_ajax(id) {
+function info_ajax(id, url) {
     var data = $(id).serializeJSON();
-    var url;
-    if (id === '#add_project') {
-        url = '/api/add_project/';
-    } else if (id === '#add_module') {
-        url = '/api/add_module/';
-    } else if (id === '#list_pro') {
-        url = '/api/project_list/1/';
-    } else if (id === '#list_module') {
-        url = '/api/module_list/1/';
-    } else if (id === '#form_message') {
-        url = '/api/add_case/';
+    if (id === '#form_message') {
         data = {
             "test": {
                 "name": data
             }
         }
-    } else if (id === '#form_config') {
-        url = '/api/add_config/';
+    }
+    else if (id === '#form_config') {
         data = {
             "config": {
                 "name": data
             }
         }
-    } else {
-        data = {
-            "id": id.substring(6, id.length)
-        };
-        if (id.indexOf('un_pro') > -1) {
-            url = '/api/project_list/1/';
-        } else if (id.indexOf('un_mod') > -1) {
-            url = '/api/module_list/1/';
-        } else if (id.indexOf('un_tec') > -1) {
-            url = '/api/test_list/1/';
-        } else if(id.indexOf('un_env') > -1) {
-            url = '/api/env_set/'
-        }
     }
-
     $.ajax({
         type: 'post',
         url: url,
@@ -72,6 +48,24 @@ function info_ajax(id) {
 
 }
 
+function del_data_ajax(id, url) {
+    var data = {
+        "id": id
+    };
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (data) {
+            window.location.reload();
+        }
+        ,
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    });
+}
 
 function case_ajax(type) {
     var url = $("#url").serializeJSON();
@@ -109,7 +103,7 @@ function case_ajax(type) {
         }
     };
     if (type === 'edit') {
-        url = '/api/edit_case/1/';
+        url = '/api/edit_case/';
     } else {
         url = '/api/add_case/';
     }
@@ -120,7 +114,7 @@ function case_ajax(type) {
         contentType: "application/json",
         success: function (data) {
             if (data === 'session invalid') {
-                window.location.href = "/api/login";
+                window.location.href = "/api/login/";
             } else {
                 myAlert(data)
             }

@@ -174,7 +174,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_mod{{ foo.id }}')"><span
+                                            onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -220,7 +220,7 @@
             $('#my-edit').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax('#list_module', id)
+                    info_ajax('#list_module', '/api/module_list/1/')
                 },
                 onCancel: function () {
                 }
@@ -231,7 +231,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
+                    del_data_ajax(name,'/api/module_list/1/')
                 },
                 onCancel: function () {
                 }

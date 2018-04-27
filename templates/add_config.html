@@ -37,11 +37,11 @@
                         <div class="form-group has-success">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onclick=info_ajax("#form_config")>
-                                    <option value=请选择>请选择</option>
-                                    {% for foo in project %}
-                                        <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
-                                    {% endfor %}
+                                <select name="project" class="form-control" onchange="info_ajax('#form_config', '/api/add_config/')">
+                                <option value=请选择>请选择</option>
+                                {% for foo in project %}
+                                    <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
+                                {% endfor %}
                                 </select>
                             </div>
                         </div>

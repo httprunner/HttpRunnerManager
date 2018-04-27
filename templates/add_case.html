@@ -15,8 +15,8 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables/parameters</a></li>
-                <li><a href="javascript:;" data-target="#tab3">request/hook</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables</a></li>
+                <li><a href="javascript:;" data-target="#tab3">request</a></li>
                 <li><a href="javascript:;" data-target="#tab4">extract/validate</a></li>
             </ul>
 
@@ -37,7 +37,7 @@
                         <div class="form-group has-success">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onchange=info_ajax("#form_message")>
+                                <select name="project" class="form-control" onchange=info_ajax("#form_message","/api/add_case/")>
                                     <option value=请选择>请选择</option>
                                     {% for foo in project %}
                                         <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
