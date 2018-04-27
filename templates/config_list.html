@@ -6,7 +6,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要删除该配置么？
+                亲，请确认该配置是否被其他用例依赖后再谨慎删除哦
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -133,7 +133,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    del_data_ajax(name,'/api/config_list/1')
+                    del_data_ajax(name,'/api/config_list/1/')
                 },
                 onCancel: function () {
                 }

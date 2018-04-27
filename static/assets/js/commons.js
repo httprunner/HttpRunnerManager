@@ -113,13 +113,12 @@ function case_ajax(type) {
     var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
-    var setup = $("#form_setup").serializeJSON();
-    var teardown = $("#form_teardown").serializeJSON();
+    // var setup = $("#form_setup").serializeJSON();
+    // var teardown = $("#form_teardown").serializeJSON();
     var test = {
         "test": {
             "name": caseInfo,
             "variables": variables,
-            "setup": setup,
             "request": {
                 "url": url.url,
                 "method": method.method,
@@ -127,7 +126,6 @@ function case_ajax(type) {
                 "type": dataType.DataType,
                 "request_data": request_data
             },
-            "teardown": teardown,
             "extract": extract,
             "validate": validate
 
@@ -157,15 +155,14 @@ function case_ajax(type) {
 }
 
 function config_ajax(type) {
-    var url = $("#config_url").serializeJSON();
     var dataType = $("#config_data_type").serializeJSON();
     var caseInfo = $("#form_config").serializeJSON();
     var variables = $("#config_variables").serializeJSON();
     var request_data = null;
-    if (dataType.DataType == 'json') {
+    if (dataType.DataType === 'json') {
         request_data = eval('(' + $('#json-input').val() + ')');
     } else {
-        request_data = $("#form_request_data").serializeJSON();
+        request_data = $("#config_request_data").serializeJSON();
     }
     var headers = $("#config_request_headers").serializeJSON();
     var config = {
@@ -173,7 +170,6 @@ function config_ajax(type) {
             "name": caseInfo,
             "variables": variables,
             "request": {
-                "base_url": url.url,
                 "headers": headers,
                 "type": dataType.DataType,
                 "request_data": request_data
@@ -239,20 +235,20 @@ function del_row(id) {
     }
 }
 
-index = 100;//全局变量很重要！！
 
 function add_row(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
     var rowsNum = tabObj.rows.length;  //获取当前行数
-    var attribute = id;
     var style = 'width:100%; border: none';
-    var cellHtml1 = "<input type='text' name='cell1_key" + id + index + "'  value='' style='" + style + "' />";
-    var cellHtml2 = "<input type='text' name='cell2_value" + id + index + "' value='' style='" + style + "' />";
-    var cellHtml3 = "<input type='text' name='cell3_value" + id + index + "' value='' style='" + style + "' />";
-
-    var cellDataType = "<select name='cell_data_type" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
+    var cell_check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
+    var cell_key = "<input type='text' name='test[][key]'  value='' style='" + style + "' />";
+    var cell_value = "<input type='text' name='test[][value]'  value='' style='" + style + "' />";
+    var cell_type = "<select name='test[][type]' class='form-control' style='height: 25px; font-size: 15px; " +
         "padding-top: 0px; padding-left: 0px; border: none'> " +
         "<option>string</option><option>int</option><option>float</option><option>boolean</option></select>";
+    var cell_comparator = "<select name='test[][comparator]' class='form-control' style='height: 25px; font-size: 15px; " +
+            "padding-top: 0px; padding-left: 0px; border: none'> " +
+            "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
 
     var myNewRow = tabObj.insertRow(rowsNum);
     var newTdObj0 = myNewRow.insertCell(0);
@@ -260,24 +256,20 @@ function add_row(id) {
     var newTdObj2 = myNewRow.insertCell(2);
 
 
-    newTdObj0.innerHTML = "<input type='checkbox' name='" + attribute + "' id='chkArr_" + index + "' style='width:55px' />";
-    newTdObj1.innerHTML = cellHtml1;
+    newTdObj0.innerHTML = cell_check
+    newTdObj1.innerHTML = cell_key;
     if (id === 'variables' || id === 'data') {
         var newTdObj3 = myNewRow.insertCell(3);
-        newTdObj2.innerHTML = cellDataType;
-        newTdObj3.innerHTML = cellHtml3;
+        newTdObj2.innerHTML = cell_type;
+        newTdObj3.innerHTML = cell_value;
     } else if (id === 'validate') {
         var newTdObj3 = myNewRow.insertCell(3);
-        newTdObj2.innerHTML = "<select name='cell_2comparator" + id + index + "' class='form-control' style='height: 25px; font-size: 15px; " +
-            "padding-top: 0px; padding-left: 0px; border: none'> " +
-            "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
-
-        newTdObj3.innerHTML = cellDataType;
+        newTdObj2.innerHTML = cell_comparator;
+        newTdObj3.innerHTML = cell_type;
         var newTdObj4 = myNewRow.insertCell(4);
-        newTdObj4.innerHTML = cellHtml3;
+        newTdObj4.innerHTML = cell_value;
     } else {
-        newTdObj2.innerHTML = cellHtml2;
+        newTdObj2.innerHTML = cell_value;
     }
-    index++;
 }
 

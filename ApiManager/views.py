@@ -55,7 +55,10 @@ def register(request):
 def log_out(request):
     if request.method == 'GET':
         logger.info('{username}退出'.format(username=request.session['now_account']))
-        del request.session['now_account']
+        try:
+            del request.session['now_account']
+        except Exception:
+            logging.error('session invalid')
         return HttpResponseRedirect("/api/login/")
 
 
@@ -134,10 +137,11 @@ def add_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             try:
-                testcase_lists = json.loads(request.body.decode('utf-8'))
+                testcase_info = json.loads(request.body.decode('utf-8'))
             except ValueError:
-                logger.error('用例信息解析异常：{testcase_lists}'.format(testcase_lists=testcase_lists))
-            msg = case_info_logic(**testcase_lists)
+                logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=testcase_info))
+                return '用例信息解析异常'
+            msg = case_info_logic(**testcase_info)
             return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
         elif request.method == 'GET':
             manage_info = {
@@ -155,9 +159,12 @@ def add_case(request):
 def add_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testconfig_lists = json.loads(request.body.decode('utf-8'))
-            logger.debug('处理前配置信息：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
-            msg = config_info_logic(**testconfig_lists)
+            try:
+                testconfig_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('配置信息解析失败：{testconfig_info}'.format(testconfig_info=testconfig_info))
+                return '配置信息解析异常'
+            msg = config_info_logic(**testconfig_info)
             return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
         elif request.method == 'GET':
             manage_info = {
@@ -185,16 +192,6 @@ def run_test(request):
                 test = run_by_single(id)
                 runner.run(test)
                 return render_to_response('report_template.html', runner.summary)
-    else:
-        return HttpResponseRedirect("/api/login/")
-
-
-'''添加接口'''
-
-
-def add_api(request):
-    if request.session.get('login_status'):
-        return render_to_response('add_api.html')
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -263,7 +260,7 @@ def module_list(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
-'''配置或用例列表'''
+'''用例列表'''
 
 
 def test_list(request, id):
@@ -371,11 +368,13 @@ def edit_config(request):
             manage_info = {
                 'account': account,
                 'info': test_info[0],
-                'request': request['config']
+                'request': request['config'],
+                'project': ProjectInfo.objects.all().values(
+                    'project_name').order_by('-create_time')
             }
             return render_to_response('edit_config.html', manage_info)
-    else:
-        return HttpResponseRedirect("/api/login/")
+        else:
+            return HttpResponseRedirect("/api/login/")
 
 
 '''环境设置'''
@@ -416,8 +415,7 @@ def env_list(request, id):
     else:
         return HttpResponseRedirect('/api/login/')
 
-
-'''test celery'''
+    '''test celery'''
 
 
 def test_celery(request):
@@ -437,7 +435,7 @@ def test_api(request):
     elif request.method == 'POST':
 
         if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
-            a = {'login': 'success', 'status': True}
+            a = {'code': 'success', 'status': True}
             return HttpResponse(json.dumps(a))
         elif json.loads(request.body.decode('utf-8')).get('username') == 'yinquanwang':
             return HttpResponse('this is a json post request')

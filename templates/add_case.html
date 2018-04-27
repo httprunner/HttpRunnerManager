@@ -37,7 +37,8 @@
                         <div class="form-group has-success">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onchange=info_ajax("#form_message","/api/add_case/")>
+                                <select name="project" class="form-control"
+                                        onchange=info_ajax("#form_message","/api/add_case/")>
                                     <option value=请选择>请选择</option>
                                     {% for foo in project %}
                                         <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
@@ -81,10 +82,10 @@
                 <div class="am-tab-panel" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
-                    <button class="btn btn-info" value="添 加" onclick="add_row('setup')">add setup</button>
+                    {% comment %}  <button class="btn btn-info" value="添 加" onclick="add_row('setup')">add setup</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('setup')">del setup</button>
                     <button class="btn btn-info" value="添 加" onclick="add_row('teardown')">add teardown</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('teardown')">del teardown</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('teardown')">del teardown</button>{% endcomment %}
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -101,7 +102,7 @@
                         </table>
                     </form>
 
-                    <form id="form_setup">
+                    {% comment %} <form id="form_setup">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="setup">
                             <caption>setUp:</caption>
                             <thead>
@@ -114,9 +115,9 @@
                             <tbody>
                             </tbody>
                         </table>
-                    </form>
+                    </form>{% endcomment %}
 
-                    <form id="form_teardown">
+                    {% comment %} <form id="form_teardown">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="teardown">
                             <caption>tearDown:</caption>
                             <thead>
@@ -129,12 +130,12 @@
                             <tbody>
                             </tbody>
                         </table>
-                    </form>
+                    </form>{% endcomment %}
                 </div>
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
                         <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">Api Url:</label>
+                            <label for="url" style="font-size: 14px;">url：</label>
                             <input type="text" class="form-control" placeholder="api url"
                                    name="url"
                                    id="url">
@@ -142,7 +143,7 @@
 
                         <div class="form-group has-warning">
                             <label for="method"
-                                   style="font-size: 14px;"><code>&nbsp;</code>Method:</label>
+                                   style="font-size: 14px;"><code>&nbsp;</code>method：</label>
                             <select class="form-control" name="method" id="method">
                                 <option>POST</option>
                                 <option>GET</option>
@@ -152,7 +153,7 @@
                         </div>
                         <div class="form-group has-warning ">
                             <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
+                                   style="font-size: 14px;"><code>&nbsp;</code>type：</label>
                             <select class="form-control" name="DataType" id="DataType">
                                 <option>data</option>
                                 <option>json</option>
@@ -182,8 +183,6 @@
                                 <tbody>
                                 </tbody>
                             </table>
-
-
                         </form>
 
                         <form id="form_request_headers">

@@ -125,7 +125,7 @@ def add_case_data(type, **kwargs):
             else:
                 return '用例或配置已存在，请重新编辑'
         else:
-            index = int(case_info.get('test_index'))
+            index = case_info.get('test_index')
             if name != case_opt.get_case_by_id(index, type=False) \
                     and case_opt.get_case_name(name, module, project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
@@ -229,7 +229,9 @@ def del_project_data(id):
         project_name = ProjectInfo.objects.get_pro_name('', type=False, id=id)
         belong_modules = ModuleInfo.objects.filter(belong_project__project_name=project_name).values_list('module_name')
         for obj in belong_modules:
-            TestCaseInfo.objects.filter(belong_module__module_name=obj[0]).delete()
+            TestCaseInfo.objects.filter(belong_module__module_name=obj).delete()
+        ModuleInfo.objects.filter(belong_project__project_name=project_name).delete()
+        ProjectInfo.objects.get(id=id).delete()
     except ObjectDoesNotExist:
         return '删除异常，请重试'
     logging.info('{project_name} 项目已删除'.format(project_name=project_name))
