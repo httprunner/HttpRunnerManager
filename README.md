@@ -15,6 +15,7 @@ Key Features
 - 业务组织方式：在include输入框中以 config>case1>case2...或者case1>case2
 - 报告管理：单个运行会前端显示，批量的运行后可以选在打开
 - 运行方式：可单个test，单个module，单个project，也可选择多个批量运行
+- 分布执行：单个用例和批量执行结果会直接在前端展示，模块和项目执行为异步执行，完成后自动保存报告，可以在线查看
 - 脚本编写：可在线编写，也支持用例批量导入(yaml格式或json格式)
 
 Deployment Setp
