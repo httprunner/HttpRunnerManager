@@ -24,7 +24,7 @@ Deployment Setp
 2. 修改:HttpRunnerManager/HttpRunnerManager/settings.py里DATABASES字典相关配置：NAME(默认HttpRunner)
    USER(用户名，建议root用户，需要有增删改查权限！)、PASSWORD(对应登录用户名密码)、HOST(数据库所在服务器ip地址)
    PORT(数据库服务监听端口，默认3306)
-3. 安装rabbitmq消息中间件，service rabbitmq-servter start启动服务，访问：http://host:15672/#/ host即为你部署rabbitmq的服务器ip地址
+3. 安装rabbitmq消息中间件，service rabbitmq-server start启动服务，访问：http://host:15672/#/ host即为你部署rabbitmq的服务器ip地址
    username：guest、Password：guest, 成功登陆即可
 
 4. 修改:HttpRunnerManager/HttpRunnerManager/settings.py里BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//'将127.0.0.1替换为步骤3的host
@@ -43,7 +43,7 @@ Deployment Setp
 
 11. shell或dos窗口切换到HttpRunnerManager目录执行：python manage.py celery beat --loglevel=info 开启定时任务配置
 
-12. CLI窗口执行：celery flower 打开http://localhost:5555/dashboard 即可查看任务列表和状态
+12. CLI窗口执行：celery flower 访问：http://localhost:5555/dashboard 即可查看任务列表和状态
 
 13. 浏览器输入：http://127.0.0.1:8000/api/register/  注册用户，开始享用
 
