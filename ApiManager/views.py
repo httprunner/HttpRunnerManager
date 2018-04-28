@@ -5,12 +5,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
-from ApiManager.tasks import add
+from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
-from ApiManager.utils.runner import run_by_single
+from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
 from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -181,17 +181,49 @@ def add_config(request):
 
 def run_test(request):
     if request.session.get('login_status'):
-        kwargs = {
-            "failfast": False,
-        }
-        runner = HttpRunner(**kwargs)
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('待运行模块信息解析异常：{kwargs}'.format(kwargs=kwargs))
+                return HttpResponse('信息解析异常，请重试')
+            id = kwargs.pop('id')
+            base_url = kwargs.pop('env_name')
+            type = kwargs.pop('type')
+            testcases_dict = run_by_module(id, base_url) if type == 'module' else run_by_project(id, base_url)
+            if not testcases_dict:
+                return HttpResponse('没有用例哦')
+            main_hrun.delay(testcases_dict)
+            return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
+        else:
+            kwargs = {
+                "failfast": False,
+            }
+            runner = HttpRunner(**kwargs)
+            index = request.POST.get('index')
+            base_url = request.POST.get('env_name')
+            testcases_dict = run_by_single(index, base_url)
+            runner.run(testcases_dict)
+            return render_to_response('report_template.html', runner.summary)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+'''批量运行'''
+
+
+def run_batch_test(request):
+    if request.session.get('login_status'):
         if request.method == 'POST':
-            mode = request.POST.get('mode')
-            id = request.POST.get('id')
-            if mode == 'run_by_test':
-                test = run_by_single(id)
-                runner.run(test)
-                return render_to_response('report_template.html', runner.summary)
+            base_url = request.POST.get('env_name')
+            test_list = request.body.decode('utf-8').split('&')
+            testcases_lists = run_by_batch(test_list, base_url)
+            kwargs = {
+                "failfast": False,
+            }
+            runner = HttpRunner(**kwargs)
+            runner.run(testcases_lists)
+            return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -221,7 +253,8 @@ def project_list(request, id):
                 'project': pro_list[1],
                 'page_list': pro_list[0],
                 'info': filter_query,
-                'sum': pro_list[2]
+                'sum': pro_list[2],
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('project_list.html', manage_info)
     else:
@@ -254,6 +287,7 @@ def module_list(request, id):
                 'page_list': module_list[0],
                 'info': filter_query,
                 'sum': module_list[2],
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('module_list.html', manage_info)
     else:
@@ -283,7 +317,8 @@ def test_list(request, id):
                 'account': request.session["now_account"],
                 'test': test_list[1],
                 'page_list': test_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('test_list.html', manage_info)
     else:
@@ -418,9 +453,8 @@ def env_list(request, id):
     '''test celery'''
 
 
-def test_celery(request):
-    add.delay(1, 2)
-    return HttpResponse('ok')
+def report_list(request, id):
+    pass
 
 
 '''测试代码'''

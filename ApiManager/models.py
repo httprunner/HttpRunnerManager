@@ -88,9 +88,8 @@ class TestReports(BaseTable):
         verbose_name = "测试报告"
         db_table = 'TestReports'
 
-    name = models.CharField(max_length=50)
-    belong_project = models.CharField(max_length=50)
-    belong_module = models.CharField(max_length=50)
+    report_name = models.CharField(max_length=50)
+    status = models.BooleanField()
     reports = models.TextField()
 
 

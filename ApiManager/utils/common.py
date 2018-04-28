@@ -123,8 +123,6 @@ def case_info_logic(type=True, **kwargs):
             return '创建者不能为空'
         if test.get('request').get('url') is '':
             return '接口地址不能为空'
-        if not test.get('validate'):
-            return '至少需要一个结果校验！'
 
         name = test.pop('name')
         test.setdefault('name', name.pop('case_name'))
@@ -232,3 +230,4 @@ def get_ajax_msg(msg, success):
 
 def register_info_logic(**kwargs):
     return add_register_data(**kwargs)
+

@@ -247,8 +247,8 @@ function add_row(id) {
         "padding-top: 0px; padding-left: 0px; border: none'> " +
         "<option>string</option><option>int</option><option>float</option><option>boolean</option></select>";
     var cell_comparator = "<select name='test[][comparator]' class='form-control' style='height: 25px; font-size: 15px; " +
-            "padding-top: 0px; padding-left: 0px; border: none'> " +
-            "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
+        "padding-top: 0px; padding-left: 0px; border: none'> " +
+        "<option>equals</option> <option>contains</option> <option>startswith</option> <option>endswith</option> <option>regex_match</option> <option>type_match</option> <option>contained_by</option> <option>less_than</option> <option>less_than_or_equals</option> <option>greater_than</option> <option>greater_than_or_equals</option> <option>not_equals</option> <option>string_equals</option> <option>length_equals</option> <option>length_greater_than</option> <option>length_greater_than_or_equals</option> <option>length_less_than</option> <option>length_less_than_or_equals</option></select>";
 
     var myNewRow = tabObj.insertRow(rowsNum);
     var newTdObj0 = myNewRow.insertCell(0);

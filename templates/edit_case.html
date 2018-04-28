@@ -10,11 +10,11 @@
 
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例修改</ul>
-            <ul>
+           {% comment %} <ul>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="post('/api/run_test/', {'id':'{{ info.id }}', 'mode':'run_by_test'})">运行
                 </button>
-            </ul>
+            </ul>{% endcomment %}
             <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">修改用例</a></dl>
         </div>
 
@@ -62,7 +62,6 @@
                                         {% endifnotequal %}
                                     {% endfor %}
                                 </select>
-
                             </div>
                         </div>
 
@@ -688,6 +687,7 @@
             var target = $(this).children("a").attr("data-target");
             $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
         }).find("li").eq(0).trigger("click");
+
     </script>
 {% endblock %}
 

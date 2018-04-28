@@ -36,31 +36,31 @@ def add_register_data(**kwargs):
 def add_project_data(type, **kwargs):
     project_opt = ProjectInfo.objects
     project_name = kwargs.get('project_name')
-    try:
-        if type:
-            if project_opt.get_pro_name(project_name) < 1:
-                try:
-                    project_opt.insert_project(**kwargs)
-                except Exception:
-                    logging.error('项目添加异常：{kwargs}'.format(kwargs=kwargs))
-                    return '添加失败，请重试'
-                logger.info('项目添加成功：{kwargs}'.format(kwargs=kwargs))
-            else:
-                return '该项目已存在，请重新编辑'
-        else:
-            if project_name != project_opt.get_pro_name('', type=False, id=kwargs.get(
-                    'index')) and project_opt.get_pro_name(project_name) > 0:
-                return '该项目已存在， 请重新命名'
+    if type:
+        if project_opt.get_pro_name(project_name) < 1:
             try:
-                project_opt.update_project(kwargs.pop('index'), **kwargs)
+                project_opt.insert_project(**kwargs)
+            except DataError:
+                return '项目信息过长'
             except Exception:
-                logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
-                return '更新失败，请重试'
-            logger.info('项目更新成功：{kwargs}'.format(kwargs=kwargs))
+                logging.error('项目添加异常：{kwargs}'.format(kwargs=kwargs))
+                return '添加失败，请重试'
+            logger.info('项目添加成功：{kwargs}'.format(kwargs=kwargs))
+        else:
+            return '该项目已存在，请重新编辑'
+    else:
+        if project_name != project_opt.get_pro_name('', type=False, id=kwargs.get(
+                'index')) and project_opt.get_pro_name(project_name) > 0:
+            return '该项目已存在， 请重新命名'
+        try:
+            project_opt.update_project(kwargs.pop('index'), **kwargs)
+        except DataError:
+            return '项目信息过长'
+        except Exception:
+            logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
+            return '更新失败，请重试'
+        logger.info('项目更新成功：{kwargs}'.format(kwargs=kwargs))
 
-    except DataError:
-        logger.error('信息过长：{kwargs}'.format(kwargs=kwargs))
-        return '字段长度超长，请重新编辑'
     return 'ok'
 
 
@@ -71,39 +71,38 @@ def add_module_data(type, **kwargs):
     module_opt = ModuleInfo.objects
     belong_project = kwargs.pop('belong_project')
     module_name = kwargs.get('module_name')
-    try:
-        if type:
-            if module_opt.filter(belong_project__project_name__exact=belong_project) \
-                    .filter(module_name__exact=module_name).count() < 1:
-                try:
-                    belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
-                except ObjectDoesNotExist:
-                    logging.error('项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
-                    return '项目信息读取失败，请重试'
-                kwargs['belong_project'] = belong_project
-                try:
-                    module_opt.insert_module(**kwargs)
-                except Exception:
-                    logging.error('模块添加异常：{kwargs}'.format(kwargs=kwargs))
-                    return '添加失败，请重试'
-                logger.info('模块添加成功：{kwargs}'.format(kwargs=kwargs))
-            else:
-                return '该模块已在项目中存在，请重新编辑'
-        else:
-            if module_name != module_opt.get_module_name('', type=False, id=kwargs.get('index')) \
-                    and module_opt.filter(belong_project__project_name__exact=belong_project) \
-                            .filter(module_name__exact=module_name).count() > 0:
-                return '该模块已存在，请重新命名'
+    if type:
+        if module_opt.filter(belong_project__project_name__exact=belong_project) \
+                .filter(module_name__exact=module_name).count() < 1:
             try:
-                module_opt.update_module(kwargs.pop('index'), **kwargs)
+                belong_project = ProjectInfo.objects.get_pro_name(belong_project, type=False)
+            except ObjectDoesNotExist:
+                logging.error('项目信息读取失败：{belong_project}'.format(belong_project=belong_project))
+                return '项目信息读取失败，请重试'
+            kwargs['belong_project'] = belong_project
+            try:
+                module_opt.insert_module(**kwargs)
+            except DataError:
+                return '模块信息过长'
             except Exception:
-                logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
-                return '更新失败，请重试'
-            logger.info('模块更新成功：{kwargs}'.format(kwargs=kwargs))
-
-    except DataError:
-        logger.error('信息过长：{kwargs}'.format(kwargs=kwargs))
-        return '字段长度超长，请重新编辑'
+                logging.error('模块添加异常：{kwargs}'.format(kwargs=kwargs))
+                return '添加失败，请重试'
+            logger.info('模块添加成功：{kwargs}'.format(kwargs=kwargs))
+        else:
+            return '该模块已在项目中存在，请重新编辑'
+    else:
+        if module_name != module_opt.get_module_name('', type=False, id=kwargs.get('index')) \
+                and module_opt.filter(belong_project__project_name__exact=belong_project) \
+                        .filter(module_name__exact=module_name).count() > 0:
+            return '该模块已存在，请重新命名'
+        try:
+            module_opt.update_module(kwargs.pop('index'), **kwargs)
+        except DataError:
+            return '模块信息过长'
+        except Exception:
+            logging.error('更新失败：{kwargs}'.format(kwargs=kwargs))
+            return '更新失败，请重试'
+        logger.info('模块更新成功：{kwargs}'.format(kwargs=kwargs))
     return 'ok'
 
 
@@ -116,8 +115,16 @@ def add_case_data(type, **kwargs):
     name = kwargs.get('test').get('name')
     module = case_info.get('module')
     project = case_info.get('project')
+    path = case_info.get('include', '')
+    if path is not '':
+        include = path.split('>')
+        for value in include:
+            if TestCaseInfo.objects.filter(belong_module__module_name=module).filter(
+                    name__exact=value).count() < 1:  # 没有找到依赖用例
+                return '抱歉，您所依赖的{value}用例或配置没找到，请先添加'.format(value=value)
     try:
         if type:
+
             if case_opt.get_case_name(name, module, project) < 1:
                 belong_module = ModuleInfo.objects.get_module_name(module, type=False, project=project)
                 case_opt.insert_case(belong_module, **kwargs)
@@ -196,6 +203,8 @@ def env_data_logic(**kwargs):
                 return 'ok'
             else:
                 return '环境名称重复'
+        except DataError:
+            return '环境信息过长'
         except Exception:
             logging.error('添加环境异常：{kwargs}'.format(kwargs=kwargs))
             return '环境信息添加异常，请重试'
@@ -208,6 +217,8 @@ def env_data_logic(**kwargs):
                 EnvInfo.objects.update_env(index, **kwargs)
                 logging.info('环境信息更新成功：{kwargs}'.format(kwargs=kwargs))
                 return 'ok'
+        except DataError:
+            return '环境信息过长'
         except ObjectDoesNotExist:
             logging.error('环境信息查询失败：{kwargs}'.format(kwargs=kwargs))
             return '更新失败，请重试'

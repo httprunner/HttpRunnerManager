@@ -120,7 +120,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
 
     sum = {}
     page_list = ''
-    if total !=0:
+    if total != 0:
         if url == '/api/project_list/':
             for model in info:
                 pro_name = model.project_name
@@ -131,9 +131,13 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
         elif url == '/api/module_list/':
             for model in info:
                 module_name = model.module_name
-                test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1).count())
+                project_name = model.belong_project.project_name
+                test_count = str(
+                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1,
+                                                belong_project=project_name).count())
                 config_count = str(
-                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2).count())
+                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2,
+                                                belong_project=project_name).count())
                 sum.setdefault(model.id, test_count + '/ ' + config_count)
         page_list = customer_pager(url, id, page_info.total_page)
 
