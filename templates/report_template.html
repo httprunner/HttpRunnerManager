@@ -195,18 +195,18 @@
         <th>View</th>
     </tr>
     {% for record in records %}
-        <tr id="record_{{ loop.index }}">
+        <tr id="record_{{ forloop.counter }}">
             <th class="{{ record.status }}" style="width:5em;">
             <td>{{ record.status }}</td>
             <td>{{ record.name }}</td>
             <td style="text-align:center;width:6em;">{{ record.meta_data.response_time }} ms</td>
             <td class="detail">
 
-                <a class="button" href="#popup_log_{{ loop.index }}">log</a>
-                <div id="popup_log_{{ loop.index }}" class="overlay">
+                <a class="button" href="#popup_log_{{ forloop.counter }}">log</a>
+                <div id="popup_log_{{ forloop.counter }}" class="overlay">
                     <div class="popup">
                         <h2>Request and Response data</h2>
-                        <a class="close" href="#record_{{ loop.index }}">&times;</a>
+                        <a class="close" href="#record_{{ forloop.counter }}">&times;</a>
 
                         <div class="content">
                             <h3>Request:</h3>
@@ -297,11 +297,11 @@
                 </div>
 
                 {% if record.attachment %}
-                    <a class="button" href="#popup_attachment_{{ loop.index }}">traceback</a>
-                    <div id="popup_attachment_{{ loop.index }}" class="overlay">
+                    <a class="button" href="#popup_attachment_{{ forloop.counter }}">traceback</a>
+                    <div id="popup_attachment_{{ forloop.counter }}" class="overlay">
                         <div class="popup">
                             <h2>Traceback Message</h2>
-                            <a class="close" href="#record_{{ loop.index }}">&times;</a>
+                            <a class="close" href="#record_{{ forloop.counter }}">&times;</a>
                             <div class="content">
                                 <pre>{{ record.attachment }}</pre>
                             </div>
