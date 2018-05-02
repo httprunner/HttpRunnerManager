@@ -140,9 +140,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-CELERY_TASK_RESULT_EXPIRES = 3600  # celery任务执行结果的超时时间，
-CELERYD_CONCURRENCY = 50  # celery worker的并发数 也是命令行-c指定的数目,事实上实践发现并不是worker也多越好,保证任务不堆积,加上一定新增任务的预留就可以
-
+CELERY_TASK_RESULT_EXPIRES = 7200  # celery任务执行结果的超时时间，
+CELERYD_CONCURRENCY = 25  # celery worker的并发数 也是命令行-c指定的数目
+CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
 
 LOGGING = {
     'version': 1,

@@ -45,7 +45,11 @@
                         <td>{{ forloop.counter }}</td>
                         <td><a href="/api/view_report/{{ foo.id }}">{{ foo.report_name }}</a></td>
                         <td>{{ foo.start_at }}</td>
-                        <td>{{ foo.status }}</td>
+                        {% if foo.status == True %}
+                            <td style="color: #00e359 ">Pass</td>
+                        {% else %}
+                            <td style="color: red">Fail</td>
+                        {% endif %}
                         <td>{{ foo.testsRun }}</td>
                         <td>{{ foo.successes }}</td>
                         <td class="am-hide-sm-only">{{ foo.create_time }}</td>

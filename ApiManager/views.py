@@ -4,7 +4,7 @@ import logging
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic
@@ -454,7 +454,28 @@ def env_list(request, id):
 
 
 def report_list(request, id):
-    pass
+    if request.session.get('login_status'):
+        filter_query = set_filter_session(request)
+        report_list = get_pager_info(
+            TestReports, filter_query, '/api/report_list/', id)
+        manage_info = {
+            'account': request.session["now_account"],
+            'report': report_list[1],
+            'page_list': report_list[0],
+            'info': filter_query
+        }
+        return render_to_response('report_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+def view_report(request, id):
+    if request.session.get('login_status'):
+        reports = eval(TestReports.objects.get(id=id).reports)
+        reports.get('time')['start_at'] = TestReports.objects.get(id=id).start_at
+        return render_to_response('report_template.html', reports)
+    else:
+        return HttpResponseRedirect("/api/login/")
 
 
 '''测试代码'''
