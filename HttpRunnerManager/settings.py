@@ -132,7 +132,8 @@ STATICFILES_DIRS = (
 SESSION_COOKIE_AGE = 600 * 60
 
 djcelery.setup_loader()
-
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE='Asia/Shanghai'
 BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
