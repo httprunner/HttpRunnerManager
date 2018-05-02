@@ -37,10 +37,11 @@
                         <div class="form-group has-success">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <select name="project" class="form-control" onclick=info_ajax("#form_config")>
+                                <select name="project" class="form-control"
+                                        onchange="info_ajax('#form_config', '/api/add_config/')">
                                     <option value=请选择>请选择</option>
                                     {% for foo in project %}
-                                        <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
+                                        <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -61,7 +62,7 @@
                             <div class="col-md-4">
                                 <input type="text" class="form-control" id="config_author" placeholder="创建者"
                                        name="config_author"
-                                       value="">
+                                       value="{{ account }}">
                                 <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -77,8 +78,8 @@
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
                                 <th width="30%" align="center">Key</th>
-                                <th width="5%" align="center">Type</th>
-                                <th width="60%" align="center">Value</th>
+                                <th width="8%" align="center">Type</th>
+                                <th width="57%" align="center">Value</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -88,15 +89,9 @@
                 </div>
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
-                        <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">Base Url:</label>
-                            <input type="text" class="form-control am-input-lg" placeholder="Base Url" name="url"
-                                   id="config_url">
-                        </div>
-
                         <div class="form-group has-warning ">
                             <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
+                                   style="font-size: 14px;"><code>&nbsp;</code>type：</label>
                             <select class="form-control" name="DataType" id="config_data_type">
                                 <option>data</option>
                                 <option>json</option>
@@ -113,7 +108,7 @@
                         <button id="btn-json-viewer" class="btn btn-info" disabled>convert to json</button>
                         <form id="config_request_data">
                             <table class="table table-hover table-condensed table-bordered table-striped" id="data">
-                                <caption>request:</caption>
+                                <caption>data:</caption>
                                 <thead>
                                 <tr class="active text-success">
                                     <th width="5%" align="center">Option</th>

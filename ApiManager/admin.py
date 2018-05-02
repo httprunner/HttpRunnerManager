@@ -17,20 +17,20 @@ class UserInfoAdmin(admin.ModelAdmin):
 
 @admin.register(ProjectInfo)
 class ProjectInfoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pro_name', 'responsible_name', 'test_user', 'dev_user', 'publish_app', 'simple_desc',
-                    'other_desc', 'status', 'create_time', 'update_time')
+    list_display = ('id', 'project_name', 'responsible_name', 'test_user', 'dev_user', 'publish_app', 'simple_desc',
+                    'other_desc', 'create_time', 'update_time')
     list_per_page = 20
     ordering = ('-create_time',)
-    list_display_links = ('pro_name',)
-    list_filter = ('pro_name', 'responsible_name')  # 过滤器
-    search_fields = ('pro_name', 'responsible_name')  # 搜索字段
+    list_display_links = ('project_name',)
+    list_filter = ('project_name', 'responsible_name')  # 过滤器
+    search_fields = ('project_name', 'responsible_name')  # 搜索字段
     date_hierarchy = 'update_time'  # 详细时间分层筛选　
 
 
 @admin.register(ModuleInfo)
 class ModuleInfoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'module_name', 'belong_project', 'test_user', 'lifting_time', 'simple_desc'
-                    , 'other_desc', 'status', 'create_time', 'update_time')
+    list_display = ('id', 'module_name', 'belong_project', 'test_user', 'simple_desc'
+                    , 'other_desc', 'create_time', 'update_time')
     list_per_page = 20
     ordering = ('-create_time',)
     list_display_links = ('module_name',)
@@ -42,7 +42,7 @@ class ModuleInfoAdmin(admin.ModelAdmin):
 @admin.register(TestCaseInfo)
 class TestCaseInfoAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'type', 'name', 'belong_project', 'belong_module', 'include', 'author', 'request', 'status',
+        'id', 'type', 'name', 'belong_project', 'belong_module', 'include', 'author', 'request',
         'create_time',
         'update_time')
     list_per_page = 50

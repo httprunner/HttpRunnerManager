@@ -47,23 +47,25 @@
                         <div class="form-group has-feedback has-info">
                             <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="project" placeholder="所属项目"
-                                       name="project"
-                                       value="{{ info.belong_project }}" readonly>
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                                <select name="project" class="form-control"
+                                        onchange=info_ajax("#form_config",'/api/edit_config/')>
+                                    <option value="{{ info.belong_project }}">{{ info.belong_project }}</option>
+                                    {% for obj in project %}
+                                        {% ifnotequal info.belong_project obj.project_name %}
+                                            <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
+                                        {% endifnotequal %}
+                                    {% endfor %}
+                                </select>
+
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="config_module" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">module:</label>
+                        <div class="form-group has-success">
+                            <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" id="config_module" placeholder="所属模块"
-                                       name="config_module"
-                                       value="{{ info.belong_module.module_name }}" readonly>
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                                <select id="belong_module_id" name="config_module" class="form-control">
+                                    <option value="{{ info.belong_module.module_name }}">{{ info.belong_module.module_name }}</option>
+                                </select>
                             </div>
                         </div>
 
@@ -83,29 +85,25 @@
                     <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
                     <form id="config_variables">
-                        <table class="table table-hover table-condensed table-bordered table-striped" id="variables"
-                               onload="add_data('variables',{{ request.variables }})">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
                             <thead>
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
                                 <th width="30%" align="center">Key</th>
-                                <th width="5%" align="center">Type</th>
-                                <th width="60%" align="center">Value</th>
+                                <th width="8%" align="center">Type</th>
+                                <th width="57%" align="center">Value</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for foo in request.variables %}
                                 <tr>
-                                    <td><input type="checkbox" name="variables" id="chkArr_{{ forloop.counter }}"
-                                               style="width:55px"></td>
+                                    <td><input type="checkbox" name="variables" style="width:55px"></td>
                                     {% for key, value in foo.items %}
-                                        <td><input type="text" name="cell1_keyvariables{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counter }}"
+                                        <td><input type="text" name='test[][key]'
                                                    value="{{ key }}" style="width:100%; border: none"></td>
                                         <td>
-                                            <select name='cell_data_typevariables{{ forloop.parentloop.counter }}'
-                                                    class='form-control'
+                                            <select name='test[][type]' class='form-control'
                                                     style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
 
                                                 {% if value|data_type == 'str' %}
@@ -131,9 +129,7 @@
                                                 {% endif %}
                                             </select>
                                         </td>
-                                        <td><input type="text"
-                                                   name="cell3_valuevariables{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counterr }}" value="{{ value }}"
+                                        <td><input type="text" name='test[][value]' value="{{ value }}"
                                                    style="width:100%; border: none"></td>
                                     {% endfor %}
                                 </tr>
@@ -144,15 +140,9 @@
                 </div>
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
-                        <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">Base Url:</label>
-                            <input type="text" class="form-control am-input-lg" placeholder="Base Url" name="url"
-                                   id="config_url" value="{{ request.request.base_url }}">
-                        </div>
-
                         <div class="form-group has-warning ">
                             <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>DataType:</label>
+                                   style="font-size: 14px;"><code>&nbsp;</code>type：</label>
                             <select class="form-control" name="DataType" id="config_data_type">
                                 {% if 'data' in request.request.keys %}
                                     <option selected>data</option>
@@ -180,7 +170,7 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
-                        <button id="btn-json-viewer" class="btn btn-info" >convert to json</button>
+                        <button id="btn-json-viewer" class="btn btn-info">convert to json</button>
                         <form id="config_request_data">
                             {% if 'json' in request.request.keys %}
                                 <span id="json-text" style="font-size:10px;">
@@ -200,22 +190,19 @@
                                     <tr class="active text-success">
                                         <th width="5%" align="center">Option</th>
                                         <th width="30%" align="center">Key</th>
-                                        <th width="5%" align="center">Type</th>
-                                        <th width="60%" align="center">Value</th>
+                                        <th width="8%" align="center">Type</th>
+                                        <th width="57%" align="center">Value</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% if 'data' in request.request.keys %}
                                         {% for key, value in request.request.data.items %}
                                             <tr>
-                                                <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
-                                                           style="width:55px">
+                                                <td><input type="checkbox" name="data" style="width:55px">
                                                 </td>
-                                                <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
-                                                           id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                <td><input type="text" name='test[][key]' value="{{ key }}"
                                                            style="width:100%; border: none"></td>
-                                                <td><select name='cell_data_typedata{{ forloop.counter }}'
-                                                            class='form-control'
+                                                <td><select name='test[][type]' class='form-control'
                                                             style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
                                                     {% if value|data_type == 'str' %}
                                                         <option>string</option>
@@ -239,22 +226,19 @@
                                                         <option>float</option>
                                                     {% endif %}
                                                 </select></td>
-                                                <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
-                                                           id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                <td><input type="text" name='test[][value]' value="{{ value }}"
                                                            style="width:100%; border: none"></td>
                                             </tr>
                                         {% endfor %}
                                     {% elif 'params' in request.request.keys %}
                                         {% for key, value in request.request.params.items %}
                                             <tr>
-                                                <td><input type="checkbox" name="data" id="chkArr_{{ forloop.counter }}"
+                                                <td><input type="checkbox" name="data"
                                                            style="width:55px">
                                                 </td>
-                                                <td><input type="text" name="cell1_keydata{{ forloop.counter }}"
-                                                           id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                                <td><input type="text" name='test[][key]' value="{{ key }}"
                                                            style="width:100%; border: none"></td>
-                                                <td><select name='cell_data_typedata{{ forloop.counter }}'
-                                                            class='form-control'
+                                                <td><select name='test[][type]' class='form-control'
                                                             style='height: 25px; font-size: 15px; padding-top: 0px; padding-left: 0px; border: none'>
                                                     {% if value|data_type == 'str' %}
                                                         <option>string</option>
@@ -278,8 +262,7 @@
                                                         <option>float</option>
                                                     {% endif %}
                                                 </select></td>
-                                                <td><input type="text" name="cell2_valuedata{{ forloop.counter }}"
-                                                           id="nodename{{ forloop.counter }}" value="{{ value }}"
+                                                <td><input type="text" name='test[][value]' value="{{ value }}"
                                                            style="width:100%; border: none"></td>
                                             </tr>
                                         {% endfor %}
@@ -304,15 +287,13 @@
                                 {% if 'headers' in request.request.keys %}
                                     {% for key, value in request.request.headers.items %}
                                         <tr>
-                                            <td><input type="checkbox" name="header" id="chkArr_{{ forloop.counter }}"
-                                                       style="width:55px">
+                                            <td><input type="checkbox" name="header" style="width:55px">
                                             </td>
-                                            <td><input type="text" name="cell1_keyheader{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ key }}"
+                                            <td><input type="text" name='test[][key]' value="{{ key }}"
                                                        style="width:100%; border: none"></td>
-                                            <td><input type="text" name="cell2_valueheader{{ forloop.counter }}"
-                                                       id="nodename{{ forloop.counter }}" value="{{ value }}"
-                                                       style="width:100%; border: none"></td>
+                                            <td><input type="text" name='test[][value]'" value="{{ value }}"
+                                                style="width:100%; border: none">
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 {% endif %}

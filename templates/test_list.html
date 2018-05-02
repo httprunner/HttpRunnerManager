@@ -8,7 +8,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要删除该用例么？
+                亲，请确认该用例是否被其他用例依赖后再谨慎删除哦
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -17,31 +17,32 @@
         </div>
     </div>
 
-    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-valid">
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="select_env">
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
-            <div class="am-modal-bd">
-                亲，确定要恢复该用例么？
-            </div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">运行环境:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="env_name" name="env_name">
+                            <option value="">自带环境</option>
+                            {% for foo in env %}
+                                <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+            </form>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
             </div>
         </div>
     </div>
-    <form id="form" action="/api/upload/" method="post" enctype="multipart/form-data">
-        <div class="am-modal am-modal-confirm" tabindex="-1" id="bulk_uploadcase">
-            <div class="am-modal-dialog">
-                <div class="am-modal-hd">
-                    <h5 class="modal-title" id="HttpRunnerManager">HttpRunnerManager</h5>
-                </div>
-                <div class="am-modal-bd" id="uploadfile">
-                    <input id="input-b9" name="file" type="file" class="file">
-                    <div id="kartik-file-errors"></div>
-                </div>
-            </div>
-        </div>
-    </form>
+
+
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例列表</ul>
@@ -53,11 +54,11 @@
                 <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_config/'">新增配置
                 </button>
-                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#test_list')">运行
-                </button>
                 <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
                         data-toggle="modal" data-target="#bulk_uploadcase">批量导入
+                </button>
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                        onclick="my_submit()">运行
                 </button>
             </dl>
         </div>
@@ -65,40 +66,32 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/test_list/1/">
                 <ul>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
+                                                        name="belong_project"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属项目"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_module }}" type="text"
+                                                        name="belong_module"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属模块"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="用例名称"/></li>
                     <li>
-                        <div class="am-btn-group am-btn-group-xs">
-                            <select name="filter"
-                                    data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                                {% if info.filter == '1' %}
-                                    <option value="1" selected>有效</option>
-                                    <option value="0">无效</option>
-                                {% elif info.filter == '0' %}
-                                    <option value="1">有效</option>
-                                    <option value="0" selected>无效</option>
-                                {% else %}
-                                    <option value="1">有效</option>
-                                    <option value="0">无效</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
                                                         class="am-form-field am-input-sm am-input-xm"
                                                         placeholder="创建者"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="用例"/></li>
-                    <li>
-                        <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                style="margin-top: -1px;">搜索
-                        </button>
+
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">搜索
+                    </button>
                     </li>
                 </ul>
             </form>
         </div>
 
 
-        <form class="am-form am-g" id='test_list' name="test_list" method="post" action="/api/run_batch_test/">
+        <form class="am-form am-g" id='test_list' name="test_list">
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                 <tr class="am-success">
@@ -108,8 +101,6 @@
                     <th class="table-type">所属项目</th>
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
-                    <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
-                            class="am-icon-close am-text-primary"></i></th>
                     <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-title">操作</th>
                 </tr>
@@ -117,7 +108,7 @@
                 <tbody>
                 {% for foo in test %}
                     <tr>
-                        <td><input type="checkbox" name="test_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td><input type="checkbox" name="{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
                         <td><a href="#"
                                onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
@@ -125,11 +116,6 @@
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
                         <td>{{ foo.author }}</td>
-                        {% if foo.status == 1 %}
-                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                        {% else %}
-                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                        {% endif %}
                         <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
@@ -137,7 +123,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                            onclick="post('/api/run_test/', {'id':'{{ foo.id }}', 'mode':'run_by_test'})">
+                                            onclick="run_test('{{ foo.id }}')">
                                         <span class="am-icon-bug"></span></button>
 
                                     <button type="button"
@@ -145,16 +131,10 @@
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
                                             onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})"> <span
                                             class="am-icon-pencil-square-o"></span></button>
-
-                                    <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                            onclick="valid('in_tec{{ foo.id }}')"><span
-                                            class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_tec{{ foo.id }}')"><span
+                                            onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -171,8 +151,6 @@
                 <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
                         class="am-icon-plus"></span> 新增配置
                 </button>
-                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
-                </button>
             </div>
 
             <ul class="am-pagination am-fr">
@@ -186,11 +164,25 @@
     </div>
     <script type="text/javascript">
 
-        function my_submit(id) {
+        function my_submit() {
             if ($("input:checked").size() == 0) {
                 myAlert("请至少选择一条用例运行！");
             } else {
-                $(id).submit()
+                $('#select_env').modal({
+                        relatedTarget: this,
+                        onConfirm: function () {
+                            var data = $("#test_list").serializeJSON();
+                            var json2map = JSON.stringify(data);
+                            var obj = JSON.parse(json2map);
+                            obj['env_name'] = $('#env_name').val();
+                            console.log(obj)
+                            post('/api/run_batch_test/', obj)
+                        },
+                        onCancel: function () {
+                        }
+                    }
+                );
+
             }
         }
 
@@ -198,18 +190,18 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
+                    del_data_ajax(name, '/api/test_list/1/')
                 },
                 onCancel: function () {
                 }
             });
         }
 
-        function valid(name) {
-            $('#my-valid').modal({
+        function run_test(index) {
+            $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
+                    post('/api/run_test/', {'index': index, 'env_name': $('#env_name').val()})
                 },
                 onCancel: function () {
                 }

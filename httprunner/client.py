@@ -1,53 +1,23 @@
-import json
+# encoding: utf-8
+
 import re
 import time
 
 import requests
 import urllib3
+from httprunner import logger
+from httprunner.exception import ParamsError
 from requests import Request, Response
 from requests.exceptions import (InvalidSchema, InvalidURL, MissingSchema,
                                  RequestException)
-
-from httprunner import logger
-from httprunner.exception import ParamsError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 absolute_http_url_regexp = re.compile(r"^https?://", re.I)
 
 
-def get_charset_from_content_type(content_type):
-    """ extract charset encoding type from Content-Type
-    @param content_type
-        e.g.
-        application/json; charset=UTF-8
-        application/x-www-form-urlencoded; charset=UTF-8
-    @return: charset encoding type
-        UTF-8
-    """
-    content_type = content_type.lower()
-    if "charset=" not in content_type:
-        return None
-
-    index = content_type.index("charset=") + len("charset=")
-    return content_type[index:]
-
-
-def prepare_kwargs(method, kwargs):
-    if method == "POST":
-        content_type = kwargs.get("headers", {}).get("content-type")
-        if content_type and "data" in kwargs:
-            # if request content-type is application/json, request data should be dumped
-            if content_type.startswith("application/json"):
-                kwargs["data"] = json.dumps(kwargs["data"])
-
-            # if charset is specified in content-type, request data should be encoded with charset encoding
-            charset = get_charset_from_content_type(content_type)
-            if charset:
-                kwargs["data"] = kwargs["data"].encode(charset)
-
-
 class ApiResponse(Response):
+
     def raise_for_status(self):
         if hasattr(self, 'error') and self.error:
             raise self.error
@@ -67,7 +37,6 @@ class HttpSession(requests.Session):
     part of the URL will be prepended with the HttpSession.base_url which is normally inherited
     from a HttpRunner class' host property.
     """
-
     def __init__(self, base_url=None, *args, **kwargs):
         super(HttpSession, self).__init__(*args, **kwargs)
         self.base_url = base_url if base_url else ""
@@ -77,7 +46,7 @@ class HttpSession(requests.Session):
         if absolute_http_url_regexp.match(path):
             return path
         elif self.base_url:
-            return "%s%s" % (self.base_url, path)
+            return "{}/{}".format(self.base_url.rstrip("/"), path.lstrip("/"))
         else:
             raise ParamsError("base url missed!")
 
@@ -125,38 +94,36 @@ class HttpSession(requests.Session):
 
         # prepend url with hostname unless it's already an absolute URL
         url = self._build_url(url)
-        logger.log_info("{method} {url}".format(method=method, url=url))
-        logger.log_debug("request kwargs(raw): {kwargs}".format(kwargs=kwargs))
 
         # set up pre_request hook for attaching meta data to the request object
         self.meta_data["method"] = method
-
-        if "httpntlmauth" in kwargs:
-            from requests_ntlm import HttpNtlmAuth
-            auth_account = kwargs.pop("httpntlmauth")
-            kwargs["auth"] = HttpNtlmAuth(
-                auth_account["username"], auth_account["password"])
 
         kwargs.setdefault("timeout", 120)
 
         self.meta_data["request_time"] = time.time()
         response = self._send_request_safe_mode(method, url, **kwargs)
         # record the consumed time
-        self.meta_data["response_time"] = int((time.time() - self.meta_data["request_time"]) * 1000)
-        self.meta_data["elapsed"] = response.elapsed.total_seconds()
+        self.meta_data["response_time"] = round((time.time() - self.meta_data["request_time"]) * 1000, 2)
+        self.meta_data["elapsed(ms)"] = response.elapsed.microseconds / 1000.0
 
-        self.meta_data["url"] = (response.history and response.history[0] or response) \
-            .request.path_url
+        self.meta_data["url"] = (response.history and response.history[0] or response)\
+            .request.url
 
         self.meta_data["request_headers"] = response.request.headers
         self.meta_data["request_body"] = response.request.body
         self.meta_data["status_code"] = response.status_code
         self.meta_data["response_headers"] = response.headers
-        self.meta_data["response_body"] = response.text
 
-        logger.log_debug("response status_code: {}".format(self.meta_data["status_code"]))
-        logger.log_debug("response headers: {}".format(self.meta_data["response_headers"]))
-        logger.log_debug("response body: {}".format(self.meta_data["response_body"]))
+        try:
+            self.meta_data["response_body"] = response.json()
+        except ValueError:
+            self.meta_data["response_body"] = response.content
+
+        msg = "response details:\n"
+        msg += "> status_code: {}\n".format(self.meta_data["status_code"])
+        msg += "> headers: {}\n".format(self.meta_data["response_headers"])
+        msg += "> body: {}".format(self.meta_data["response_body"])
+        logger.log_debug(msg)
 
         # get the length of the content, but if the argument stream is set to True, we take
         # the size from the content-length header, in order to not trigger fetching of the body
@@ -186,8 +153,10 @@ class HttpSession(requests.Session):
         Safe mode has been removed from requests 1.x.
         """
         try:
-            prepare_kwargs(method, kwargs)
-            logger.log_debug("request kwargs(processed): {kwargs}".format(kwargs=kwargs))
+            msg = "processed request:\n"
+            msg += "> {method} {url}\n".format(method=method, url=url)
+            msg += "> kwargs: {kwargs}".format(kwargs=kwargs)
+            logger.log_debug(msg)
             return requests.Session.request(self, method, url, **kwargs)
         except (MissingSchema, InvalidSchema, InvalidURL):
             raise

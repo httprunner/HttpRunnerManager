@@ -1,32 +1,33 @@
+# encoding: utf-8
+
 import argparse
 import multiprocessing
 import os
 import sys
+import unittest
 
 from httprunner import logger
-from httprunner.__about__ import __version__
+from httprunner.__about__ import __description__, __version__
+from httprunner.compat import is_py2
 from httprunner.task import HttpRunner
-from httprunner.utils import (create_scaffold, load_dot_env_file, print_output)
-
-
-def main_ate(testset_paths, html_report_name=None):
-    logger.setup_logger('DEBUG')
-
-    result = HttpRunner(testset_paths).run(html_report_name=html_report_name)
-    return result
+from httprunner.utils import (create_scaffold, get_python2_retire_msg,
+                              load_dot_env_file, prettify_json_file,
+                              print_output, validate_json_file)
 
 
 def main_hrun():
     """ API test: parse command line options and run commands.
     """
-    parser = argparse.ArgumentParser(
-        description='HTTP test runner, not just about api test and load test.')
+    parser = argparse.ArgumentParser(description=__description__)
     parser.add_argument(
         '-V', '--version', dest='version', action='store_true',
         help="show version")
     parser.add_argument(
         'testset_paths', nargs='*',
         help="testset file path")
+    parser.add_argument(
+        '--no-html-report', action='store_true', default=False,
+        help="do not generate html report.")
     parser.add_argument(
         '--html-report-name',
         help="specify html report name, only effective when generating html report.")
@@ -37,6 +38,9 @@ def main_hrun():
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")
     parser.add_argument(
+        '--log-file',
+        help="Write logs to specified file path.")
+    parser.add_argument(
         '--dot-env-path',
         help="Specify .env file path, which is useful for keeping production credentials.")
     parser.add_argument(
@@ -45,12 +49,28 @@ def main_hrun():
     parser.add_argument(
         '--startproject',
         help="Specify new project name.")
+    parser.add_argument(
+        '--validate', nargs='*',
+        help="Validate JSON testset format.")
+    parser.add_argument(
+        '--prettify', nargs='*',
+        help="Prettify JSON testset format.")
 
     args = parser.parse_args()
-    logger.setup_logger(args.log_level)
+    logger.setup_logger(args.log_level, args.log_file)
+
+    if is_py2:
+        logger.log_warning(get_python2_retire_msg())
 
     if args.version:
         logger.color_print("{}".format(__version__), "GREEN")
+        exit(0)
+
+    if args.validate:
+        validate_json_file(args.validate)
+        exit(0)
+    if args.prettify:
+        prettify_json_file(args.prettify)
         exit(0)
 
     dot_env_path = args.dot_env_path or os.path.join(os.getcwd(), ".env")
@@ -63,13 +83,17 @@ def main_hrun():
         create_scaffold(project_path)
         exit(0)
 
-    result = HttpRunner(args.testset_paths, failfast=args.failfast).run(
-        html_report_name=args.html_report_name
-    )
+    runner = HttpRunner(failfast=args.failfast).run(args.testset_paths)
 
-    print_output(result["output"])
-    return 0 if result["success"] else 1
+    if not args.no_html_report:
+        runner.gen_html_report(
+            html_report_name=args.html_report_name,
+            html_report_template=args.html_report_template
+        )
 
+    summary = runner.summary
+    print_output(summary["output"])
+    return 0 if summary["success"] else 1
 
 def main_locust():
     """ Performance test with locust: parse command line options and run commands.
@@ -102,34 +126,34 @@ def main_locust():
     testcase_file_path = sys.argv[testcase_index]
     sys.argv[testcase_index] = locusts.parse_locustfile(testcase_file_path)
 
-    if "--cpu-cores" in sys.argv:
-        """ locusts -f locustfile.py --cpu-cores 4
+    if "--processes" in sys.argv:
+        """ locusts -f locustfile.py --processes 4
         """
         if "--no-web" in sys.argv:
-            logger.log_error("conflict parameter args: --cpu-cores & --no-web. \nexit.")
+            logger.log_error("conflict parameter args: --processes & --no-web. \nexit.")
             sys.exit(1)
 
-        cpu_cores_index = sys.argv.index('--cpu-cores')
+        processes_index = sys.argv.index('--processes')
 
-        cpu_cores_num_index = cpu_cores_index + 1
+        processes_count_index = processes_index + 1
 
-        if cpu_cores_num_index >= len(sys.argv):
-            """ do not specify cpu cores explicitly
-                locusts -f locustfile.py --cpu-cores
+        if processes_count_index >= len(sys.argv):
+            """ do not specify processes count explicitly
+                locusts -f locustfile.py --processes
             """
-            cpu_cores_num_value = multiprocessing.cpu_count()
-            logger.log_warning("cpu cores number not specified, use {} by default.".format(cpu_cores_num_value))
+            processes_count = multiprocessing.cpu_count()
+            logger.log_warning("processes count not specified, use {} by default.".format(processes_count))
         else:
             try:
-                """ locusts -f locustfile.py --cpu-cores 4 """
-                cpu_cores_num_value = int(sys.argv[cpu_cores_num_index])
-                sys.argv.pop(cpu_cores_num_index)
+                """ locusts -f locustfile.py --processes 4 """
+                processes_count = int(sys.argv[processes_count_index])
+                sys.argv.pop(processes_count_index)
             except ValueError:
-                """ locusts -f locustfile.py --cpu-cores -P 8888 """
-                cpu_cores_num_value = multiprocessing.cpu_count()
-                logger.log_warning("cpu cores number not specified, use {} by default.".format(cpu_cores_num_value))
+                """ locusts -f locustfile.py --processes -P 8888 """
+                processes_count = multiprocessing.cpu_count()
+                logger.log_warning("processes count not specified, use {} by default.".format(processes_count))
 
-        sys.argv.pop(cpu_cores_index)
-        locusts.run_locusts_on_cpu_cores(sys.argv, cpu_cores_num_value)
+        sys.argv.pop(processes_index)
+        locusts.run_locusts_with_processes(sys.argv, processes_count)
     else:
         locusts.main()

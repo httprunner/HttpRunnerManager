@@ -6,31 +6,31 @@
         <div class="am-modal-dialog">
             <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                <form class="form-horizontal" id="list_pro">
+                <form class="form-horizontal" id="list_project">
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="index"
                                style="font-weight: inherit; font-size: small " hidden>索引值：</label>
                         <div class="col-sm-9">
                             <input name="index" type="text" class="form-control" id="index"
-                                   placeholder="索引值" hidden>
+                                   placeholder="索引值" value="" hidden>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="project_name"
-                               style="font-weight: inherit; font-size: small ">项目名称</label>
+                               style="font-weight: inherit; font-size: small ">项目名称：</label>
                         <div class="col-sm-9">
                             <input name="project_name" type="text" class="form-control" id="project_name"
-                                   placeholder="项目名称">
+                                   placeholder="项目名称" value="">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-3" for="responsible_name"
-                               style="font-weight: inherit; font-size: small ">负责人</label>
+                               style="font-weight: inherit; font-size: small ">负责人：</label>
                         <div class="col-sm-9">
                             <input name="responsible_name" type="text" id="responsible_name" class="form-control"
-                                   placeholder="负责人">
+                                   placeholder="负责人" value="">
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
                                style="font-weight: inherit; font-size: small ">测试人员：</label>
                         <div class="col-sm-9">
                             <input name="test_user" type="text" id="test_user" class="form-control"
-                                   placeholder="测试人员">
+                                   placeholder="测试人员" value="">
                         </div>
                     </div>
 
@@ -48,7 +48,7 @@
                                style="font-weight: inherit; font-size: small ">开发人员：</label>
                         <div class="col-sm-9">
                             <input name="dev_user" type="text" id="dev_user" class="form-control"
-                                   placeholder="开发人员">
+                                   placeholder="开发人员" value="">
                         </div>
                     </div>
 
@@ -57,7 +57,7 @@
                                style="font-weight: inherit; font-size: small ">发布应用：</label>
                         <div class="col-sm-9">
                             <input name="publish_app" type="text" id="publish_app" class="form-control"
-                                   placeholder="发布应用">
+                                   placeholder="发布应用" value="">
                         </div>
                     </div>
 
@@ -66,7 +66,7 @@
                                style="font-weight: inherit; font-size: small ">简要描述：</label>
                         <div class="col-sm-9">
                             <input name="simple_desc" type="text" id="simple_desc" class="form-control"
-                                   placeholder="简要描述">
+                                   placeholder="简要描述" value="">
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@
                                style="font-weight: inherit; font-size: small ">其他信息：</label>
                         <div class="col-sm-9">
                             <input name="other_desc" type="text" id="other_desc" class="form-control"
-                                   placeholder="其他信息">
+                                   placeholder="其他信息" value="">
                         </div>
                     </div>
 
@@ -92,7 +92,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要删除该项目么？
+                亲，此操作会强制删除该项目下所有模块和用例，请谨慎操作！！！
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -101,12 +101,24 @@
         </div>
     </div>
 
-    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-valid">
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="select_env">
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
-            <div class="am-modal-bd">
-                亲，确定要恢复该项目么？
-            </div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">运行环境:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="env_name" name="env_name">
+                            <option value="">自带环境</option>
+                            {% for foo in env %}
+                                <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+            </form>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
@@ -117,57 +129,38 @@
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 项目列表</ul>
-            <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">模块展示</a></dl>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 项目管理 > <a href="#">项目展示</a></dl>
             <dl>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_project/'">新增项目
                 </button>
+                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
+                        data-toggle="modal" data-target="#bulk_uploadcase">批量导入
+                </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="my_submit('#project_list')">运行
                 </button>
-                <button type="button"  class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
-                        data-toggle="modal" data-target="#bulk_uploadcase">批量导入
-                </button>
             </dl>
-
-
         </div>
 
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/project_list/1/">
                 <ul>
-                    <li>
-                        <div class="am-btn-group am-btn-group-xs">
-                            <select name="filter" data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                                {% if info.filter == '1' %}
-                                    <option value="1" selected>有效</option>
-                                    <option value="0">无效</option>
-                                {% elif info.filter == '0' %}
-                                    <option value="1">有效</option>
-                                    <option value="0" selected>无效</option>
-                                {% else %}
-                                    <option value="1">有效</option>
-                                    <option value="0">无效</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </li>
-                    <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="负责人"/></li>
                     <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
                                                         class="am-form-field am-input-sm am-input-xm"
                                                         placeholder="项目名称"/></li>
                     <li>
-                        <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                style="margin-top: -1px;">搜索
-                        </button>
+                    <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="负责人"/></li>
+
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">查询
+                    </button>
                     </li>
                 </ul>
             </form>
         </div>
-
-
         <form class="am-form am-g" id="project_list" name="project_list" method="post" action="/api/run_batch_test/">
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
@@ -176,9 +169,10 @@
                     <th class="table-title">序号</th>
                     <th class="table-type">项目名称</th>
                     <th class="table-type">负责人</th>
-                    <th class="table-title">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
-                            class="am-icon-close am-text-primary"></i></th>
-                    <th class="table-date am-hide-sm-only">创建日期</th>
+                    <th class="table-title">发布应用</th>
+                    <th class="table-title">测试人员</th>
+                    <th class="table-title">模块/用例/配置</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-set">操作</th>
                 </tr>
                 </thead>
@@ -188,15 +182,21 @@
                     <tr>
                         <td><input type="checkbox" name="project_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="#" onclick="edit('{{ foo.id }}','{{ foo.pro_name }}', '{{ foo.responsible_name }}'
-                                , '{{ foo.test_user }}','{{ foo.dev_user }}', '{{ foo.publish_app }}'
-                                , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')">{{ foo.pro_name }}</a></td>
+                        <td><a href="#"
+                               onclick="edit('{{ foo.id }}','{{ foo.project_name }}', '{{ foo.responsible_name }}'
+                                       , '{{ foo.test_user }}','{{ foo.dev_user }}', '{{ foo.publish_app }}'
+                                       , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')">{{ foo.project_name }}</a>
+                        </td>
                         <td>{{ foo.responsible_name }}</td>
-                        {% if foo.status == 1 %}
-                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                        {% else %}
-                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                        {% endif %}
+                        <td>{{ foo.publish_app }}</td>
+                        <td>{{ foo.test_user }}</td>
+
+                        {% for key, value in sum.items %}
+                            {% ifequal foo.id key %}
+                                <td>{{ value }}</td>
+                            {% endifequal %}
+                        {% endfor %}
+
                         <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
@@ -204,24 +204,19 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                            onclick="post('/api/run_test/',{'mode':'run_by_project','id':'{{ foo.id }}'})">
+                                            onclick="run_test('{{ foo.id }}', '/api/run_test/', 'project')">
                                         <span class="am-icon-bug"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '编辑', trigger: 'hover focus'}"
-                                            onclick="edit('{{ foo.id }}','{{ foo.pro_name }}', '{{ foo.responsible_name }}'
+                                            onclick="edit('{{ foo.id }}','{{ foo.project_name }}', '{{ foo.responsible_name }}'
                                                     , '{{ foo.test_user }}','{{ foo.dev_user }}', '{{ foo.publish_app }}'
                                                     , '{{ foo.simple_desc }}', '{{ foo.other_desc }}')"> <span
                                             class="am-icon-pencil-square-o"></span></button>
                                     <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                            onclick="valid('in_pro{{ foo.id }}')"><span
-                                            class="am-icon-copy"></span></button>
-                                    <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_pro{{ foo.id }}')"><span
+                                            onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -237,16 +232,12 @@
                 <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_project/'"><span
                         class="am-icon-plus"></span> 新增
                 </button>
-                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
             </div>
 
             <ul class="am-pagination am-fr">
                 {{ page_list }}
             </ul>
-
-
             <hr/>
-
         </form>
     </div>
     <script type="text/javascript">
@@ -270,7 +261,7 @@
             $('#my-edit').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax('#list_pro', id)
+                    update_data_ajax('#list_project', '/api/project_list/1/')
                 },
                 onCancel: function () {
                 }
@@ -281,22 +272,48 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
+                    del_data_ajax(name, '/api/project_list/1/')
                 },
                 onCancel: function () {
                 }
             });
         }
 
-        function valid(name) {
-            $('#my-valid').modal({
+        function run_test(mode, url, type) {
+            $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
+                    var data;
+                    if (mode !== 'batch') {
+                        data = {
+                            "id": mode,
+                            "env_name": $('#env_name').val(),
+                            "type": type
+                        };
+                    } else {
+                        data = {
+                            "id": $("#module_list").serializeJSON(),
+                            "env_name": $('#env_name').val(),
+                            "type": type
+                        };
+                    }
+                    $.ajax({
+                        type: 'post',
+                        url: url,
+                        data: JSON.stringify(data),
+                        contentType: "application/json",
+                        success: function (data) {
+                            myAlert(data);
+                        },
+                        error: function () {
+                            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                        }
+                    });
                 },
                 onCancel: function () {
                 }
             });
+
         }
     </script>
 

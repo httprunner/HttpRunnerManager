@@ -23,10 +23,10 @@
                     <div class="form-group">
                         <label class="control-label col-md-1 text-primary" for="belong_project">所属项目：</label>
                         <div class="col-md-5">
-                            {#                            <select class="form-control" data-am-selected="{searchBox: 1}" name="belong_project" style="display: none;">#}
                             <select name="belong_project" class="form-control">
+                            <option value="请选择">请选择</option>
                                 {% for foo in  data %}
-                                    <option value="{{ foo.pro_name }}">{{ foo.pro_name }}</option>
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -38,15 +38,6 @@
                             <input type="text" class="form-control" id="test_user" name="test_user"
                                    aria-describedby="inputSuccess3Status" placeholder="请输入参与的测试人员" value="">
                             <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group  has-feedback">
-                        <label class="control-label col-md-1 text-primary" for="lifting_time">提测时间：</label>
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" id="lifting_time" name="lifting_time"
-                                   aria-describedby="inputSuccess3Status" placeholder="预计提测时间">
-                            <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
 
@@ -70,7 +61,7 @@
                     <div class="am-form-group am-cf">
                         <div class="you" style="margin-left: 8%;">
                             <button type="button" class="am-btn am-btn-success am-radius"
-                                    onclick="info_ajax('#add_module')">点 击 提 交
+                                    onclick="info_ajax('#add_module', '/api/add_module/')">点 击 提 交
                             </button>&nbsp;
                             &raquo; &nbsp;
                             <a type="submit" href="/api/add_case/" class="am-btn am-btn-secondary am-radius">新 增 用 例</a>
@@ -81,19 +72,5 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        $(function () {
-            $('#lifting_time').datetimepicker(
-                {
-                    format: 'yyyy-mm-dd hh:ii',
-                    language: 'zh-CN',
-                    weekStart: true,
-                    todayBtn: true,
-                    autoclose: true,
-                    todayHighlight: true,
-                    keyboardNavigation: true
-                });
-        })
-    </script>
 
 {% endblock %}

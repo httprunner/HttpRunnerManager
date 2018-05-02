@@ -1,21 +1,22 @@
+# encoding: utf-8
+
 import logging
 import sys
 
-from colorama import Fore, init
+from colorama import Back, Fore, Style, init
 from colorlog import ColoredFormatter
 
 init(autoreset=True)
 
 log_colors_config = {
-    'DEBUG': 'cyan',
-    'INFO': 'green',
-    'WARNING': 'yellow',
-    'ERROR': 'red',
+    'DEBUG':    'cyan',
+    'INFO':     'green',
+    'WARNING':  'yellow',
+    'ERROR':    'red',
     'CRITICAL': 'red',
 }
 
-
-def setup_logger(log_level):
+def setup_logger(log_level, log_file=None):
     """setup root logger with ColoredFormatter."""
     level = getattr(logging, log_level.upper(), None)
     if not level:
@@ -27,13 +28,17 @@ def setup_logger(log_level):
         sys.tracebacklimit = 0
 
     formatter = ColoredFormatter(
-        "%(log_color)s%(bg_white)s%(levelname)-8s%(reset)s %(message)s",
+        u"%(log_color)s%(bg_white)s%(levelname)-8s%(reset)s %(message)s",
         datefmt=None,
         reset=True,
         log_colors=log_colors_config
     )
 
-    handler = logging.StreamHandler()
+    if log_file:
+        handler = logging.FileHandler(log_file)
+    else:
+        handler = logging.StreamHandler()
+
     handler.setFormatter(formatter)
     logging.root.addHandler(handler)
     logging.root.setLevel(level)
@@ -43,16 +48,13 @@ def coloring(text, color="WHITE"):
     fore_color = getattr(Fore, color.upper())
     return fore_color + text
 
-
 def color_print(msg, color="WHITE"):
     fore_color = getattr(Fore, color.upper())
     print(fore_color + msg)
 
-
 def log_with_color(level):
     """ log with color by different level
     """
-
     def wrapper(text):
         color = log_colors_config[level.upper()]
         getattr(logging, level.lower())(coloring(text, color))

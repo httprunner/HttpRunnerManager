@@ -1,16 +1,18 @@
+# encoding: utf-8
+
 import copy
 import os
+import re
 import sys
-from collections import OrderedDict
 
 from httprunner import exception, testcase, utils
+from httprunner.compat import OrderedDict
 
 
 class Context(object):
     """ Manages context functions and variables.
         context has two levels, testset and testcase.
     """
-
     def __init__(self):
         self.testset_shared_variables_mapping = OrderedDict()
         self.testcase_variables_mapping = OrderedDict()
@@ -50,11 +52,11 @@ class Context(object):
 
         # import_module_functions will be deprecated soon
         module_items = config_dict.get('import_module_items', []) \
-                       or config_dict.get('import_module_functions', [])
+            or config_dict.get('import_module_functions', [])
         self.import_module_items(module_items, level)
 
         variables = config_dict.get('variables') \
-                    or config_dict.get('variable_binds', OrderedDict())
+            or config_dict.get('variable_binds', OrderedDict())
         self.bind_variables(variables, level)
 
     def import_requires(self, modules):
@@ -182,19 +184,22 @@ class Context(object):
             }
         """
         check_item = validator["check"]
-        # check_item should only be in 3 types:
+        # check_item should only be in 4 types:
         # 1, variable reference, e.g. $token
         # 2, string joined by delimiter. e.g. "status_code", "headers.content-type"
         # 3, regex string, e.g. "LB[\d]*(.*)RB[\d]*"
-        if testcase.extract_variables(check_item):
-            # type 1
+        # 4, dict or list, maybe containing variables reference, e.g. {"var": "$abc"}
+        if isinstance(check_item, (dict, list)) or testcase.extract_variables(check_item):
+            # type 4 or type 1
             check_value = self.eval_content(check_item)
         else:
             try:
                 # type 2 or type 3
                 check_value = resp_obj.extract_field(check_item)
             except exception.ParseResponseError:
-                raise exception.ParseResponseError("failed to extract check item in response!")
+                msg = "failed to extract check item from response!\n"
+                msg += "response: {}".format(resp_obj.resp_text)
+                raise exception.ParseResponseError(msg)
 
         validator["check_value"] = check_value
 
@@ -209,7 +214,7 @@ class Context(object):
         """ validate with functions
         """
         comparator = utils.get_uniform_comparator(validator_dict["comparator"])
-        validate_func = self.testcase_parser.get_bind_item("function", comparator)
+        validate_func = self.testcase_parser.get_bind_function(comparator)
 
         if not validate_func:
             raise exception.FunctionNotFound("comparator not found: {}".format(comparator))
@@ -219,7 +224,7 @@ class Context(object):
         expect_value = validator_dict["expect"]
 
         if (check_value is None or expect_value is None) \
-                and comparator not in ["is", "eq", "equals", "=="]:
+            and comparator not in ["is", "eq", "equals", "=="]:
             raise exception.ParamsError("Null value can only be compared with comparator: eq/equals/==")
 
         try:

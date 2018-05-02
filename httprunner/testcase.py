@@ -1,19 +1,22 @@
+# encoding: utf-8
+
 import ast
+import collections
+import csv
 import io
 import itertools
 import json
 import os
 import random
 import re
-from collections import OrderedDict
 
 import yaml
-
 from httprunner import exception, logger, utils
+from httprunner.compat import OrderedDict, numeric_types
 
 variable_regexp = r"\$([\w_]+)"
-function_regexp = r"\$\{([\w_]+\([\$\w_ =,]*\))\}"
-function_regexp_compile = re.compile(r"^([\w_]+)\(([\$\w_ =,]*)\)$")
+function_regexp = r"\$\{([\w_]+\([\$\w\.\-_ =,]*\))\}"
+function_regexp_compile = re.compile(r"^([\w_]+)\(([\$\w\.\-_ =,]*)\)$")
 test_def_overall_dict = {
     "loaded": False,
     "api": {},
@@ -30,7 +33,6 @@ def _load_yaml_file(yaml_file):
         check_format(yaml_file, yaml_content)
         return yaml_content
 
-
 def _load_json_file(json_file):
     """ load json file and check file content format
     """
@@ -44,7 +46,6 @@ def _load_json_file(json_file):
 
         check_format(json_file, json_content)
         return json_content
-
 
 def _load_csv_file(csv_file):
     """ load csv file and check file content format
@@ -65,44 +66,30 @@ def _load_csv_file(csv_file):
         ]
     """
     csv_content_list = []
-    parameter_list = None
-    collums_num = 0
-    with io.open(csv_file, encoding='utf-8') as data_file:
-        for line in data_file:
-            line_data = line.strip().split(",")
-            if line_data == [""]:
-                # ignore empty line
-                continue
 
-            if not parameter_list:
-                # first line will always be parameter name
-                expected_filename = "{}.csv".format("-".join(line_data))
-                if not csv_file.endswith(expected_filename):
-                    raise exception.FileFormatError("CSV file name does not match with headers: {}".format(csv_file))
-
-                parameter_list = line_data
-                collums_num = len(parameter_list)
-                continue
-
-            # from the second line
-            if len(line_data) != collums_num:
-                err_msg = "CSV file collums does match with headers.\n"
-                err_msg += "\tcsv file path: {}\n".format(csv_file)
-                err_msg += "\terror line content: {}".format(line_data)
-                raise exception.FileFormatError(err_msg)
-            else:
-                data = {}
-                for index, parameter_name in enumerate(parameter_list):
-                    data[parameter_name] = line_data[index]
-
-                csv_content_list.append(data)
+    with io.open(csv_file, encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            csv_content_list.append(row)
 
     return csv_content_list
 
-
 def load_file(file_path):
-    return file_path
+    if not os.path.isfile(file_path):
+        raise exception.FileNotFoundError("{} does not exist.".format(file_path))
 
+    file_suffix = os.path.splitext(file_path)[1].lower()
+    if file_suffix == '.json':
+        return _load_json_file(file_path)
+    elif file_suffix in ['.yaml', '.yml']:
+        return _load_yaml_file(file_path)
+    elif file_suffix == ".csv":
+        return _load_csv_file(file_path)
+    else:
+        # '' or other suffix
+        err_msg = u"Unsupported file format: {}".format(file_path)
+        logger.log_warning(err_msg)
+        return []
 
 def extract_variables(content):
     """ extract all variable names from content, which is in format $variable
@@ -118,7 +105,6 @@ def extract_variables(content):
         return re.findall(variable_regexp, content)
     except TypeError:
         return []
-
 
 def extract_functions(content):
     """ extract all functions from string content, which are in format ${fun()}
@@ -136,7 +122,6 @@ def extract_functions(content):
     except TypeError:
         return []
 
-
 def parse_string_value(str_value):
     """ parse string to number if possible
     e.g. "123" => 123
@@ -151,7 +136,6 @@ def parse_string_value(str_value):
     except SyntaxError:
         # e.g. $var, ${func}
         return str_value
-
 
 def parse_function(content):
     """ parse function name and args from string content.
@@ -185,7 +169,6 @@ def parse_function(content):
 
     return function_meta
 
-
 def load_test_dependencies():
     """ load all api and suite definitions.
         default api folder is "$CWD/tests/api/".
@@ -217,8 +200,7 @@ def load_test_dependencies():
         suite["function_meta"] = function_meta
         test_def_overall_dict["suite"][function_meta["func_name"]] = suite
 
-
-def load_testcases_by_path(path):
+def load_testsets_by_path(path):
     """ load testcases from file path
     @param path: path could be in several type
         - absolute/relative file path
@@ -230,17 +212,43 @@ def load_testcases_by_path(path):
             testset_dict_2
         ]
     """
-    try:
-        testset = load_test_file(path)
-        if testset["testcases"] or testset["api"]:
-            testcases_list = [testset]
-        else:
+    if isinstance(path, (list, set)):
+        testsets = []
+
+        for file_path in set(path):
+            testset = load_testsets_by_path(file_path)
+            if not testset:
+                continue
+            testsets.extend(testset)
+
+        return testsets
+
+    if not os.path.isabs(path):
+        path = os.path.join(os.getcwd(), path)
+
+    if path in testcases_cache_mapping:
+        return testcases_cache_mapping[path]
+
+    if os.path.isdir(path):
+        files_list = utils.load_folder_files(path)
+        testcases_list = load_testsets_by_path(files_list)
+
+    elif os.path.isfile(path):
+        try:
+            testset = load_test_file(path)
+            if testset["testcases"] or testset["api"]:
+                testcases_list = [testset]
+            else:
+                testcases_list = []
+        except exception.FileFormatError:
             testcases_list = []
-    except exception.FileFormatError:
+
+    else:
+        logger.log_error(u"file not found: {}".format(path))
         testcases_list = []
 
+    testcases_cache_mapping[path] = testcases_list
     return testcases_list
-
 
 def parse_validator(validator):
     """ parse validator, validator maybe in two format
@@ -293,6 +301,33 @@ def parse_validator(validator):
         "comparator": comparator
     }
 
+def _get_validators_mapping(validators):
+    """ get validators mapping from api or test validators
+    @param (list) validators:
+        [
+            {"check": "v1", "expect": 201, "comparator": "eq"},
+            {"check": {"b": 1}, "expect": 200, "comparator": "eq"}
+        ]
+    @return
+        {
+            ("v1", "eq"): {"check": "v1", "expect": 201, "comparator": "eq"},
+            ('{"b": 1}', "eq"): {"check": {"b": 1}, "expect": 200, "comparator": "eq"}
+        }
+    """
+    validators_mapping = {}
+
+    for validator in validators:
+        validator = parse_validator(validator)
+
+        if not isinstance(validator["check"], collections.Hashable):
+            check = json.dumps(validator["check"])
+        else:
+            check = validator["check"]
+
+        key = (check, validator["comparator"])
+        validators_mapping[key] = validator
+
+    return validators_mapping
 
 def merge_validator(api_validators, test_validators):
     """ merge api_validators with test_validators
@@ -313,21 +348,11 @@ def merge_validator(api_validators, test_validators):
         return api_validators
 
     else:
-        api_validators_mapping = {}
-        for api_validator in api_validators:
-            api_validator = parse_validator(api_validator)
-            key = (api_validator["check"], api_validator["comparator"])
-            api_validators_mapping[key] = api_validator
-
-        test_validators_mapping = {}
-        for test_validator in test_validators:
-            test_validator = parse_validator(test_validator)
-            key = (test_validator["check"], test_validator["comparator"])
-            test_validators_mapping[key] = test_validator
+        api_validators_mapping = _get_validators_mapping(api_validators)
+        test_validators_mapping = _get_validators_mapping(test_validators)
 
         api_validators_mapping.update(test_validators_mapping)
         return list(api_validators_mapping.values())
-
 
 def merge_extractor(api_extrators, test_extracors):
     """ merge api_extrators with test_extracors
@@ -371,7 +396,6 @@ def merge_extractor(api_extrators, test_extracors):
 
         return extractor_list
 
-
 def extend_test_api(test_block_dict):
     """ update test block api with api definition
     @param
@@ -397,11 +421,11 @@ def extend_test_api(test_block_dict):
     test_validators = test_block_dict.get("validate") or test_block_dict.get("validators", [])
 
     api_extrators = test_info.get("extract") \
-                    or test_info.get("extractors") \
-                    or test_info.get("extract_binds", [])
+        or test_info.get("extractors") \
+        or test_info.get("extract_binds", [])
     test_extracors = test_block_dict.get("extract") \
-                     or test_block_dict.get("extractors") \
-                     or test_block_dict.get("extract_binds", [])
+        or test_block_dict.get("extractors") \
+        or test_block_dict.get("extract_binds", [])
 
     test_block_dict.update(test_info)
     test_block_dict["validate"] = merge_validator(
@@ -413,6 +437,45 @@ def extend_test_api(test_block_dict):
         test_extracors
     )
 
+def is_testset(data_structure):
+    """ check if data_structure is a testset
+    testset should always be in the following data structure:
+        {
+            "name": "desc1",
+            "config": {},
+            "api": {},
+            "testcases": [testcase11, testcase12]
+        }
+    """
+    if not isinstance(data_structure, dict):
+        return False
+
+    if "name" not in data_structure or "testcases" not in data_structure:
+        return False
+
+    if not isinstance(data_structure["testcases"], list):
+        return False
+
+    return True
+
+def is_testsets(data_structure):
+    """ check if data_structure is testset or testsets
+    testsets should always be in the following data structure:
+        testset_dict
+        or
+        [
+            testset_dict_1,
+            testset_dict_2
+        ]
+    """
+    if not isinstance(data_structure, list):
+        return is_testset(data_structure)
+
+    for item in data_structure:
+        if not is_testset(item):
+            return False
+
+    return True
 
 def load_test_file(file_path):
     """ load testset file, get testset data structure.
@@ -428,8 +491,9 @@ def load_test_file(file_path):
     testset = {
         "name": "",
         "config": {
-            # "path": file_path
+            "path": file_path
         },
+        "api": {},
         "testcases": []
     }
     tests_list = load_file(file_path)
@@ -457,13 +521,20 @@ def load_test_file(file_path):
                 function_meta = parse_function(api_def)
                 func_name = function_meta["func_name"]
 
+                if func_name in testset["api"]:
+                    logger.log_warning("api definition duplicated: {}".format(func_name))
+
                 api_info = {}
                 api_info["function_meta"] = function_meta
                 api_info.update(item["api"])
                 testset["api"][func_name] = api_info
 
-    return testset
+            else:
+                logger.log_warning(
+                    "unexpected block: {}. block should only be 'config', 'test' or 'api'.".format(key)
+                )
 
+    return testset
 
 def get_testinfo_by_reference(ref_name, ref_type):
     """ get test content by reference name
@@ -492,7 +563,6 @@ def get_testinfo_by_reference(ref_name, ref_type):
 
     return test_info
 
-
 def get_test_definition(name, ref_type):
     """ get expected api or suite.
     @params:
@@ -516,7 +586,6 @@ def get_test_definition(name, ref_type):
 
     return test_info
 
-
 def substitute_variables_with_mapping(content, mapping):
     """ substitute variables in content with mapping
     e.g.
@@ -539,7 +608,7 @@ def substitute_variables_with_mapping(content, mapping):
     if isinstance(content, bool):
         return content
 
-    if isinstance(content, (int, utils.long_type, float, complex)):
+    if isinstance(content, (numeric_types, type)):
         return content
 
     if not content:
@@ -570,7 +639,6 @@ def substitute_variables_with_mapping(content, mapping):
 
     return content
 
-
 def check_format(file_path, content):
     """ check testcase format if valid
     """
@@ -585,7 +653,6 @@ def check_format(file_path, content):
         err_msg = u"Testcase file content format invalid: {}".format(file_path)
         logger.log_error(err_msg)
         raise exception.FileFormatError(err_msg)
-
 
 def gen_cartesian_product(*args):
     """ generate cartesian product for lists
@@ -620,37 +687,67 @@ def gen_cartesian_product(*args):
 
     return product_list
 
-
-def gen_cartesian_product_parameters(parameters, testset_path):
+def parse_parameters(parameters, testset_path=None):
     """ parse parameters and generate cartesian product
     @params
-        (list) parameters: parameter name and fetch method
+        (list) parameters: parameter name and value in list
+            parameter value may be in three types:
+                (1) data list
+                (2) call built-in parameterize function
+                (3) call custom function in debugtalk.py
             e.g.
                 [
-                    {"user_agent": "Random"},
-                    {"app_version": "Sequential"}
+                    {"user_agent": ["iOS/10.1", "iOS/10.2", "iOS/10.3"]},
+                    {"username-password": "${parameterize(account.csv)}"},
+                    {"app_version": "${gen_app_version()}"}
                 ]
-        (str) testset_path: testset file path, used for locating csv file
+        (str) testset_path: testset file path, used for locating csv file and debugtalk.py
     @return cartesian product in list
     """
-    parameters_content_list = []
+    testcase_parser = TestcaseParser(file_path=testset_path)
+
+    parsed_parameters_list = []
     for parameter in parameters:
-        parameter_name, fetch_method = list(parameter.items())[0]
-        parameter_file_path = os.path.join(
-            os.path.dirname(testset_path),
-            "{}.csv".format(parameter_name)
-        )
-        csv_content_list = load_file(parameter_file_path)
+        parameter_name, parameter_content = list(parameter.items())[0]
+        parameter_name_list = parameter_name.split("-")
 
-        if fetch_method.lower() == "random":
-            random.shuffle(csv_content_list)
+        if isinstance(parameter_content, list):
+            # (1) data list
+            # e.g. {"app_version": ["2.8.5", "2.8.6"]}
+            #       => [{"app_version": "2.8.5", "app_version": "2.8.6"}]
+            # e.g. {"username-password": [["user1", "111111"], ["test2", "222222"]}
+            #       => [{"username": "user1", "password": "111111"}, {"username": "user2", "password": "222222"}]
+            parameter_content_list = []
+            for parameter_item in parameter_content:
+                if not isinstance(parameter_item, (list, tuple)):
+                    # "2.8.5" => ["2.8.5"]
+                    parameter_item = [parameter_item]
 
-        parameters_content_list.append(csv_content_list)
+                # ["app_version"], ["2.8.5"] => {"app_version": "2.8.5"}
+                # ["username", "password"], ["user1", "111111"] => {"username": "user1", "password": "111111"}
+                parameter_content_dict = dict(zip(parameter_name_list, parameter_item))
 
-    return gen_cartesian_product(*parameters_content_list)
+                parameter_content_list.append(parameter_content_dict)
+        else:
+            # (2) & (3)
+            parsed_parameter_content = testcase_parser.eval_content_with_bindings(parameter_content)
+            # e.g. [{'app_version': '2.8.5'}, {'app_version': '2.8.6'}]
+            # e.g. [{"username": "user1", "password": "111111"}, {"username": "user2", "password": "222222"}]
+            if not isinstance(parsed_parameter_content, list):
+                raise exception.ParamsError("parameters syntax error!")
 
+            parameter_content_list = [
+                # get subset by parameter name
+                {key: parameter_item[key] for key in parameter_name_list}
+                for parameter_item in parsed_parameter_content
+            ]
+
+        parsed_parameters_list.append(parameter_content_list)
+
+    return gen_cartesian_product(*parsed_parameters_list)
 
 class TestcaseParser(object):
+
     def __init__(self, variables={}, functions={}, file_path=None):
         self.update_binded_variables(variables)
         self.bind_functions(functions)
@@ -677,7 +774,7 @@ class TestcaseParser(object):
         """
         self.functions = functions
 
-    def get_bind_item(self, item_type, item_name):
+    def _get_bind_item(self, item_type, item_name):
         if item_type == "function":
             if item_name in self.functions:
                 return self.functions[item_name]
@@ -704,19 +801,40 @@ class TestcaseParser(object):
             raise exception.ParamsError(
                 "{} is not defined in bind {}s!".format(item_name, item_type))
 
+    def get_bind_function(self, func_name):
+        return self._get_bind_item("function", func_name)
+
+    def get_bind_variable(self, variable_name):
+        return self._get_bind_item("variable", variable_name)
+
+    def parameterize(self, csv_file_name, fetch_method="Sequential"):
+        parameter_file_path = os.path.join(
+            os.path.dirname(self.file_path),
+            "{}".format(csv_file_name)
+        )
+        csv_content_list = load_file(parameter_file_path)
+
+        if fetch_method.lower() == "random":
+            random.shuffle(csv_content_list)
+
+        return csv_content_list
+
     def _eval_content_functions(self, content):
         functions_list = extract_functions(content)
         for func_content in functions_list:
             function_meta = parse_function(func_content)
             func_name = function_meta['func_name']
 
-            func = self.get_bind_item("function", func_name)
-
             args = function_meta.get('args', [])
             kwargs = function_meta.get('kwargs', {})
             args = self.eval_content_with_bindings(args)
             kwargs = self.eval_content_with_bindings(kwargs)
-            eval_value = func(*args, **kwargs)
+
+            if func_name in ["parameterize", "P"]:
+                eval_value = self.parameterize(*args, **kwargs)
+            else:
+                func = self.get_bind_function(func_name)
+                eval_value = func(*args, **kwargs)
 
             func_content = "${" + func_content + "}"
             if func_content == content:
@@ -748,13 +866,13 @@ class TestcaseParser(object):
         """
         variables_list = extract_variables(content)
         for variable_name in variables_list:
-            variable_value = self.get_bind_item("variable", variable_name)
+            variable_value = self.get_bind_variable(variable_name)
 
             if "${}".format(variable_name) == content:
                 # content is a variable
                 content = variable_value
             else:
-                # content contains one or many variables
+                # content contains one or several variables
                 content = content.replace(
                     "${}".format(variable_name),
                     str(variable_value), 1
@@ -808,7 +926,7 @@ class TestcaseParser(object):
 
             return evaluated_data
 
-        if isinstance(content, (int, utils.long_type, float, complex)):
+        if isinstance(content, (numeric_types, type)):
             return content
 
         # content is in string format here

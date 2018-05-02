@@ -1,18 +1,19 @@
 import json
-import os
+import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo
-from ApiManager.tasks import add
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
+from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, yml_parser
-from ApiManager.utils.operation import change_status
+    set_filter_session, get_ajax_msg, register_info_logic
+from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
-from ApiManager.utils.runner import run_by_batch, get_result, run_by_single, run_by_module, run_by_project
-from httprunner.cli import main_ate
+from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
+from httprunner import HttpRunner
 
+logger = logging.getLogger('HttpRunnerManager')
 # Create your views here.
 
 '''登录'''
@@ -22,11 +23,14 @@ def login(request):
     if request.method == 'POST':
         username = request.POST.get('account')
         password = request.POST.get('password')
+
         if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
+            logger.info('{username} 登录成功'.format(username=username))
             request.session["login_status"] = True
             request.session["now_account"] = username
             return HttpResponseRedirect('/api/index/')
         else:
+            logger.info('{username} 登录失败, 请检查用户名或者密码'.format(username=username))
             request.session["login_status"] = False
             return render_to_response("login.html")
     elif request.method == 'GET':
@@ -50,7 +54,11 @@ def register(request):
 
 def log_out(request):
     if request.method == 'GET':
-        del request.session['now_account']
+        logger.info('{username}退出'.format(username=request.session['now_account']))
+        try:
+            del request.session['now_account']
+        except Exception:
+            logging.error('session invalid')
         return HttpResponseRedirect("/api/login/")
 
 
@@ -62,10 +70,12 @@ def index(request):
         project_length = ProjectInfo.objects.count()
         module_length = ModuleInfo.objects.count()
         test_length = TestCaseInfo.objects.filter(type__exact=1).count()
+        config_length = TestCaseInfo.objects.filter(type__exact=2).count()
         manage_info = {
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
+            'config_length': config_length,
             'account': request.session["now_account"]
         }
         return render_to_response('index.html', manage_info)
@@ -79,7 +89,11 @@ def index(request):
 def add_project(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            project_info = json.loads(request.body.decode('utf-8'))
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('项目信息解析异常: {project_info}'.format(project_info=project_info))
+                return HttpResponse('项目信息新增异常')
             msg = project_info_logic(**project_info)
             return HttpResponse(get_ajax_msg(msg, '项目添加成功'))
 
@@ -98,13 +112,16 @@ def add_project(request):
 def add_module(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            module_info = json.loads(request.body.decode('utf-8'))
+            try:
+                module_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('模块信息解析异常：{module_info}'.format(module_info=module_info))
             msg = module_info_logic(**module_info)
             return HttpResponse(get_ajax_msg(msg, '模块添加成功'))
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'data': ProjectInfo.objects.all().values('pro_name')
+                'data': ProjectInfo.objects.all().values('project_name')
             }
             return render_to_response('add_module.html', manage_info)
     else:
@@ -119,13 +136,17 @@ def add_module(request):
 def add_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testcase_lists = json.loads(request.body.decode('utf-8'))
-            msg = case_info_logic(**testcase_lists)
+            try:
+                testcase_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=testcase_info))
+                return '用例信息解析异常'
+            msg = case_info_logic(**testcase_info)
             return HttpResponse(get_ajax_msg(msg, '用例添加成功'))
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('add_case.html', manage_info)
     else:
@@ -138,13 +159,17 @@ def add_case(request):
 def add_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testconfig_lists = json.loads(request.body.decode('utf-8'))
-            msg = config_info_logic(**testconfig_lists)
+            try:
+                testconfig_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('配置信息解析失败：{testconfig_info}'.format(testconfig_info=testconfig_info))
+                return '配置信息解析异常'
+            msg = config_info_logic(**testconfig_info)
             return HttpResponse(get_ajax_msg(msg, '配置添加成功'))
         elif request.method == 'GET':
             manage_info = {
                 'account': request.session["now_account"],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('add_config.html', manage_info)
     else:
@@ -156,41 +181,49 @@ def add_config(request):
 
 def run_test(request):
     if request.session.get('login_status'):
-        if request.method == 'POST':
-            mode = request.POST.get('mode')
-            id = request.POST.get('id')
-            if mode == 'run_by_test':
-                result = main_ate(run_by_single(id))
-            elif mode == 'run_by_module':
-                test_lists = run_by_module(id)
-                result = get_result(test_lists)
-            elif mode == 'run_by_project':
-                test_lists = run_by_project(id)
-                result = get_result(test_lists)
-            return render_to_response('report_template.html', result)
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('待运行模块信息解析异常：{kwargs}'.format(kwargs=kwargs))
+                return HttpResponse('信息解析异常，请重试')
+            id = kwargs.pop('id')
+            base_url = kwargs.pop('env_name')
+            type = kwargs.pop('type')
+            testcases_dict = run_by_module(id, base_url) if type == 'module' else run_by_project(id, base_url)
+            if not testcases_dict:
+                return HttpResponse('没有用例哦')
+            main_hrun.delay(testcases_dict)
+            return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
+        else:
+            kwargs = {
+                "failfast": False,
+            }
+            runner = HttpRunner(**kwargs)
+            index = request.POST.get('index')
+            base_url = request.POST.get('env_name')
+            testcases_dict = run_by_single(index, base_url)
+            runner.run(testcases_dict)
+            return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
 
-'''批量执行'''
+'''批量运行'''
 
 
 def run_batch_test(request):
     if request.session.get('login_status'):
         if request.method == 'POST':
-            test_lists = run_by_batch(request.body.decode('ascii').split('&'))
-            result = get_result(test_lists)
-            return render_to_response('report_template.html', result)
-    else:
-        return HttpResponseRedirect("/api/login/")
-
-
-'''添加接口'''
-
-
-def add_api(request):
-    if request.session.get('login_status'):
-        return render_to_response('add_api.html')
+            base_url = request.POST.get('env_name')
+            test_list = request.body.decode('utf-8').split('&')
+            testcases_lists = run_by_batch(test_list, base_url)
+            kwargs = {
+                "failfast": False,
+            }
+            runner = HttpRunner(**kwargs)
+            runner.run(testcases_lists)
+            return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -201,14 +234,16 @@ def add_api(request):
 def project_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            project_info = json.loads(request.body.decode('utf-8'))
-
-            if 'status' in project_info.keys():
-                msg = change_status(ProjectInfo, **project_info)
-                return HttpResponse(get_ajax_msg(msg, '项目状态已更改！'))
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.debug('项目信息解析异常：{project_info}'.format(project_info=project_info))
+                return HttpResponse('项目信息解析异常')
+            if 'mode' in project_info.keys():
+                msg = del_project_data(project_info.pop('id'))
             else:
                 msg = project_info_logic(type=False, **project_info)
-                return HttpResponse(get_ajax_msg(msg, '项目信息更新成功'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             pro_list = get_pager_info(
@@ -217,7 +252,9 @@ def project_list(request, id):
                 'account': request.session["now_account"],
                 'project': pro_list[1],
                 'page_list': pro_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'sum': pro_list[2],
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('project_list.html', manage_info)
     else:
@@ -230,14 +267,16 @@ def project_list(request, id):
 def module_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            module_info = json.loads(request.body.decode('utf-8'))
-
-            if 'status' in module_info.keys():
-                msg = change_status(ModuleInfo, **module_info)
-                return HttpResponse(get_ajax_msg(msg, '模块状态已更改！'))
+            try:
+                module_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('模块信息解析异常：{module_info}'.format(module_info=module_info))
+                return HttpResponse('模块信息解析异常')
+            if 'mode' in module_info.keys():  # del module
+                msg = del_module_data(module_info.pop('id'))
             else:
                 msg = module_info_logic(type=False, **module_info)
-                return HttpResponse(get_ajax_msg(msg, '模块信息更新成功'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             module_list = get_pager_info(
@@ -246,23 +285,30 @@ def module_list(request, id):
                 'account': request.session["now_account"],
                 'module': module_list[1],
                 'page_list': module_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'sum': module_list[2],
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('module_list.html', manage_info)
     else:
         return HttpResponseRedirect("/api/login/")
 
 
-'''配置或用例列表'''
+'''用例列表'''
 
 
 def test_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            test_info = json.loads(request.body.decode('utf-8'))
-            if 'status' in test_info.keys():
-                msg = change_status(TestCaseInfo, **test_info)
-                return HttpResponse(get_ajax_msg(msg, '用例已更改！'))
+            try:
+                test_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('用例信息解析异常：{test_info}'.format(test_info=test_info))
+                return HttpResponse('用例信息解析异常')
+            if 'mode' in test_info.keys():
+                msg = del_test_data(test_info.pop('id'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
+
         else:
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
@@ -271,7 +317,8 @@ def test_list(request, id):
                 'account': request.session["now_account"],
                 'test': test_list[1],
                 'page_list': test_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'env': EnvInfo.objects.all().order_by('-create_time')
             }
             return render_to_response('test_list.html', manage_info)
     else:
@@ -284,10 +331,14 @@ def test_list(request, id):
 def config_list(request, id):
     if request.session.get('login_status'):
         if request.is_ajax():
-            test_info = json.loads(request.body.decode('utf-8'))
-            if 'status' in test_info.keys():
-                msg = change_status(TestCaseInfo, **test_info)
-                return HttpResponse(get_ajax_msg(msg, '配置已更改！'))
+            try:
+                test_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('配置信息解析异常：{test_info}'.format(test_info=test_info))
+                return HttpResponse('配置信息解析异常')
+            if 'mode' in test_info.keys():
+                msg = del_test_data(test_info.pop('id'))
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
         else:
             filter_query = set_filter_session(request)
             test_list = get_pager_info(
@@ -309,7 +360,11 @@ def config_list(request, id):
 def edit_case(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testcase_lists = json.loads(request.body.decode('utf-8'))
+            try:
+                testcase_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('用例信息解析异常：{testcase_lists}'.format(testcase_lists=testcase_lists))
+                return HttpResponse('用例信息解析异常')
             msg = case_info_logic(type=False, **testcase_lists)
             return HttpResponse(get_ajax_msg(msg, '用例更新成功'))
 
@@ -322,7 +377,7 @@ def edit_case(request):
                 'account': account,
                 'info': test_info[0],
                 'request': request['test'],
-                'project': ProjectInfo.objects.all().values('pro_name').order_by('-create_time')
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('edit_case.html', manage_info)
     else:
@@ -336,6 +391,7 @@ def edit_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
             testconfig_lists = json.loads(request.body.decode('utf-8'))
+            logger.error('配置更新处理之前数据：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
             msg = config_info_logic(type=False, **testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
 
@@ -347,19 +403,58 @@ def edit_config(request):
             manage_info = {
                 'account': account,
                 'info': test_info[0],
-                'request': request['config']
+                'request': request['config'],
+                'project': ProjectInfo.objects.all().values(
+                    'project_name').order_by('-create_time')
             }
             return render_to_response('edit_config.html', manage_info)
+        else:
+            return HttpResponseRedirect("/api/login/")
+
+
+'''环境设置'''
+
+
+def env_set(request):
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                env_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('环境信息解析异常：{env_lists}'.format(env_lists=env_lists))
+                return HttpResponse('环境信息查询异常，请重试')
+            msg = env_data_logic(**env_lists)
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
+
+        elif request.method == 'GET':
+            return render_to_response('env_list.html', {'account': request.session["now_account"]})
+
     else:
         return HttpResponseRedirect("/api/login/")
 
 
-'''test celery'''
+'''环境列表'''
 
 
-def test_celery(request):
-    add.delay(1, 2)
-    return HttpResponse('ok')
+def env_list(request, id):
+    if request.session.get('login_status'):
+        if request.method == 'GET':
+            env_lists = get_pager_info(
+                EnvInfo, None, '/api/env_list/', id)
+            manage_info = {
+                'account': request.session["now_account"],
+                'env': env_lists[1],
+                'page_list': env_lists[0],
+            }
+            return render_to_response('env_list.html', manage_info)
+    else:
+        return HttpResponseRedirect('/api/login/')
+
+    '''test celery'''
+
+
+def report_list(request, id):
+    pass
 
 
 '''测试代码'''
@@ -374,31 +469,9 @@ def test_api(request):
     elif request.method == 'POST':
 
         if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
-            a = {'login': 'success', 'status': True}
+            a = {'code': 'success', 'status': True}
             return HttpResponse(json.dumps(a))
         elif json.loads(request.body.decode('utf-8')).get('username') == 'yinquanwang':
             return HttpResponse('this is a json post request')
         else:
             return HttpResponse('this is a post request')
-
-
-def upload(request):
-    """
-    实现文件上传，
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        return HttpResponse('上传失败，请使用POST方法上传文件')
-    elif request.method == 'POST':
-        obj = request.FILES.get('file')
-        temp_save = os.path.join('upload', obj.name)
-        if '\\' in temp_save:
-            temp_save = temp_save.replace('\\\\', '\\')
-        f = open(temp_save, 'wb')
-        for line in obj.chunks():
-            f.write(line)
-        f.close()
-        yml_parser(temp_save)
-
-        return HttpResponse('上传成功')

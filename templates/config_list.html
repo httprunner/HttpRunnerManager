@@ -6,7 +6,7 @@
         <div class="am-modal-dialog">
             <div class="am-modal-hd">HttpRunnerManager</div>
             <div class="am-modal-bd">
-                亲，确定要删除该配置么？
+                亲，请确认该配置是否被其他用例依赖后再谨慎删除哦
             </div>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -15,18 +15,6 @@
         </div>
     </div>
 
-    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-valid">
-        <div class="am-modal-dialog">
-            <div class="am-modal-hd">HttpRunnerManager</div>
-            <div class="am-modal-bd">
-                亲，确定要恢复该配置么？
-            </div>
-            <div class="am-modal-footer">
-                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
-                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
-            </div>
-        </div>
-    </div>
 
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
@@ -39,6 +27,9 @@
                 <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_config/'">新增配置
                 </button>
+                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
+                        data-toggle="modal" data-target="#bulk_uploadcase">批量导入
+                </button>
 
             </dl>
         </div>
@@ -46,33 +37,25 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/config_list/1/">
                 <ul>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
+                                                        name="belong_project"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属项目"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_module }}" type="text"
+                                                        name="belong_module"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属模块"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="配置名称"/></li>
                     <li>
-                        <div class="am-btn-group am-btn-group-xs">
-                            <select name="filter"
-                                    data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
-                                {% if info.filter == '1' %}
-                                    <option value="1" selected>有效</option>
-                                    <option value="0">无效</option>
-                                {% elif info.filter == '0' %}
-                                    <option value="1">有效</option>
-                                    <option value="0" selected>无效</option>
-                                {% else %}
-                                    <option value="1">有效</option>
-                                    <option value="0">无效</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                    </li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
                                                         class="am-form-field am-input-sm am-input-xm"
                                                         placeholder="创建者"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="配置"/></li>
-                    <li>
-                        <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                style="margin-top: -1px;">搜索
-                        </button>
+
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">搜索
+                    </button>
                     </li>
                 </ul>
             </form>
@@ -89,8 +72,6 @@
                     <th class="table-type">所属项目</th>
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
-                    <th class="table-set">有效/无效 <i class="am-icon-check am-text-warning"></i> <i
-                            class="am-icon-close am-text-primary"></i></th>
                     <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-title">操作</th>
                 </tr>
@@ -106,11 +87,6 @@
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
                         <td>{{ foo.author }}</td>
-                        {% if foo.status == 1 %}
-                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                        {% else %}
-                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                        {% endif %}
                         <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
@@ -121,14 +97,9 @@
                                             onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">
                                         <span class="am-icon-pencil-square-o"></span></button>
                                     <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-warning  am-round"
-                                            data-am-popover="{content: '恢复', trigger: 'hover focus'}"
-                                            onclick="valid('in_tec{{ foo.id }}')"><span
-                                            class="am-icon-copy"></span></button>
-                                    <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('un_tec{{ foo.id }}')"><span
+                                            onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
                                 </div>
                             </div>
@@ -144,8 +115,6 @@
                 </button>
                 <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
                         class="am-icon-plus"></span> 新增配置
-                </button>
-                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
                 </button>
             </div>
 
@@ -164,18 +133,7 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    info_ajax(name)
-                },
-                onCancel: function () {
-                }
-            });
-        }
-
-        function valid(name) {
-            $('#my-valid').modal({
-                relatedTarget: this,
-                onConfirm: function () {
-                    info_ajax(name)
+                    del_data_ajax(name,'/api/config_list/1/')
                 },
                 onCancel: function () {
                 }

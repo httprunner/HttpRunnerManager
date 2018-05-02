@@ -1,14 +1,7 @@
 # Create your tests here.
-import json
-
-import django
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HttpRunnerManager.settings")
+import django
 
-django.setup()
-
-a = {}
-print(json.loads(json.dumps(a)))
-
-print(bool('true'))
+from ApiManager.models import ProjectInfo
+print(1)

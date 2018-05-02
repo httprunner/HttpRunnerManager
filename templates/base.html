@@ -12,26 +12,13 @@
 
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
-    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet"/>
-    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-datetimepicker.min.css" %}">
-    {% comment %}    <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput.css" %}">
-    <link rel="stylesheet" href="{% static "bootstrap-fileinput/css/fileinput-rtl.css" %}">
-    <link rel="stylesheet" href="{% static "bootstrap-fileinput/themes/explorer-fa/theme.css" %}">{% endcomment %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
     <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
     <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/jquery.json-viewer.css" %}">
 
-    <script src="{% static "bootstrap/js/jquery.min.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-datetimepicker.min.js" %}"></script>
-    {% comment %}    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/js/fileinput.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/js/locales/zh.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/js/plugins/sortable.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/js/fileinput.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/js/locales/fr.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/themes/explorer-fa/theme.js" %}"></script>
-    <script src="{% static "bootstrap-fileinput/themes/fa/theme.js" %}"></script>{% endcomment %}
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 
     <script src="{% static "assets/js/amazeui.min.js" %}"></script>
     <script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
@@ -79,17 +66,17 @@
                 <li><a href="/api/add_config/">新 增 配 置</a></li>
                 <li><a href="/api/add_case/">新 增 用 例</a></li>
             </ul>
-            <h3 class="am-icon-users"><em></em> <a href="#">接口管理</a></h3>
+            {% comment %}<h3 class="am-icon-users"><em></em> <a href="#">接口管理</a></h3>
             <ul>
                 <li>待 开 发</li>
-            </ul>
+            </ul>{% endcomment %}
             <h3 class="am-icon-volume-up"><em></em> <a href="#">报告管理</a></h3>
             <ul>
                 <li><a href="#">待开发</a></li>
             </ul>
             <h3 class="am-icon-gears"><em></em> <a href="#">系统设置</a></h3>
             <ul>
-                <li>待开发</li>
+                <li><a href="/api/env_list/1/">运 行 环 境</a></li>
             </ul>
         </div>
         <!-- sideMenu End -->
@@ -98,21 +85,24 @@
     <div class="daohang">
         <ul>
             <li>
-                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"> 返回首页 <a
-                        href="/api/index/" class="am-close am-close-spin">~</a></button>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/index/'">返回首页
+                    <a href="/api/index/" class="am-close am-close-spin">~</a></button>
             </li>
             <li>
-                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增模块<a
-                        href="/api/add_module/" class="am-close am-close-spin">~</a>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/add_module/'">新增模块
+                    <a href="/api/add_module/" class="am-close am-close-spin">~</a></button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/add_config/'">新增配置<a
+                        href="/api/add_config/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
             <li>
-                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增接口<a
-                        href="/api/add_api/" class="am-close am-close-spin">~</a>
-                </button>
-            </li>
-            <li>
-                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs">新增用例<a
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/add_case/'">新增用例<a
                         href="/api/add_case/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
@@ -128,10 +118,6 @@
                     <input id="input-b9" name="file" type="file" class="file">
                     <div id="kartik-file-errors"></div>
                 </div>
-                <!--<div class="am-modal-footer">-->
-                <!--<span class="am-modal-btn" data-am-modal-cancel>取消</span>-->
-                <!--<span class="am-modal-btn" data-am-modal-confirm>确定</span>-->
-                <!--</div>-->
             </div>
         </div>
     </form>
@@ -147,7 +133,7 @@
             delayTime: 300, //效果时间
             triggerTime: 150, //鼠标延迟触发时间（默认150）
             defaultPlay: true,//默认是否执行效果（默认true）
-            returnDefault: true //鼠标从.sideMen移走后返回默认状态（默认false）
+            returnDefault: false //鼠标从.sideMen移走后返回默认状态（默认false）
         });
     </script>
 </div>
