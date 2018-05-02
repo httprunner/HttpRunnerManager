@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ApiManager.models import UserInfo, ProjectInfo, ModuleInfo, TestCaseInfo
+from ApiManager.models import UserInfo, ProjectInfo, ModuleInfo, TestCaseInfo, EnvInfo
 
 
 @admin.register(UserInfo)
@@ -50,6 +50,18 @@ class TestCaseInfoAdmin(admin.ModelAdmin):
     list_display_links = ('name',)
     list_filter = ('belong_project', 'belong_module', 'type', 'name')  # 过滤器
     search_fields = ('belong_project', 'belong_module', 'type', 'name')  # 搜索字段
+    date_hierarchy = 'update_time'  # 详细时间分层筛选
+
+
+@admin.register(EnvInfo)
+class EnvInfoAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'env_name', 'base_url', 'simple_desc', 'create_time', 'update_time')
+    list_per_page = 50
+    ordering = ('-create_time',)
+    list_display_links = ('env_name',)
+    list_filter = ('env_name', 'base_url')  # 过滤器
+    search_fields = ('env_name', 'env_name')  # 搜索字段
     date_hierarchy = 'update_time'  # 详细时间分层筛选
 
 
