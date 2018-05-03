@@ -101,6 +101,12 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
             obj = obj.filter(module_name__contains=name) if name is not '' else obj.filter(test_user__contains=user)
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
+    elif url == '/api/periodictask/':
+        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled',
+                                                  'date_changed') if name is not '' else obj.all().values('id', 'name',
+                                                                                                          'kwargs',
+                                                                                                          'enabled',
+                                                                                                          'date_changed')
     elif url != '/api/env_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
         if belong_project and belong_module is not '':
@@ -113,8 +119,10 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
                 obj = obj.filter(belong_module__module_name__contains=belong_module)
             else:
                 obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
-
-    obj = obj.order_by('-create_time')
+    if url != '/api/periodictask/':
+        obj = obj.order_by('-create_time')
+    else:
+        obj = obj.order_by('-date_changed')
     total = obj.count()
 
     page_info = PageInfo(id, total, per_items=per_items)
