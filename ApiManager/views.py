@@ -3,15 +3,16 @@ import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
+from djcelery.models import PeriodicTask
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
-from ApiManager.utils.task_opt import create_task, delete_task
+from ApiManager.utils.task_opt import create_task, delete_task, change_task_status
 from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -493,6 +494,53 @@ def view_report(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
+def periodictask(request, id):
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('定时任务信息解析异常: {kwargs}'.format(kwargs=kwargs))
+                return HttpResponse('定时任务信息解析异常，请重试')
+            mode = kwargs.pop('mode')
+            id = kwargs.pop('id')
+            msg = delete_task(id) if mode == 'del' else change_task_status(id, mode)
+            return HttpResponse(get_ajax_msg(msg, 'ok'))
+        else:
+            filter_query = set_filter_session(request)
+            task_list = get_pager_info(
+                PeriodicTask, filter_query, '/api/periodictask/', id)
+            manage_info = {
+                'account': request.session["now_account"],
+                'task': task_list[1],
+                'page_list': task_list[0],
+                'info': filter_query
+            }
+        return render_to_response('periodictask_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+def add_task(request):
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('定时任务信息解析异常: {kwargs}'.format(kwargs=kwargs))
+                return HttpResponse('定时任务信息解析异常，请重试')
+            msg = task_logic(**kwargs)
+            return HttpResponse(get_ajax_msg(msg, '任务添加成功'))
+        elif request.method == 'GET':
+            info = {
+                'env': EnvInfo.objects.all().order_by('-create_time'),
+                'project': ProjectInfo.objects.all().order_by('-create_time')
+            }
+            return render_to_response('add_task.html', info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
 '''测试代码'''
 
 
@@ -515,7 +563,7 @@ def test_api(request):
 
 def test_tasks(request, id):
     create_task(str(id), 'ApiManager.tasks.add', {"x": 1, "y": 2}, {
-        'day of week': 0,
+        'day_of_week': 0,
         'month_of_year': '*',  # 月份
         'day_of_month': '*',  # 日期
         'hour': '*',  # 小时
