@@ -46,9 +46,9 @@
                         <td><a href="/api/view_report/{{ foo.id }}">{{ foo.report_name }}</a></td>
                         <td>{{ foo.start_at }}</td>
                         {% if foo.status == True %}
-                            <td style="color: #00e359 ">Pass</td>
+                            <td style="color: #00e359;  font-size: 15px ">Pass</td>
                         {% else %}
-                            <td style="color: red">Fail</td>
+                            <td style="color: red;  font-size: 15px">Fail</td>
                         {% endif %}
                         <td>{{ foo.testsRun }}</td>
                         <td>{{ foo.successes }}</td>
