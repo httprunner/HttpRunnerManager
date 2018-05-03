@@ -47,12 +47,20 @@ def run_by_single(index, base_url):
 '''test批量组装'''
 
 
-def run_by_batch(test_list, base_url):
+def run_by_batch(test_list, base_url, type=None):
     testcase_lists = []
-    for index in range(len(test_list) - 1):
-        form_test = test_list[index].split('=')
-        index = form_test[1]
-        testcase_lists.append(run_by_single(index, base_url))
+    if type == 'project':
+        for value in test_list.values():
+            testcase_lists.extend(run_by_project(value, base_url))
+    elif type == 'module':
+        for value in test_list.values():
+            testcase_lists.extend(run_by_module(value, base_url))
+    else:
+
+        for index in range(len(test_list) - 1):
+            form_test = test_list[index].split('=')
+            index = form_test[1]
+            testcase_lists.append(run_by_single(index, base_url))
     return testcase_lists
 
 
