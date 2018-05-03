@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}新增任务{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+            <div class="listbiaoti am-cf">
+                <ul class="am-icon-flag on"> 系统设置</ul>
+                <dl class="am-icon-home" style="float: right;"> 当前位置： 定时任务 > <a href="#">新增任务</a></dl>
+            </div>
+            <div class="fbneirong">
+                <form class="form-horizontal" id="add_task">
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="name">任务名称：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="name"
+                                   aria-describedby="inputSuccess3Status" name="name" placeholder="请输入任务名称" value="">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-1 text-primary" for="env_name">运行环境：</label>
+                        <div class="col-md-5">
+                            <select name="env_name" class="form-control">
+                                <option value="">自带环境</option>
+                                {% for foo in  env %}
+                                    <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-1 text-primary" for="belong_project">选择项目：</label>
+                        <div class="col-md-5">
+                            <select name="project" class="form-control">
+                                <option value="请选择">请选择</option>
+                                {% for foo in  project %}
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="module">选择模块：</label>
+                        <div class="col-md-5">
+                            <textarea type="text" rows="3" class="form-control" id="module" name="module"
+                                      aria-describedby="inputSuccess3Status"
+                                      placeholder="[modulename1, modulename2]  为空即为选择整个项目"></textarea>
+                            <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group  has-feedback">
+                        <label class="control-label col-md-1 text-primary" for="crontab_time">定时配置：</label>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="crontab_time"
+                                   aria-describedby="inputSuccess3Status" name="crontab_time"
+                                   placeholder="请输入正确的crontab表达式 例如： * * * * *"
+                                   value="">
+                            <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-form-group am-cf">
+                        <div class="you" style="margin-left: 8%;">
+                            <button type="button" class="am-btn am-btn-success am-radius"
+                                    onclick="info_ajax('#add_task', '/api/add_task/')">点 击 提 交
+                            </button>&nbsp;
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
