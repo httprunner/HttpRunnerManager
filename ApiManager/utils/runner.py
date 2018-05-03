@@ -8,7 +8,12 @@ from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
 def run_by_single(index, base_url):
     testcase_dict = {
         'name': 'testset description',
-        'config': {},
+        'config': {
+            'name': 'base_url config',
+            'request': {
+                'base_url': base_url,
+            }
+        },
         'api': {},
         'testcases': []
     }
@@ -17,12 +22,6 @@ def run_by_single(index, base_url):
     request = eval(obj.request).pop('test')
 
     if include == '':
-        testcase_dict['config'] = {
-            'name': 'base_url config',
-            'request': {
-                'base_url': base_url,
-            }
-        }
         testcase_dict['testcases'].append(request)
         return testcase_dict
 
