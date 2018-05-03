@@ -192,12 +192,10 @@
         <th>Name</th>
         <th>Response Time</th>
         <th>Detail</th>
-        <th>View</th>
     </tr>
     {% for record in records %}
         <tr id="record_{{ forloop.counter }}">
-            <th class="{{ record.status }}" style="width:5em;">
-            <td>{{ record.status }}</td>
+            <th class="{{record.status}}" style="width:5em;">{{record.status}}
             <td>{{ record.name }}</td>
             <td style="text-align:center;width:6em;">{{ record.meta_data.response_time }} ms</td>
             <td class="detail">
