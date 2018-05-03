@@ -15,20 +15,20 @@ def create_task(name, task, task_args, crontab_time):
     task.enabled = True  # 开启task
     task.kwargs = json.dumps(task_args)  # 传入task参数
     task.save()
-    return True
+    return 'ok'
 
 
-def disable_task(name):
+def change_task_status(name, mode):
     '''
     关闭任务
     '''
     try:
         task = celery_models.PeriodicTask.objects.get(name=name)
-        task.enabled = False  # 设置关闭
+        task.enabled = mode  # 设置关闭
         task.save()
-        return True
+        return 'ok'
     except celery_models.PeriodicTask.DoesNotExist:
-        return False
+        return 'error'
 
 
 def delete_task(name):
@@ -39,6 +39,6 @@ def delete_task(name):
         task = celery_models.PeriodicTask.objects.get(name=name)
         task.enabled = False  # 设置关闭
         task.delete()
-        return True
+        return 'ok'
     except celery_models.PeriodicTask.DoesNotExist:
-        return False
+        return 'error'
