@@ -4,13 +4,14 @@ import logging
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
+from ApiManager.utils.task_opt import create_task, delete_task
 from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -185,7 +186,7 @@ def run_test(request):
             try:
                 kwargs = json.loads(request.body.decode('utf-8'))
             except ValueError:
-                logging.error('待运行模块信息解析异常：{kwargs}'.format(kwargs=kwargs))
+                logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
                 return HttpResponse('信息解析异常，请重试')
             id = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
@@ -214,7 +215,21 @@ def run_test(request):
 
 def run_batch_test(request):
     if request.session.get('login_status'):
-        if request.method == 'POST':
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
+                return HttpResponse('信息解析异常，请重试')
+            test_list = kwargs.pop('id')
+            base_url = kwargs.pop('env_name')
+            type = kwargs.pop('type')
+            testcases_dict = run_by_batch(test_list, base_url, type)
+            if not testcases_dict:
+                return HttpResponse('没有用例哦')
+            main_hrun.delay(testcases_dict)
+            return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
+        else:
             base_url = request.POST.get('env_name')
             test_list = request.body.decode('utf-8').split('&')
             testcases_lists = run_by_batch(test_list, base_url)
@@ -454,7 +469,28 @@ def env_list(request, id):
 
 
 def report_list(request, id):
-    pass
+    if request.session.get('login_status'):
+        filter_query = set_filter_session(request)
+        report_list = get_pager_info(
+            TestReports, filter_query, '/api/report_list/', id)
+        manage_info = {
+            'account': request.session["now_account"],
+            'report': report_list[1],
+            'page_list': report_list[0],
+            'info': filter_query
+        }
+        return render_to_response('report_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+def view_report(request, id):
+    if request.session.get('login_status'):
+        reports = eval(TestReports.objects.get(id=id).reports)
+        reports.get('time')['start_at'] = TestReports.objects.get(id=id).start_at
+        return render_to_response('report_template.html', reports)
+    else:
+        return HttpResponseRedirect("/api/login/")
 
 
 '''测试代码'''
@@ -475,3 +511,15 @@ def test_api(request):
             return HttpResponse('this is a json post request')
         else:
             return HttpResponse('this is a post request')
+
+
+def test_tasks(request, id):
+    create_task(str(id), 'ApiManager.tasks.add', {"x": 1, "y": 2}, {
+        'day of week': 0,
+        'month_of_year': '*',  # 月份
+        'day_of_month': '*',  # 日期
+        'hour': '*',  # 小时
+        'minute': '*',  # 分钟
+    })
+    delete_task('6')
+    return HttpResponse('ok')

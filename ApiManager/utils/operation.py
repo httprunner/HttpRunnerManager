@@ -3,7 +3,7 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 
 logger = logging.getLogger('HttpRunnerManager')
 '''用户注册信息落地'''
@@ -256,3 +256,17 @@ def del_test_data(id):
         return '删除异常，请重试'
     logging.info('用例/配置已删除')
     return 'ok'
+
+
+def add_test_reports(report_name=None, **kwargs):
+    report_name = kwargs.get('time').get('start_at') if report_name is None else report_name
+    test_reports = {
+        'report_name': report_name,
+        'status': kwargs.get('success'),
+        'successes': kwargs.get('stat').get('successes'),
+        'testsRun': kwargs.get('stat').get('testsRun'),
+        'start_at': kwargs.get('time').pop('start_at'),
+        'reports': kwargs
+    }
+
+    TestReports.objects.create(**test_reports)

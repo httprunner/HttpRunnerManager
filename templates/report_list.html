@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}查看报告{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <div class="admin-biaogelist">
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-flag on"> 报告列表</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 报告管理 > <a href="#">报告展示</a></dl>
+        </div>
+
+        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+            <form id="pro_filter" method="post" action="/api/report_list/1/">
+                <ul>
+                    <li style="padding-top: 5px"><input value="{{ info.report_name }}" type="text" name="report_name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="报告名称"/></li>
+                    <li>
+
+                        <button class="am-btn am-radius am-btn-xs am-btn-success"
+                                style="margin-top: -1px;">查询
+                        </button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <form class="am-form am-g" id="report_list" name="report_list">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-title">序号</th>
+                    <th class="table-type">报告名称</th>
+                    <th class="table-date am-hide-sm-only">开始时间</th>
+                    <th class="table-title">测试结果</th>
+                    <th class="table-title">总计用例</th>
+                    <th class="table-title">成功用例</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for foo in report %}
+                    <tr>
+                        <td><input type="checkbox" name="report_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="/api/view_report/{{ foo.id }}">{{ foo.report_name }}</a></td>
+                        <td>{{ foo.start_at }}</td>
+                        {% if foo.status == True %}
+                            <td style="color: #00e359 ">Pass</td>
+                        {% else %}
+                            <td style="color: red">Fail</td>
+                        {% endif %}
+                        <td>{{ foo.testsRun }}</td>
+                        <td>{{ foo.successes }}</td>
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+            <hr/>
+        </form>
+    </div>
+
+{% endblock %}

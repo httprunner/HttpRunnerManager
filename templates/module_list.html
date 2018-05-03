@@ -98,7 +98,16 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="report_name"
+                           style="font-weight: inherit; font-size: small ">报告名称：</label>
+                    <div class="col-sm-9">
+                        <input name="report_name" type="text" id="report_name" class="form-control"
+                               placeholder="默认时间戳命名" value="">
+                    </div>
+                </div>
             </form>
+
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
@@ -118,7 +127,7 @@
                         data-toggle="modal" data-target="#bulk_uploadcase">批量导入
                 </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#module_list')">运行
+                        onclick="run_test('batch', '/api/run_batch_test/', 'module')">运行
                 </button>
 
             </dl>
@@ -254,6 +263,12 @@
         }
 
         function run_test(mode, url, type) {
+            if (mode === 'batch') {
+                if ($("input:checked").size() === 0) {
+                    myAlert("请至少选择一个模块运行！");
+                    return;
+                }
+            }
             $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
@@ -262,13 +277,15 @@
                         data = {
                             "id": mode,
                             "env_name": $('#env_name').val(),
-                            "type": type
+                            "type": type,
+                            'report_name': $('#report_name').val()
                         };
                     } else {
                         data = {
                             "id": $("#module_list").serializeJSON(),
                             "env_name": $('#env_name').val(),
-                            "type": type
+                            "type": type,
+                            'report_name': $('#report_name').val()
                         };
                     }
                     $.ajax({

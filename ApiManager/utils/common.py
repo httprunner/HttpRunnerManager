@@ -210,10 +210,11 @@ def set_filter_session(request):
     request.session['name'] = request.POST.get('name', '')
     request.session['belong_project'] = request.POST.get('belong_project', '')
     request.session['belong_module'] = request.POST.get('belong_module', '')
+    request.session['report_name'] = request.POST.get('report_name', '')
 
     filter_query = {'user': request.session['user'], 'name': request.session['name'],
                     'belong_project': request.session['belong_project'],
-                    'belong_module': request.session['belong_module']}
+                    'belong_module': request.session['belong_module'], 'report_name': request.session['report_name']}
 
     return filter_query
 
@@ -230,4 +231,3 @@ def get_ajax_msg(msg, success):
 
 def register_info_logic(**kwargs):
     return add_register_data(**kwargs)
-

@@ -4,19 +4,21 @@ HttpRunnerManager
 Design Philosophy
 -----------------
 
-基于HttpRunner的接口自动化测试平台: `Requests`_, `unittest`_ and `Django`_.
+基于HttpRunner的接口自动化测试平台: `Requests`_, `unittest`_ and `Django`_. HttpRunner手册: http://cn.httprunner.org/
 
 Key Features
 ------------
 
-- 项目管理模块：新增项目，列表展示及相关操作
-- 模块管理：为项目新增模块，子模块用module1>module2方式
-- 用例管理：分为添加config与test子功能，config定义全部变量和request等相关信息
+- 项目管理：新增项目，列表展示及相关操作
+- 模块管理：为项目新增模块，用例和配置都归属于module
+- 用例管理：分为添加config与test子功能，config定义全部变量和request等相关信息 request可以为公共参数和请求头，也可定义全部变量
 - 业务组织方式：在include输入框中以 config>case1>case2...或者case1>case2
-- 报告管理：单个运行会前端显示，批量的运行后可以选在打开
+- 报告管理：单个运行会前端显示，批量的运行后可以在线查看
 - 运行方式：可单个test，单个module，单个project，也可选择多个批量运行
 - 分布执行：单个用例和批量执行结果会直接在前端展示，模块和项目执行为异步执行，完成后自动保存报告，可以在线查看
-- 脚本编写：可在线编写，也支持用例批量导入(yaml格式或json格式)
+- 系统设置：可添加运行环境，case运行时可自由选择环境
+- 报告查看：所有异步执行的用例均可在线查看报告，暂时未开放自主命名,默认时间戳命名
+- 定时任务：可设置定时任务，遵循crontab表达式
 
 Deployment Setp
 ---------------

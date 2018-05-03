@@ -88,8 +88,11 @@ class TestReports(BaseTable):
         verbose_name = "测试报告"
         db_table = 'TestReports'
 
-    report_name = models.CharField(max_length=50)
+    report_name = models.CharField(max_length=40)
+    start_at = models.CharField(max_length=40, null=True)
     status = models.BooleanField()
+    testsRun = models.IntegerField()
+    successes = models.IntegerField()
     reports = models.TextField()
 
 
