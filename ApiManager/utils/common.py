@@ -1,8 +1,11 @@
 import logging
 
+from djcelery.models import PeriodicTask
+
 from ApiManager.models import ModuleInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data
+from ApiManager.utils.task_opt import create_task
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -200,6 +203,29 @@ def config_info_logic(type=True, **kwargs):
 
         kwargs.setdefault('config', config)
         return add_config_data(type, **kwargs)
+
+
+def task_logic(**kwargs):
+    if kwargs.get('name') is '':
+        return '任务名称不可为空'
+    elif kwargs.get('belong_project') is '':
+        return '请选择一个项目'
+    elif kwargs.get('crontab_time') is '':
+        return '定时配置不可为空'
+    try:
+        crontab_time = kwargs.pop('crontab_time').split(' ')
+        crontab = {
+            'day_of_week': crontab_time[-1],
+            'month_of_year': crontab_time[3],  # 月份
+            'day_of_month': crontab_time[2],  # 日期
+            'hour': crontab_time[1],  # 小时
+            'minute': crontab_time[0],  # 分钟
+        }
+    except Exception:
+        return '定时配置参数格式不正确'
+    if PeriodicTask.objects.filter(name__exact=kwargs.get('name')).count() > 0:
+        return '任务名称重复，请重新命名'
+    return create_task(kwargs.pop('name'), 'ApiManager.tasks.periodic_hrun', kwargs, crontab)
 
 
 '''查询session'''
