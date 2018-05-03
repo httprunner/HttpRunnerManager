@@ -66,7 +66,7 @@
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                 <tr class="am-success">
-                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
                     <th class="table-title">序号</th>
                     <th class="table-type">名称</th>
                     <th class="table-type">所属项目</th>
@@ -79,7 +79,7 @@
                 <tbody>
                 {% for foo in test %}
                     <tr>
-                        <td><input type="checkbox" disabled/></td>
+                        <td><input type="checkbox" name="config_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
                         <td><a href="#"
                                onclick="post('/api/edit_config/',{'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
@@ -133,12 +133,16 @@
             $('#my-invalid').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    del_data_ajax(name,'/api/config_list/1/')
+                    del_data_ajax(name, '/api/config_list/1/')
                 },
                 onCancel: function () {
                 }
             });
         }
 
+        $('#select_all').click(function () {
+            var isChecked = $(this).prop("checked");
+            $("input[name^='config']").prop("checked", isChecked);
+        })
     </script>
 {% endblock %}

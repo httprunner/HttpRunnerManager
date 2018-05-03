@@ -173,7 +173,7 @@
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                 <tr class="am-success">
-                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
                     <th class="table-title">序号</th>
                     <th class="table-type">项目名称</th>
                     <th class="table-type">负责人</th>
@@ -188,7 +188,7 @@
 
                 {% for foo in project %}
                     <tr>
-                        <td><input type="checkbox" name="{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td><input type="checkbox" name="project_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
                         <td><a href="#"
                                onclick="edit('{{ foo.id }}','{{ foo.project_name }}', '{{ foo.responsible_name }}'
@@ -323,6 +323,11 @@
             });
 
         }
+
+        $('#select_all').click(function () {
+            var isChecked = $(this).prop("checked");
+            $("input[name^='project']").prop("checked", isChecked);
+        })
     </script>
 
 {% endblock %}
