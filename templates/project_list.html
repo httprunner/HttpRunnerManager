@@ -146,7 +146,7 @@
                         data-toggle="modal" data-target="#bulk_uploadcase">批量导入
                 </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#project_list')">运行
+                        onclick="run_test('batch', '/api/run_batch_test/', 'project')">运行
                 </button>
             </dl>
         </div>
@@ -188,7 +188,7 @@
 
                 {% for foo in project %}
                     <tr>
-                        <td><input type="checkbox" name="project_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td><input type="checkbox" name="{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
                         <td><a href="#"
                                onclick="edit('{{ foo.id }}','{{ foo.project_name }}', '{{ foo.responsible_name }}'
@@ -249,14 +249,6 @@
         </form>
     </div>
     <script type="text/javascript">
-        function my_submit(id) {
-            if ($("input:checked").size() == 0) {
-                myAlert("请至少选择一个项目运行！");
-            } else {
-                $(id).submit()
-            }
-        }
-
         function edit(id, pro_name, responsible_name, test_user, dev_user, publish_app, simple_desc, other_desc) {
             $('#index').val(id);
             $('#project_name').val(pro_name);
@@ -288,6 +280,12 @@
         }
 
         function run_test(mode, url, type) {
+            if (mode === 'batch') {
+                if ($("input:checked").size() === 0) {
+                    myAlert("请至少选择一个项目运行！");
+                    return;
+                }
+            }
             $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
@@ -301,7 +299,7 @@
                         };
                     } else {
                         data = {
-                            "id": $("#module_list").serializeJSON(),
+                            "id": $("#project_list").serializeJSON(),
                             "env_name": $('#env_name').val(),
                             "type": type,
                             'report_name': $('#report_name').val()

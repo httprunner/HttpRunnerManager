@@ -127,7 +127,7 @@
                         data-toggle="modal" data-target="#bulk_uploadcase">批量导入
                 </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit('#module_list')">运行
+                        onclick="run_test('batch', '/api/run_batch_test/', 'module')">运行
                 </button>
 
             </dl>
@@ -263,6 +263,12 @@
         }
 
         function run_test(mode, url, type) {
+            if (mode === 'batch') {
+                if ($("input:checked").size() === 0) {
+                    myAlert("请至少选择一个模块运行！");
+                    return;
+                }
+            }
             $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
@@ -272,14 +278,14 @@
                             "id": mode,
                             "env_name": $('#env_name').val(),
                             "type": type,
-                            'report_name':$('#report_name').val()
+                            'report_name': $('#report_name').val()
                         };
                     } else {
                         data = {
                             "id": $("#module_list").serializeJSON(),
                             "env_name": $('#env_name').val(),
                             "type": type,
-                            'report_name':$('#report_name').val()
+                            'report_name': $('#report_name').val()
                         };
                     }
                     $.ajax({
