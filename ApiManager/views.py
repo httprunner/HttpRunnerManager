@@ -12,7 +12,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
-from ApiManager.utils.task_opt import create_task, delete_task, change_task_status
+from ApiManager.utils.task_opt import delete_task, change_task_status
 from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -539,35 +539,3 @@ def add_task(request):
             return render_to_response('add_task.html', info)
     else:
         return HttpResponseRedirect("/api/login/")
-
-
-'''测试代码'''
-
-
-def test_api(request):
-    if request.method == 'GET':
-        if request.GET.get('username') == 'lcc':
-            return HttpResponse(json.dumps({'status': 'ok'}))
-        else:
-            return HttpResponse('illegal')
-    elif request.method == 'POST':
-
-        if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
-            a = {'code': 'success', 'status': True}
-            return HttpResponse(json.dumps(a))
-        elif json.loads(request.body.decode('utf-8')).get('username') == 'yinquanwang':
-            return HttpResponse('this is a json post request')
-        else:
-            return HttpResponse('this is a post request')
-
-
-def test_tasks(request, id):
-    create_task(str(id), 'ApiManager.tasks.add', {"x": 1, "y": 2}, {
-        'day_of_week': 0,
-        'month_of_year': '*',  # 月份
-        'day_of_month': '*',  # 日期
-        'hour': '*',  # 小时
-        'minute': '*',  # 分钟
-    })
-    delete_task('6')
-    return HttpResponse('ok')
