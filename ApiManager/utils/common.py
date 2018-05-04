@@ -18,8 +18,8 @@ def type_change(type, value):
             value = float(value)
         elif type == 'int':
             value = int(value)
-        else:
-            value = bool(value)
+        elif type == 'boolean':
+            value = False if value == 'False' else True
     except ValueError:
         logger.error('{type}转换失败，默认转换为str类型'.format(type=type))
     return value
