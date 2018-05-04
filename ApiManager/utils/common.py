@@ -208,12 +208,16 @@ def config_info_logic(type=True, **kwargs):
 def task_logic(**kwargs):
     if kwargs.get('name') is '':
         return '任务名称不可为空'
-    elif kwargs.get('belong_project') is '':
+    elif kwargs.get('project') is '':
         return '请选择一个项目'
     elif kwargs.get('crontab_time') is '':
         return '定时配置不可为空'
+    elif kwargs.get('module') is '':
+        kwargs.pop('module')
     try:
         crontab_time = kwargs.pop('crontab_time').split(' ')
+        if len(crontab_time) > 5:
+            return '定时配置参数格式不正确'
         crontab = {
             'day_of_week': crontab_time[-1],
             'month_of_year': crontab_time[3],  # 月份
@@ -225,7 +229,12 @@ def task_logic(**kwargs):
         return '定时配置参数格式不正确'
     if PeriodicTask.objects.filter(name__exact=kwargs.get('name')).count() > 0:
         return '任务名称重复，请重新命名'
-    return create_task(kwargs.pop('name'), 'ApiManager.tasks.periodic_hrun', kwargs, crontab)
+    desc = " ".join(str(i) for i in crontab_time)
+    name = kwargs.pop('name')
+    if 'module' in kwargs.keys():
+        return create_task(name, 'ApiManager.tasks.module_hrun', kwargs, crontab, desc)
+    else:
+        return create_task(name, 'ApiManager.tasks.project_hrun', kwargs, crontab, desc)
 
 
 '''查询session'''

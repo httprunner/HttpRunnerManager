@@ -258,14 +258,15 @@ def del_test_data(id):
     return 'ok'
 
 
-def add_test_reports(report_name=None, **kwargs):
-    report_name = kwargs.get('time').get('start_at') if report_name is None else report_name
+def add_test_reports(start_at, report_name=None, **kwargs):
+    kwargs.get('time').pop('start_at')
+    report_name = report_name + start_at if report_name else start_at
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
         'successes': kwargs.get('stat').get('successes'),
         'testsRun': kwargs.get('stat').get('testsRun'),
-        'start_at': kwargs.get('time').pop('start_at'),
+        'start_at': start_at,
         'reports': kwargs
     }
 
