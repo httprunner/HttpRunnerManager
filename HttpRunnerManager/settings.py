@@ -129,7 +129,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-SESSION_COOKIE_AGE = 600 * 60
+SESSION_COOKIE_AGE = 30 * 60
 
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
