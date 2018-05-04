@@ -25,12 +25,8 @@ def process(request, **kwargs):
         fun = getattr(view, fun)
 
         # 执行view.py中的函数，并获取其返回值
-
-        result = fun(request, index)
-    except TypeError:
-        result = fun(request)
+        result = fun(request, index) if index else fun(request)
     except (ImportError, AttributeError):
-        # 导入失败时，自定义404错误
         return HttpResponse(traceback.format_exc())
 
     return result
