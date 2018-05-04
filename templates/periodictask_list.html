@@ -48,7 +48,7 @@
                     <th class="table-check"><input type="checkbox" id="select_all"/></th>
                     <th class="table-title">INDEX</th>
                     <th class="table-set">ENABLED</th>
-                    <th class="table-type">STR</th>
+                    <th class="table-type">CRONTAB TIME</th>
                     <th class="table-title">TASK NAME</th>
                     <th class="table-title">KEYWORD ARGUMENTS</th>
                     <th class="table-date am-hide-sm-only">DATE_CHANGED</th>
@@ -70,7 +70,7 @@
                         {% else %}
                             <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
                         {% endif %}
-                        <td>{{ foo.str }}</td>
+                        <td style="color: #3b87ee">{{ foo.description }}(m/h/d/dM/MY)</td>
                         <td>{{ foo.name }}</td>
                         <td>{{ foo.kwargs }}</td>
                         <td class="am-hide-sm-only">{{ foo.date_changed }}</td>
