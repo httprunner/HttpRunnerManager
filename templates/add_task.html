@@ -35,7 +35,7 @@
                         <label class="control-label col-md-1 text-primary" for="belong_project">选择项目：</label>
                         <div class="col-md-5">
                             <select name="project" class="form-control">
-                                <option value="请选择">请选择</option>
+                                <option value="">请选择</option>
                                 {% for foo in  project %}
                                     <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                 {% endfor %}
@@ -48,7 +48,7 @@
                         <div class="col-md-5">
                             <textarea type="text" rows="3" class="form-control" id="module" name="module"
                                       aria-describedby="inputSuccess3Status"
-                                      placeholder="[modulename1, modulename2]  为空即为选择整个项目"></textarea>
+                                      placeholder="modulename1, modulename2  为空即为选择整个项目"></textarea>
                             <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="crontab_time"
                                    aria-describedby="inputSuccess3Status" name="crontab_time"
-                                   placeholder="请输入正确的crontab表达式 例如： * * * * *"
+                                   placeholder="请输入正确的crontab表达式 例如： 11 * * * *"
                                    value="">
                             <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
                         </div>
