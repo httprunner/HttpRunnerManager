@@ -101,7 +101,6 @@
                     <th class="table-type">所属项目</th>
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
-                    <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-title">操作</th>
                 </tr>
                 </thead>
@@ -110,13 +109,11 @@
                     <tr>
                         <td><input type="checkbox" name="testcase_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="#"
-                               onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
+                        <td><a href="#" onclick="post('/api/edit_case/', {'id':'{{ foo.id }}', 'account':'{{ account }}'})">{{ foo.name }}</a>
                         </td>
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
                         <td>{{ foo.author }}</td>
-                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
@@ -201,14 +198,14 @@
             $('#select_env').modal({
                 relatedTarget: this,
                 onConfirm: function () {
-                    post('/api/run_test/', {'index': index, 'env_name': $('#env_name').val()})
+                    post('/api/run_test/', {'id': index, 'env_name': $('#env_name').val()})
                 },
                 onCancel: function () {
                 }
             });
         }
 
-          $('#select_all').click(function () {
+        $('#select_all').click(function () {
             var isChecked = $(this).prop("checked");
             $("input[name^='testcase']").prop("checked", isChecked);
         })

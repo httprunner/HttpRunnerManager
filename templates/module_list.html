@@ -101,11 +101,23 @@
                 <div class="form-group">
                     <label class="control-label col-sm-3" for="report_name"
                            style="font-weight: inherit; font-size: small ">报告名称：</label>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                         <input name="report_name" type="text" id="report_name" class="form-control"
-                               placeholder="默认时间戳命名" value="">
+                               placeholder="默认时间戳命名" value="" readonly>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">执行方式:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="mode" name="mode">
+                            <option value="true">同步(执行完立即返回报告)</option>
+                            <option value="false">异步(后台执行，完毕后可查看报告)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
             </form>
 
             <div class="am-modal-footer">
@@ -262,48 +274,64 @@
             });
         }
 
+
+        $('#mode').change(function () {
+            if ($('#mode').val() == 'false') {
+                $('#report_name').removeAttr("readonly");
+            } else {
+                $('#report_name').attr('readonly', 'readonly');
+            }
+        });
+
         function run_test(mode, url, type) {
             if (mode === 'batch') {
                 if ($("input:checked").size() === 0) {
-                    myAlert("请至少选择一个模块运行！");
+                    myAlert("请至少选择一个项目运行！");
                     return;
                 }
             }
             $('#select_env').modal({
                 relatedTarget: this,
+
                 onConfirm: function () {
-                    var data;
+                    var data = {
+                        "id": $("#module_list").serializeJSON(),
+                        "env_name": $('#env_name').val(),
+                        "type": type,
+                        'report_name': $('#report_name').val(),
+                    };
                     if (mode !== 'batch') {
-                        data = {
-                            "id": mode,
-                            "env_name": $('#env_name').val(),
-                            "type": type,
-                            'report_name': $('#report_name').val()
-                        };
-                    } else {
-                        data = {
-                            "id": $("#module_list").serializeJSON(),
-                            "env_name": $('#env_name').val(),
-                            "type": type,
-                            'report_name': $('#report_name').val()
-                        };
+                        data["id"] = mode;
                     }
-                    $.ajax({
-                        type: 'post',
-                        url: url,
-                        data: JSON.stringify(data),
-                        contentType: "application/json",
-                        success: function (data) {
-                            myAlert(data);
-                        },
-                        error: function () {
-                            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                    if ($('#mode').val() === 'true') {
+                        if (mode === 'batch') {
+                            var json2map = JSON.stringify(data['id']);
+                            var obj = JSON.parse(json2map);
+                            obj['env_name'] = data['env_name'];
+                            obj['type'] = data['type'];
+                            post('/api/run_batch_test/', obj);
+                        } else {
+                            post('/api/run_test/', data);
                         }
-                    });
+                    } else {
+                        $.ajax({
+                            type: 'post',
+                            url: url,
+                            data: JSON.stringify(data),
+                            contentType: "application/json",
+                            success: function (data) {
+                                myAlert(data);
+                            },
+                            error: function () {
+                                myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                            }
+                        });
+                    }
                 },
                 onCancel: function () {
                 }
             });
+
         }
 
         $('#select_all').click(function () {
