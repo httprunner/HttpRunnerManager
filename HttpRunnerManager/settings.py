@@ -17,8 +17,6 @@ import os
 import djcelery
 from django.conf.global_settings import SESSION_COOKIE_AGE
 
-from HttpRunnerManager.activator import isLinux
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -30,7 +28,7 @@ SECRET_KEY = '=w+1if4no=o&6!la#5j)3wsu%k@$)6bf+@3=i0h!5)h9h)$*s7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -122,18 +120,22 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static') #告诉Nginx寻找静态文件
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),  # 静态文件额外目录
+)
+STATIC_URL = '/static/'
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
 )
 
 SESSION_COOKIE_AGE = 30 * 60
 
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
-CELERY_TIMEZONE='Asia/Shanghai'
+CELERY_TIMEZONE = 'Asia/Shanghai'
 BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
@@ -164,7 +166,7 @@ LOGGING = {
         'default': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/opt/logs/HttpRunnerManager/all.log' if isLinux() else os.path.join(BASE_DIR, 'logs/all.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/all.log'),
             'maxBytes': 1024 * 1024 * 100,
             'backupCount': 5,
             'formatter': 'standard',
@@ -177,8 +179,7 @@ LOGGING = {
         'request_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/opt/logs/HttpRunnerManager/script.log' if isLinux() else os.path.join(BASE_DIR,
-                                                                                                'logs/script.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/script.log'),
             'maxBytes': 1024 * 1024 * 100,
             'backupCount': 5,
             'formatter': 'standard',
@@ -186,8 +187,7 @@ LOGGING = {
         'scprits_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/opt/logs/HttpRunnerManager/script.log' if isLinux() else os.path.join(BASE_DIR,
-                                                                                                'logs/script.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/script.log'),
             'maxBytes': 1024 * 1024 * 100,
             'backupCount': 5,
             'formatter': 'standard',
