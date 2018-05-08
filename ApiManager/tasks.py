@@ -13,7 +13,7 @@ from httprunner import HttpRunner, logger
 
 
 @shared_task
-def main_hrun(testset_path):
+def main_hrun(testset_path, report_name):
     logger.setup_logger('DEBUG')
     kwargs = {
         "failfast": False,
@@ -21,7 +21,7 @@ def main_hrun(testset_path):
     runner = HttpRunner(**kwargs)
     run_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     runner.run(testset_path)
-    add_test_reports(run_time, **runner.summary)
+    add_test_reports(run_time, report_name=report_name, **runner.summary)
     return runner.summary
 
 
