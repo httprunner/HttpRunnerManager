@@ -1,7 +1,7 @@
 import json
 import logging
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
 
@@ -183,6 +183,10 @@ def add_config(request):
 
 def run_test(request):
     if request.session.get('login_status'):
+        kwargs = {
+            "failfast": False,
+        }
+        runner = HttpRunner(**kwargs)
         if request.is_ajax():
             try:
                 kwargs = json.loads(request.body.decode('utf-8'))
@@ -193,18 +197,19 @@ def run_test(request):
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
             testcases_dict = run_by_module(id, base_url) if type == 'module' else run_by_project(id, base_url)
+            report_name = kwargs.get('report_name', None)
             if not testcases_dict:
                 return HttpResponse('没有用例哦')
-            main_hrun.delay(testcases_dict)
+            main_hrun.delay(testcases_dict, report_name)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
-            kwargs = {
-                "failfast": False,
-            }
-            runner = HttpRunner(**kwargs)
-            index = request.POST.get('index')
+            id = request.POST.get('id')
             base_url = request.POST.get('env_name')
-            testcases_dict = run_by_single(index, base_url)
+            type = request.POST.get('type', None)
+            if type:
+                testcases_dict = run_by_module(id, base_url) if type == 'module' else run_by_project(id, base_url)
+            else:
+                testcases_dict = run_by_single(id, base_url)
             runner.run(testcases_dict)
             return render_to_response('report_template.html', runner.summary)
     else:
@@ -216,6 +221,10 @@ def run_test(request):
 
 def run_batch_test(request):
     if request.session.get('login_status'):
+        kwargs = {
+            "failfast": False,
+        }
+        runner = HttpRunner(**kwargs)
         if request.is_ajax():
             try:
                 kwargs = json.loads(request.body.decode('utf-8'))
@@ -225,19 +234,20 @@ def run_batch_test(request):
             test_list = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
+            report_name = kwargs.get('report_name', None)
             testcases_dict = run_by_batch(test_list, base_url, type)
             if not testcases_dict:
                 return HttpResponse('没有用例哦')
-            main_hrun.delay(testcases_dict)
+            main_hrun.delay(testcases_dict, report_name)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
+            type = request.POST.get('type', None)
             base_url = request.POST.get('env_name')
             test_list = request.body.decode('utf-8').split('&')
-            testcases_lists = run_by_batch(test_list, base_url)
-            kwargs = {
-                "failfast": False,
-            }
-            runner = HttpRunner(**kwargs)
+            if type:
+                testcases_lists = run_by_batch(test_list, base_url, type=type, mode=True)
+            else:
+                testcases_lists = run_by_batch(test_list, base_url)
             runner.run(testcases_lists)
             return render_to_response('report_template.html', runner.summary)
     else:
@@ -406,8 +416,10 @@ def edit_case(request):
 def edit_config(request):
     if request.session.get('login_status'):
         if request.is_ajax():
-            testconfig_lists = json.loads(request.body.decode('utf-8'))
-            logger.error('配置更新处理之前数据：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
+            try:
+                testconfig_lists = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('配置更新处理之前数据：{testconfig_lists}'.format(testconfig_lists=testconfig_lists))
             msg = config_info_logic(type=False, **testconfig_lists)
             return HttpResponse(get_ajax_msg(msg, '配置更新成功'))
 
@@ -539,3 +551,13 @@ def add_task(request):
             return render_to_response('add_task.html', info)
     else:
         return HttpResponseRedirect("/api/login/")
+
+
+def test_login(request):
+    if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
+        return JsonResponse({'code': 'success', 'status': True})
+
+
+def test_deposit(request):
+    if request.POST.get('code') == 'success' and request.POST.get('money') == '1':
+        return JsonResponse({'code': 'error', 'status': False})
