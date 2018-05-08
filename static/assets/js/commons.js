@@ -177,7 +177,7 @@ function config_ajax(type) {
         }
     };
     if (type === 'edit') {
-        url = '/api/edit_config/1/';
+        url = '/api/edit_config/';
     } else {
         url = '/api/add_config/';
     }
@@ -188,7 +188,7 @@ function config_ajax(type) {
         contentType: "application/json",
         success: function (data) {
             if (data === 'session invalid') {
-                window.location.href = "/api/login";
+                window.location.href = "/api/login/";
             } else {
                 myAlert(data)
             }
