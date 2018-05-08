@@ -46,20 +46,31 @@ def run_by_single(index, base_url):
 '''test批量组装'''
 
 
-def run_by_batch(test_list, base_url, type=None):
+def run_by_batch(test_list, base_url, type=None, mode=False):
     testcase_lists = []
-    if type == 'project':
-        for value in test_list.values():
-            testcase_lists.extend(run_by_project(value, base_url))
-    elif type == 'module':
-        for value in test_list.values():
-            testcase_lists.extend(run_by_module(value, base_url))
-    else:
 
-        for index in range(len(test_list) - 1):
+    if mode:
+        for index in range(len(test_list) - 2):
             form_test = test_list[index].split('=')
-            index = form_test[1]
-            testcase_lists.append(run_by_single(index, base_url))
+            value = form_test[1]
+            if type == 'project':
+                testcase_lists.extend(run_by_project(value, base_url))
+            elif type == 'module':
+                testcase_lists.extend(run_by_module(value, base_url))
+
+    else:
+        if type == 'project':
+            for value in test_list.values():
+                testcase_lists.extend(run_by_project(value, base_url))
+        elif type == 'module':
+            for value in test_list.values():
+                testcase_lists.extend(run_by_module(value, base_url))
+        else:
+
+            for index in range(len(test_list) - 1):
+                form_test = test_list[index].split('=')
+                index = form_test[1]
+                testcase_lists.append(run_by_single(index, base_url))
     return testcase_lists
 
 
