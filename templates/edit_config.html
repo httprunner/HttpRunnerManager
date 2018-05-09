@@ -15,7 +15,7 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables/parameters</a></li>
                 <li><a href="javascript:;" data-target="#tab3">request</a></li>
             </ul>
 
@@ -84,6 +84,8 @@
                 <div class="am-tab-panel" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
                     <form id="config_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -134,6 +136,34 @@
                                     {% endfor %}
                                 </tr>
                             {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                    <form id="config_params">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="params">
+                            <caption>parameters:</caption>
+                            <thead>
+                            <tr class="active text-success">
+                                <th width="5%" align="center">Option</th>
+                                <th width="20%" align="center">Key</th>
+                                <th width="75%" align="center">Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for foo in request.parameters %}
+                                <tr>
+                                    <td><input type="checkbox" name="params" style="width:55px"></td>
+                                    {% for key, value in foo.items %}
+                                        <td><textarea name='test[][key]'
+                                                      style="width:100%; border: none">{{ key }}</textarea></td>
+                                        <td><textarea name='test[][key]'
+                                                      style="width:100%; border: none">{{ value }}</textarea></td>
+
+                                    {% endfor %}
+
+                                </tr>
+                            {% endfor %}
+
                             </tbody>
                         </table>
                     </form>
@@ -292,7 +322,7 @@
                                             <td><input type="text" name='test[][key]' value="{{ key }}"
                                                        style="width:100%; border: none"></td>
                                             <td><input type="text" name='test[][value]' value="{{ value }}"
-                                                style="width:100%; border: none">
+                                                       style="width:100%; border: none">
                                             </td>
                                         </tr>
                                     {% endfor %}

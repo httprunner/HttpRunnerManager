@@ -10,7 +10,7 @@
 
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例修改</ul>
-           {% comment %} <ul>
+            {% comment %} <ul>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="post('/api/run_test/', {'id':'{{ info.id }}', 'mode':'run_by_test'})">运行
                 </button>
@@ -21,7 +21,7 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables/parameters</a></li>
                 <li><a href="javascript:;" data-target="#tab3">request</a></li>
                 <li><a href="javascript:;" data-target="#tab4">extract/validate</a></li>
             </ul>
@@ -101,10 +101,8 @@
                 <div class="am-tab-panel" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
-                    {% comment %} <button class="btn btn-info" value="添 加" onclick="add_row('setup')">add setup</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('setup')">del setup</button>
-                    <button class="btn btn-info" value="添 加" onclick="add_row('teardown')">add teardown</button>
-                    <button class="btn btn-danger" value="删 除" onclick="del_row('teardown')">del teardown</button>{% endcomment %}
+                    <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -161,66 +159,34 @@
                             </tbody>
                         </table>
                     </form>
-                    {% comment %} <form id="form_setup">
-                        <table class="table table-hover table-condensed table-bordered table-striped" id="setup">
-                            <caption>setUp:</caption>
+
+                    <form id="form_params">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="params">
+                            <caption>parameters:</caption>
                             <thead>
                             <tr class="active text-success">
                                 <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
-                                <th width="55%" align="center">Value</th>
+                                <th width="20%" align="center">Key</th>
+                                <th width="75%" align="center">Value</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for foo in request.setup %}
+                            {% for foo in request.parameters %}
                                 <tr>
-                                    <td><input type="checkbox" name="setup" id="chkArr_{{ forloop.counter }}"
-                                               style="width:55px"></td>
+                                    <td><input type="checkbox" name="params" style="width:55px"></td>
                                     {% for key, value in foo.items %}
+                                        <td><textarea name='test[][key]' style="width:100%; border: none">{{ key }}</textarea></td>
+                                        <td><textarea name='test[][key]' style="width:100%; border: none">{{ value }}</textarea></td>
 
-                                        <td><input type="text" name="cell1_keysetup{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counter }}"
-                                                   value="{{ key }}" style="width:100%; border: none"></td>
-                                        <td><input type="text"
-                                                   name="cell2_valuesetup{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counter }}" value="{{ value }}"
-                                                   style="width:100%; border: none"></td>
                                     {% endfor %}
+
                                 </tr>
                             {% endfor %}
-                            </tbody>
-                        </table>
-                    </form>{% endcomment %}
-                    {% comment %}<form id="form_teardown">
-                        <table class="table table-hover table-condensed table-bordered table-striped" id="teardown">
-                            <caption>tearDown:</caption>
-                            <thead>
-                            <tr class="active text-success">
-                                <th width="5%" align="center">Option</th>
-                                <th width="40%" align="center">Key</th>
-                                <th width="55%" align="center">Value</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for foo in request.teardown %}
-                                <tr>
-                                    <td><input type="checkbox" name="teardown" id="chkArr_{{ forloop.counter }}"
-                                               style="width:55px"></td>
-                                    {% for key, value in foo.items %}
 
-                                        <td><input type="text" name="cell1_keyteardown{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counter }}"
-                                                   value="{{ key }}" style="width:100%; border: none"></td>
-                                        <td><input type="text"
-                                                   name="cell2_valueteardown{{ forloop.parentloop.counter }}"
-                                                   id="nodename{{ forloop.parentloop.counter }}" value="{{ value }}"
-                                                   style="width:100%; border: none"></td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
                             </tbody>
                         </table>
-                    </form>{% endcomment %}
+                    </form>
+
                 </div>
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
