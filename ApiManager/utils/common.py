@@ -18,44 +18,74 @@ def type_change(type, value):
             value = float(value)
         elif type == 'int':
             value = int(value)
-        elif type == 'boolean':
-            value = False if value == 'False' else True
     except ValueError:
-        logger.error('{type}转换失败，默认转换为str类型'.format(type=type))
+        logger.error('{value}转换{type}失败'.format(value=value, type=type))
+        return 'error'
+    if type == 'boolean':
+        if value == 'False':
+            value = False
+        elif value == 'True':
+            value = True
+        else:
+            return 'error'
     return value
 
 
-def key_value_list(key, **kwargs):
+def key_value_list(keyword, **kwargs):
     if not isinstance(kwargs, dict) or not kwargs:
         return None
     else:
         lists = []
         test = kwargs.pop('test')
         for value in test:
-            if value.get('key') != '' and value.get('value') != '':
-                if key == 'validate':
-                    value['check'] = value.pop('key')
-                    value['expected'] = type_change(value.pop('type'), value.pop('value'))
-                elif key == 'extract':
-                    value[value.pop('key')] = value.pop('value')
-                elif key == 'variables':
-                    value[value.pop('key')] = type_change(value.pop('type'), value.pop('value'))
+            key = value.pop('key')
+            type = value.get('type', '')
+            val = value.pop('value')
+            tips = '{keyword}: {val}格式错误,不是{type}类型'.format(keyword=keyword, val=val, type=type)
+            if key != '' and val != '':
+                if keyword == 'validate':
+                    value['check'] = key
+                    msg = type_change(type, val)
+                    if msg == 'error':
+                        return tips
+                    value['expected'] = msg
+                elif keyword == 'extract':
+                    value[key] = val
+                elif keyword == 'variables':
+                    msg = type_change(type, val)
+                    if msg == 'error':
+                        return tips
+                    value[key] = msg
+                elif keyword == 'parameters':
+                    try:
+                        value[key] = eval(val)
+                    except Exception:
+                        logging.error('{val}->eval 异常'.format(val=val))
+                        return '{keyword}: {val}格式错误'.format(keyword=keyword, val=val)
+
                 lists.append(value)
         return lists
 
 
-def key_value_dict(key, **kwargs):
+def key_value_dict(keyword, **kwargs):
     if not isinstance(kwargs, dict) or not kwargs:
         return None
     else:
         dicts = {}
         test = kwargs.pop('test')
         for value in test:
-            if value.get('key') != '' and value.get('value') != '':
-                if key == 'headers':
-                    value[value.pop('key')] = value.pop('value')
-                elif key == 'data':
-                    value[value.pop('key')] = type_change(value.pop('type'), value.pop('value'))
+            key = value.pop('key')
+            type = value.get('type', '')
+            val = value.pop('value')
+
+            if key != '' and val != '':
+                if keyword == 'headers':
+                    value[key] = val
+                elif keyword == 'data':
+                    msg = type_change(type, val)
+                    if msg == 'error':
+                        return '{keyword}: {val}格式错误,不是{type}类型'.format(keyword=keyword, val=val, type=type)
+                    value[key] = msg
                 dicts.update(value)
         return dicts
 
@@ -133,7 +163,11 @@ def case_info_logic(type=True, **kwargs):
         test.setdefault('case_info', name)
 
         validate = test.pop('validate')
-        test.setdefault('validate', key_value_list('validate', **validate))
+        if validate:
+            validate_list = key_value_list('validate', **validate)
+            if not isinstance(validate_list, list):
+                return validate_list
+            test.setdefault('validate', validate_list)
 
         extract = test.pop('extract')
         if extract:
@@ -145,7 +179,10 @@ def case_info_logic(type=True, **kwargs):
             if data_type == 'json':
                 test.get('request').setdefault(data_type, request_data)
             else:
-                test.get('request').setdefault(data_type, key_value_dict('data', **request_data))
+                data_dict = key_value_dict('data', **request_data)
+                if not isinstance(data_dict, dict):
+                    return data_dict
+                test.get('request').setdefault(data_type, data_dict)
 
         headers = test.get('request').pop('headers')
         if headers:
@@ -153,7 +190,17 @@ def case_info_logic(type=True, **kwargs):
 
         variables = test.pop('variables')
         if variables:
-            test.setdefault('variables', key_value_list('variables', **variables))
+            variables_list = key_value_list('variables', **variables)
+            if not isinstance(variables_list, list):
+                return variables_list
+            test.setdefault('variables', variables_list)
+
+        parameters = test.pop('parameters')
+        if parameters:
+            params_list = key_value_list('parameters', **parameters)
+            if not isinstance(params_list, list):
+                return params_list
+            test.setdefault('parameters', params_list)
 
         kwargs.setdefault('test', test)
         return add_case_data(type, **kwargs)
@@ -191,7 +238,10 @@ def config_info_logic(type=True, **kwargs):
             if data_type == 'json':
                 config.get('request').setdefault(data_type, request_data)
             else:
-                config.get('request').setdefault(data_type, key_value_dict('data', **request_data))
+                data_dict = key_value_dict('data', **request_data)
+                if not isinstance(data_dict, dict):
+                    return data_dict
+                config.get('request').setdefault(data_type, data_dict)
 
         headers = config.get('request').pop('headers')
         if headers:
@@ -199,8 +249,17 @@ def config_info_logic(type=True, **kwargs):
 
         variables = config.pop('variables')
         if variables:
-            config.setdefault('variables', key_value_list('variables', **variables))
+            variables_list = key_value_list('variables', **variables)
+            if not isinstance(variables_list, list):
+                return variables_list
+            config.setdefault('variables', variables_list)
 
+        parameters = config.pop('parameters')
+        if parameters:
+            params_list = key_value_list('parameters', **parameters)
+            if not isinstance(params_list, list):
+                return params_list
+            config.setdefault('parameters', params_list)
         kwargs.setdefault('config', config)
         return add_config_data(type, **kwargs)
 
