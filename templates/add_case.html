@@ -119,31 +119,34 @@
 
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
-                        <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">url：</label>
-                            <input type="text" class="form-control" placeholder="api url"
-                                   name="url"
-                                   id="url">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">URL</div>
+                                <input type="text" class="form-control" id="url" name="url" placeholder="api url">
+                            </div>
                         </div>
 
-                        <div class="form-group has-warning">
-                            <label for="method"
-                                   style="font-size: 14px;"><code>&nbsp;</code>method：</label>
-                            <select class="form-control" name="method" id="method">
+                         <div class="form-group ">
+                            <div class="input-group">
+                                <div class="input-group-addon">Method</div>
+                                   <select class="form-control" name="method" id="method">
                                 <option>POST</option>
                                 <option>GET</option>
                                 <option>PUT</option>
                                 <option>DELETE</option>
                             </select>
+                            </div>
                         </div>
-                        <div class="form-group has-warning ">
-                            <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>type：</label>
-                            <select class="form-control" name="DataType" id="DataType">
+
+                        <div class="form-group ">
+                            <div class="input-group">
+                                <div class="input-group-addon">Type</div>
+                                  <select class="form-control" name="DataType" id="DataType">
                                 <option>data</option>
                                 <option>json</option>
                                 <option>params</option>
                             </select>
+                            </div>
                         </div>
 
                         <button class="btn btn-info" value="添 加" id="add_data" onclick="add_row('data')">add data

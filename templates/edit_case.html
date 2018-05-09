@@ -175,8 +175,10 @@
                                 <tr>
                                     <td><input type="checkbox" name="params" style="width:55px"></td>
                                     {% for key, value in foo.items %}
-                                        <td><textarea name='test[][key]' style="width:100%; border: none">{{ key }}</textarea></td>
-                                        <td><textarea name='test[][value]' style="width:100%; border: none">{{ value }}</textarea></td>
+                                        <td><textarea name='test[][key]'
+                                                      style="width:100%; border: none">{{ key }}</textarea></td>
+                                        <td><textarea name='test[][value]'
+                                                      style="width:100%; border: none">{{ value }}</textarea></td>
 
                                     {% endfor %}
 
@@ -190,16 +192,18 @@
                 </div>
                 <div class="am-tab-panel" id="tab3">
                     <div class="form-inline">
-                        <div class="form-group has-success">
-                            <label for="url" style="font-size: 14px;">url：</label>
-                            <input type="text" class="form-control am-input-sm " placeholder="api url"
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">URL</div>
+                                <input type="text" class="form-control am-input-sm " placeholder="api url"
                                    name="url"
                                    id="url" value="{{ request.request.url }}">
+                            </div>
                         </div>
 
-                        <div class="form-group has-warning">
-                            <label for="method"
-                                   style="font-size: 14px;"><code>&nbsp;</code>method：</label>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Method</div>
                             <select class="form-control" name="method" id="method">
                                 <option>{{ request.request.method }}</option>
                                 {% if request.request.method == 'GET' %}
@@ -221,10 +225,11 @@
 
                                 {% endif %}
                             </select>
+                            </div>
                         </div>
-                        <div class="form-group has-warning ">
-                            <label for="DataType"
-                                   style="font-size: 14px;"><code>&nbsp;</code>type：</label>
+                         <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Type</div>
                             <select class="form-control" name="DataType" id="DataType">
                                 {% if 'data' in request.request.keys %}
                                     <option selected>data</option>
@@ -245,6 +250,7 @@
 
                                 {% endif %}
                             </select>
+                            </div>
                         </div>
 
                         <button class="btn btn-info" value="添 加" onclick="add_row('data')" id="add_data">add data
