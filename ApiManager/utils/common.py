@@ -40,8 +40,8 @@ def key_value_list(keyword, **kwargs):
         for value in test:
             try:
                 key = value.pop('key')
-                type = value.pop('type')
                 val = value.pop('value')
+                type = value.pop('type')
             except KeyError:
                 pass
             tips = '{keyword}: {val}格式错误,不是{type}类型'.format(keyword=keyword, val=val, type=type)
@@ -79,8 +79,8 @@ def key_value_dict(keyword, **kwargs):
         for value in test:
             try:
                 key = value.pop('key')
-                type = value.pop('type')
                 val = value.pop('value')
+                type = value.pop('type')
             except KeyError:
                 pass
 
