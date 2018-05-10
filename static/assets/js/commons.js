@@ -113,11 +113,11 @@ function case_ajax(type) {
     var headers = $("#form_request_headers").serializeJSON();
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
-    // var setup = $("#form_setup").serializeJSON();
-    // var teardown = $("#form_teardown").serializeJSON();
+    var parameters = $('#form_params').serializeJSON();
     var test = {
         "test": {
             "name": caseInfo,
+            "parameters": parameters,
             "variables": variables,
             "request": {
                 "url": url.url,
@@ -158,6 +158,7 @@ function config_ajax(type) {
     var dataType = $("#config_data_type").serializeJSON();
     var caseInfo = $("#form_config").serializeJSON();
     var variables = $("#config_variables").serializeJSON();
+    var parameters = $('#config_params').serializeJSON();
     var request_data = null;
     if (dataType.DataType === 'json') {
         request_data = eval('(' + $('#json-input').val() + ')');
@@ -169,6 +170,7 @@ function config_ajax(type) {
         "config": {
             "name": caseInfo,
             "variables": variables,
+            "parameters": parameters,
             "request": {
                 "headers": headers,
                 "type": dataType.DataType,
@@ -273,3 +275,19 @@ function add_row(id) {
     }
 }
 
+function add_params(id) {
+    var tabObj = document.getElementById(id);//获取添加数据的表格
+    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var style = 'width:100%; border: none';
+    var check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
+    var placeholder = '单个:["value1", "value2],  多个:[["name1", "pwd1"],["name2","pwd2"]]';
+    var key = "<textarea  name='test[][key]'  placeholder='单个:key, 多个:key1-key2'  style='" + style + "' />";
+    var value = "<textarea  name='test[][value]'  placeholder='" + placeholder + "' style='" + style + "' />";
+    var myNewRow = tabObj.insertRow(rowsNum);
+    var newTdObj0 = myNewRow.insertCell(0);
+    var newTdObj1 = myNewRow.insertCell(1);
+    var newTdObj2 = myNewRow.insertCell(2);
+    newTdObj0.innerHTML = check;
+    newTdObj1.innerHTML = key;
+    newTdObj2.innerHTML = value;
+}
