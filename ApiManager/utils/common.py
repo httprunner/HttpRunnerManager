@@ -38,12 +38,12 @@ def key_value_list(keyword, **kwargs):
         lists = []
         test = kwargs.pop('test')
         for value in test:
-            try:
-                key = value.pop('key')
-                val = value.pop('value')
+            key = value.pop('key')
+            val = value.pop('value')
+            if 'type' in value.keys():
                 type = value.pop('type')
-            except KeyError:
-                pass
+            else:
+                type = 'str'
             tips = '{keyword}: {val}格式错误,不是{type}类型'.format(keyword=keyword, val=val, type=type)
             if key != '' and val != '':
                 if keyword == 'validate':
@@ -77,12 +77,12 @@ def key_value_dict(keyword, **kwargs):
         dicts = {}
         test = kwargs.pop('test')
         for value in test:
-            try:
-                key = value.pop('key')
-                val = value.pop('value')
+            key = value.pop('key')
+            val = value.pop('value')
+            if 'type' in value.keys():
                 type = value.pop('type')
-            except KeyError:
-                pass
+            else:
+                type = 'str'
 
             if key != '' and val != '':
                 if keyword == 'headers':
