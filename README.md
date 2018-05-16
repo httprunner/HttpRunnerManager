@@ -100,7 +100,7 @@ Key Features
 ![首页](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/index_01.png)<br>
 <br>
 3、首先应该先添加一个项目，用例都是以项目为维度进行管理, 注意简要描述和其他信息可以为空, 添加成功后会自动重定向到项目列表
-![新增项目](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/add_project_01.jpg)<br>
+![新增项目](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/add_project_01.png)<br>
 <br>
 4、支持对项目进行二次编辑,也可以进行筛选等,项目列表页面可以选择单个项目运行，也可以批量运行，注意：删除操作会强制删除该项目下所有数据，请谨慎操作
 ![项目列表](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/project_list_01.jpg)<br>
