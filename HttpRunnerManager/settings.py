@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=w+1if4no=o&6!la#5j)3wsu%k@$)6bf+@3=i0h!5)h9h)$*s7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # 如果部署在生产环境请设置为False
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'HttpRunnerManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'HttpRunner',
-        'USER': 'root',
-        'PASSWORD': 'lcc123456',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': 'HttpRunner',  # 新建数据库名
+        'USER': 'root',  # 数据库登录名
+        'PASSWORD': 'lcc123456',  # 数据库登录密码
+        'HOST': '127.0.0.1',  # 数据库所在服务器ip地址
+        'PORT': '3306',  # 监听端口 默认3306即可
     }
 }
 
@@ -120,7 +120,7 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static') #告诉Nginx寻找静态文件
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static') #Nginx寻找静态文件 如果生产环境部署请打开这句
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),  # 静态文件额外目录
@@ -136,7 +136,7 @@ SESSION_COOKIE_AGE = 30 * 60
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
-BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//'
+BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//'  # 127.0.0.1即为rabbitmq-server所在服务器ip地址
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -144,7 +144,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_TASK_RESULT_EXPIRES = 7200  # celery任务执行结果的超时时间，
-CELERYD_CONCURRENCY = 25  # celery worker的并发数 也是命令行-c指定的数目
+CELERYD_CONCURRENCY = 25  # celery worker的并发数 也是命令行-c指定的数目 根据服务器配置实际更改 一般25即可
 CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
 
 LOGGING = {
