@@ -1,10 +1,23 @@
 from django import template
 
 register = template.Library()
-'''自定义模板tag，判断数据类型'''
 
 
 @register.filter(name='data_type')
 def data_type(value):
+    """
+    返回数据类型 自建filter
+    :param value:
+    :return: the type of value
+    """
     return str(type(value).__name__)
 
+
+@register.filter(name='convert_eval')
+def data_type(value):
+    """
+    数据eval转换 自建filter
+    :param value:
+    :return: the value which had been eval
+    """
+    return eval(value)
