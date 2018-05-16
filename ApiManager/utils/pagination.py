@@ -2,10 +2,12 @@ from django.utils.safestring import mark_safe
 
 from ApiManager.models import ModuleInfo, TestCaseInfo
 
-'''分页类'''
 
 
 class PageInfo(object):
+    """
+    分页类
+    """
     def __init__(self, current, total_item, per_items=5):
         self.__current = current
         self.__per_items = per_items
@@ -28,10 +30,15 @@ class PageInfo(object):
             return result[0] + 1
 
 
-'''分页处理 返回html'''
 
-
-def customer_pager(base_url, current_page, total_page):  # 基础页，当前页，总页数
+def customer_pager(base_url, current_page, total_page):
+    """
+    返回可分页的html
+    :param base_url: a标签href值
+    :param current_page: 当前页
+    :param total_page: 总共页
+    :return: html
+    """
     per_pager = 11
     middle_pager = 5
     start_pager = 1
@@ -82,6 +89,15 @@ def customer_pager(base_url, current_page, total_page):  # 基础页，当前页
 
 
 def get_pager_info(Model, filter_query, url, id, per_items=10):
+    """
+    筛选列表信息
+    :param Model: Models实体类
+    :param filter_query: dict: 筛选条件
+    :param url:
+    :param id:
+    :param per_items: int: m默认展示10行
+    :return:
+    """
     id = int(id)
     if filter_query:
         belong_project = filter_query.get('belong_project')
@@ -103,7 +119,12 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
     elif url == '/api/periodictask/':
         obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled',
-             'date_changed') if name is not '' else obj.all().values('id', 'name', 'kwargs', 'enabled', 'date_changed', 'description')
+                                                     'date_changed') if name is not '' else obj.all().values('id',
+                                                                                                             'name',
+                                                                                                             'kwargs',
+                                                                                                             'enabled',
+                                                                                                             'date_changed',
+                                                                                                             'description')
     elif url != '/api/env_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
         if belong_project and belong_module is not '':
@@ -117,7 +138,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
             else:
                 obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
     if url != '/api/periodictask/':
-        obj = obj.order_by('-create_time')
+        obj = obj.order_by('-update_time')
     else:
         obj = obj.order_by('-date_changed')
     total = obj.count()
