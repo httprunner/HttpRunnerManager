@@ -6,10 +6,14 @@ from django.db import DataError
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 
 logger = logging.getLogger('HttpRunnerManager')
-'''用户注册信息落地'''
 
 
 def add_register_data(**kwargs):
+    """
+    用户注册信息逻辑判断及落地
+    :param kwargs: dict
+    :return: ok or tips
+    """
     user_info = UserInfo.objects
     try:
         username = kwargs.pop('account')
@@ -30,10 +34,13 @@ def add_register_data(**kwargs):
         return '字段长度超长，请重新编辑'
 
 
-'''项目数据落地'''
-
-
 def add_project_data(type, **kwargs):
+    """
+    项目信息落地
+    :param type: true: 新增， false: 更新
+    :param kwargs: dict
+    :return: ok or tips
+    """
     project_opt = ProjectInfo.objects
     project_name = kwargs.get('project_name')
     if type:
@@ -53,7 +60,7 @@ def add_project_data(type, **kwargs):
                 'index')) and project_opt.get_pro_name(project_name) > 0:
             return '该项目已存在， 请重新命名'
         try:
-            project_opt.update_project(kwargs.pop('index'), **kwargs)
+            project_opt.update_project(kwargs.pop('index'), **kwargs)  # testcaseinfo的belong_project也得更新，这个字段设计的有点坑了
         except DataError:
             return '项目信息过长'
         except Exception:
@@ -68,6 +75,12 @@ def add_project_data(type, **kwargs):
 
 
 def add_module_data(type, **kwargs):
+    """
+    模块信息落地
+    :param type: boolean: true: 新增， false: 更新
+    :param kwargs: dict
+    :return: ok or tips
+    """
     module_opt = ModuleInfo.objects
     belong_project = kwargs.pop('belong_project')
     module_name = kwargs.get('module_name')
@@ -110,23 +123,22 @@ def add_module_data(type, **kwargs):
 
 
 def add_case_data(type, **kwargs):
+    """
+    用例信息落地
+    :param type: boolean: true: 添加新用例， false: 更新用例
+    :param kwargs: dict
+    :return: ok or tips
+    """
     case_info = kwargs.get('test').get('case_info')
     case_opt = TestCaseInfo.objects
     name = kwargs.get('test').get('name')
     module = case_info.get('module')
     project = case_info.get('project')
-    path = case_info.get('include', '')
-    if path is not '':
-        include = path.split('>')
-        for value in include:
-            if TestCaseInfo.objects.filter(belong_module__module_name=module).filter(
-                    name__exact=value).count() < 1:  # 没有找到依赖用例
-                return '抱歉，您所依赖的{value}用例或配置没找到，请先添加'.format(value=value)
+    belong_module = ModuleInfo.objects.get_module_name(module, type=False)
     try:
         if type:
 
             if case_opt.get_case_name(name, module, project) < 1:
-                belong_module = ModuleInfo.objects.get_module_name(module, type=False, project=project)
                 case_opt.insert_case(belong_module, **kwargs)
                 logger.info('{name}用例添加成功'.format(name=name))
             else:
@@ -136,7 +148,7 @@ def add_case_data(type, **kwargs):
             if name != case_opt.get_case_by_id(index, type=False) \
                     and case_opt.get_case_name(name, module, project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
-            case_opt.update_case(**kwargs)
+            case_opt.update_case(belong_module, **kwargs)
             logger.info('{name}用例更新成功'.format(name=name))
 
     except DataError:
@@ -149,25 +161,32 @@ def add_case_data(type, **kwargs):
 
 
 def add_config_data(type, **kwargs):
+    """
+    配置信息落地
+    :param type: boolean: true: 添加新配置， fasle: 更新配置
+    :param kwargs: dict
+    :return: ok or tips
+    """
     case_opt = TestCaseInfo.objects
     config_info = kwargs.get('config').get('config_info')
     name = kwargs.get('config').get('name')
     module = config_info.get('config_module')
     project = config_info.get('project')
+    belong_module = ModuleInfo.objects.get_module_name(module, type=False)
+
     try:
         if type:
             if case_opt.get_case_name(name, module, project) < 1:
-                belong_module = ModuleInfo.objects.get_module_name(module, type=False, project=project)
                 case_opt.insert_config(belong_module, **kwargs)
                 logger.info('{name}配置添加成功'.format(name=name))
             else:
                 return '用例或配置已存在，请重新编辑'
         else:
-            index = int(config_info.get('test_index'))
+            index = config_info.get('test_index')
             if name != case_opt.get_case_by_id(index, type=False) \
                     and case_opt.get_case_name(name, module, project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
-            case_opt.update_config(**kwargs)
+            case_opt.update_config(belong_module, **kwargs)
             logger.info('{name}配置更新成功'.format(name=name))
     except DataError:
         logger.error('{name}配置信息过长：{kwargs}'.format(name=name, kwargs=kwargs))
@@ -179,6 +198,11 @@ def add_config_data(type, **kwargs):
 
 
 def env_data_logic(**kwargs):
+    """
+    环境信息逻辑判断及落地
+    :param kwargs: dict
+    :return: ok or tips
+    """
     id = kwargs.get('id', None)
     if id:
         try:
@@ -225,6 +249,11 @@ def env_data_logic(**kwargs):
 
 
 def del_module_data(id):
+    """
+    根据模块索引删除模块数据，强制删除其下所有用例及配置
+    :param id: str or int:模块索引
+    :return: ok or tips
+    """
     try:
         module_name = ModuleInfo.objects.get_module_name('', type=False, id=id)
         TestCaseInfo.objects.filter(belong_module__module_name=module_name).delete()
@@ -236,6 +265,11 @@ def del_module_data(id):
 
 
 def del_project_data(id):
+    """
+    根据项目索引删除项目数据，强制删除其下所有用例、配置、模块
+    :param id: str or int: 项目索引
+    :return: ok or tips
+    """
     try:
         project_name = ProjectInfo.objects.get_pro_name('', type=False, id=id)
         belong_modules = ModuleInfo.objects.filter(belong_project__project_name=project_name).values_list('module_name')
@@ -250,6 +284,11 @@ def del_project_data(id):
 
 
 def del_test_data(id):
+    """
+    根据用例或配置索引删除数据
+    :param id: str or int: test or config index
+    :return: ok or tips
+    """
     try:
         TestCaseInfo.objects.get(id=id).delete()
     except ObjectDoesNotExist:
@@ -258,9 +297,53 @@ def del_test_data(id):
     return 'ok'
 
 
+def del_report_data(id):
+    """
+    根据报告索引删除报告
+    :param id:
+    :return: ok or tips
+    """
+    try:
+        TestReports.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    return 'ok'
+
+
+def copy_test_data(id, name):
+    """
+    复制用例信息，默认插入到当前项目、莫夸
+    :param id: str or int: 复制源
+    :param name: str：新用例名称
+    :return: ok or tips
+    """
+    try:
+        test = TestCaseInfo.objects.get(id=id)
+        belong_module = test.belong_module
+    except ObjectDoesNotExist:
+        return '复制异常，请重试'
+    if TestCaseInfo.objects.filter(name=name, belong_module=belong_module).count() > 0:
+        return '用例/配置名称重复了哦'
+    test.id = None
+    test.name = name
+    request = eval(test.request)
+    request.get('test')['name'] = name
+    test.request = request
+    test.save()
+    logging.info('{name}用例/配置添加成功'.format(name=name))
+    return 'ok'
+
+
 def add_test_reports(start_at, report_name=None, **kwargs):
+    """
+    定时任务或者异步执行报告信息落地
+    :param start_at: time: 开始时间
+    :param report_name: str: 报告名称，为空默认时间戳命名
+    :param kwargs: dict: 报告结果值
+    :return:
+    """
     kwargs.get('time').pop('start_at')
-    report_name = report_name + start_at if report_name else start_at
+    report_name = report_name if report_name else start_at
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
