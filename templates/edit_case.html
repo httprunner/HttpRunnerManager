@@ -29,7 +29,7 @@
             <div class="am-tabs-bd">
                 <div class="am-tab-panel" id="tab1">
                     <form class="form-horizontal" id="form_message">
-                        <div class="form-group has-feedback has-info">
+                        <div class="form-group">
                             <label for="test_index" class="col-md-2 control-label text-info" style="font-size: 14px;"
                                    hidden>用例索引:</label>
                             <div class="col-md-4">
@@ -39,22 +39,19 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="case_name" class="col-md-2 control-label text-info" style="font-size: 14px;">name:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="case_name" placeholder="用例名称"
-                                       name="case_name"
-                                       value="{{ info.name }}">
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">用例名称</div>
+                                <input type="text" class="form-control" id="case_name" name="case_name"
+                                       placeholder="用例名称" value="{{ info.name }}">
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
-                            <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select name="project" class="form-control"
-                                        onchange=info_ajax("#form_message",'/api/edit_case/')>
+                                        onclick="auto_load('#form_message', '/api/edit_case/', '#belong_module_id', 'module')">
                                     <option value="{{ info.belong_project }}">{{ info.belong_project }}</option>
                                     {% for obj in project %}
                                         {% ifnotequal info.belong_project obj.project_name %}
@@ -65,37 +62,56 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
-                            <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
-                            <div class="col-md-4">
-                                <select id="belong_module_id" name="module" class="form-control">
-                                    <option value="{{ info.belong_module.module_name }}">{{ info.belong_module.module_name }}</option>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                                <select id="belong_module_id" name="module" class="form-control"
+                                        onclick="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
+                                    <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
                                 </select>
                             </div>
                         </div>
 
-
-                        <div class="form-group has-feedback has-info">
-                            <label for="include" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">include:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name"
-                                       placeholder="config>case_name1>casename2"
-                                       name="include"
-                                       value="{{ info.include }}">
-                                <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">可选用例</div>
+                                <select id="belong_case_id" name="include" class="form-control">
+                                </select>
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="author" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">author:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="author" placeholder="创建者" name="author"
-                                       value="{{ info.author }}">
-                                <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">编写人员</div>
+                                <input type="text" class="form-control" id="author" name="author"
+                                       placeholder="用例编写人员" value="{{ info.author }}">
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">前置条件</div>
+
+                                <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
+                                   style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
+                                   data-am-collapse="{target: '#pre_case'}">
+                                    依 赖 用 例 执 行 顺 序
+                                </a>
+                                <nav>
+                                    <ul id="pre_case" class="am-nav am-collapse">
+                                        {% for foo in info.include|convert_eval %}
+                                            <li id="{{ foo.0 }}">
+                                                <a href="/api/edit_case/{{ foo.0 }}/" id="{{ foo.0 }}">{{ foo.1 }}</a>
+                                                <i class="js-remove" onclick=remove_self('#{{ foo.0 }}')>✖</i></li>
+
+                                        {% endfor %}
+
+                                    </ul>
+                                </nav>
+
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="am-tab-panel" id="tab2">
@@ -103,6 +119,8 @@
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
                     <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('hooks')">add hooks</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('hooks')">del hooks</button>
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -173,8 +191,8 @@
                             <tbody>
                             {% for foo in request.parameters %}
                                 <tr>
-                                    <td><input type="checkbox" name="params" style="width:55px"></td>
                                     {% for key, value in foo.items %}
+                                        <td><input type="checkbox" name="params" style="width:55px"></td>
                                         <td><textarea name='test[][key]'
                                                       style="width:100%; border: none">{{ key }}</textarea></td>
                                         <td><textarea name='test[][value]'
@@ -188,6 +206,71 @@
                             </tbody>
                         </table>
                     </form>
+                    <form id="form_hooks">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="hooks">
+                            <caption>hooks:</caption>
+                            <thead>
+                            <tr class="active text-success">
+                                <th width="5%" align="center">Option</th>
+                                <th width="47.5%" align="center">setup_hooks</th>
+                                <th width="47.5%" align="center">teardown_hooks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if request.setup_hooks|length >= request.teardown_hooks|length %}
+                                {% for foo in  request.setup_hooks %}
+                                    <tr>
+                                        <td><input type="checkbox" name="hooks" style="width:55px"></td>
+                                        <td><input type="text" name='test[][key]'
+                                                   value="{{ foo }}" style="width:100%; border: none"></td>
+                                        <td>
+                                            {% for foos in  request.teardown_hooks %}
+                                                {% if forloop.parentloop.counter0 == forloop.counter0 %}
+                                                    <input type="text" name='test[][value]'
+                                                           value="{{ foos }}"
+                                                           style="width:100%; border: none">
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if forloop.counter > request.teardown_hooks|length %}
+                                                <input type="text" name='test[][value]'
+                                                       value=""
+                                                       style="width:100%; border: none">
+
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for foo in  request.teardown_hooks %}
+                                    <tr>
+                                        <td><input type="checkbox" name="hooks" style="width:55px"></td>
+                                        <td>
+                                            {% for foos in  request.setup_hooks %}
+                                                {% if forloop.parentloop.counter0 == forloop.counter0 %}
+                                                    <input type="text" name='test[][key]'
+                                                           value="{{ foos }}"
+                                                           style="width:100%; border: none">
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if forloop.counter > request.setup_hooks|length %}
+                                                <input type="text" name='test[][key]'
+                                                       value=""
+                                                       style="width:100%; border: none">
+
+                                            {% endif %}
+                                        </td>
+                                        <td><input type="text" name='test[][value]'
+                                                   value="{{ foo }}" style="width:100%; border: none"></td>
+
+                                    </tr>
+                                {% endfor %}
+
+                            {% endif %}
+
+                            </tbody>
+                        </table>
+                    </form>
 
                 </div>
                 <div class="am-tab-panel" id="tab3">
@@ -196,60 +279,60 @@
                             <div class="input-group">
                                 <div class="input-group-addon">URL</div>
                                 <input type="text" class="form-control am-input-sm " placeholder="api url"
-                                   name="url"
-                                   id="url" value="{{ request.request.url }}">
+                                       name="url"
+                                       id="url" value="{{ request.request.url }}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Method</div>
-                            <select class="form-control" name="method" id="method">
-                                <option>{{ request.request.method }}</option>
-                                {% if request.request.method == 'GET' %}
-                                    <option>POST</option>
-                                    <option>PUT</option>
-                                    <option>DELETE</option>
-                                {% elif request.request.method == 'POST' %}
-                                    <option>GET</option>
-                                    <option>PUT</option>
-                                    <option>DELETE</option>
-                                {% elif request.request.method == 'PUT' %}
-                                    <option>GET</option>
-                                    <option>POST</option>
-                                    <option>DELETE</option>
-                                {% elif request.request.method == 'DELETE' %}
-                                    <option>GET</option>
-                                    <option>POST</option>
-                                    <option>DELETE</option>
+                                <select class="form-control" name="method" id="method">
+                                    <option>{{ request.request.method }}</option>
+                                    {% if request.request.method == 'GET' %}
+                                        <option>POST</option>
+                                        <option>PUT</option>
+                                        <option>DELETE</option>
+                                    {% elif request.request.method == 'POST' %}
+                                        <option>GET</option>
+                                        <option>PUT</option>
+                                        <option>DELETE</option>
+                                    {% elif request.request.method == 'PUT' %}
+                                        <option>GET</option>
+                                        <option>POST</option>
+                                        <option>DELETE</option>
+                                    {% elif request.request.method == 'DELETE' %}
+                                        <option>GET</option>
+                                        <option>POST</option>
+                                        <option>DELETE</option>
 
-                                {% endif %}
-                            </select>
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">Type</div>
-                            <select class="form-control" name="DataType" id="DataType">
-                                {% if 'data' in request.request.keys %}
-                                    <option selected>data</option>
-                                    <option>json</option>
-                                    <option>params</option>
-                                {% elif 'json' in request.request.keys %}
-                                    <option selected>json</option>
-                                    <option>data</option>
-                                    <option>params</option>
-                                {% elif 'params' in request.request.keys %}
-                                    <option selected>params</option>
-                                    <option>data</option>
-                                    <option>json</option>
-                                {% else %}
-                                    <option>data</option>
-                                    <option>json</option>
-                                    <option>params</option>
+                                <select class="form-control" name="DataType" id="DataType">
+                                    {% if 'data' in request.request.keys %}
+                                        <option selected>data</option>
+                                        <option>json</option>
+                                        <option>params</option>
+                                    {% elif 'json' in request.request.keys %}
+                                        <option selected>json</option>
+                                        <option>data</option>
+                                        <option>params</option>
+                                    {% elif 'params' in request.request.keys %}
+                                        <option selected>params</option>
+                                        <option>data</option>
+                                        <option>json</option>
+                                    {% else %}
+                                        <option>data</option>
+                                        <option>json</option>
+                                        <option>params</option>
 
-                                {% endif %}
-                            </select>
+                                    {% endif %}
+                                </select>
                             </div>
                         </div>
 
@@ -595,7 +678,7 @@
     <script>
 
         $('#DataType').on('change', function () {
-            if ($('#DataType').val() == 'json') {
+            if ($('#DataType').val() === 'json') {
                 $('#add_data').attr('disabled', true);
                 $('#del_data').attr('disabled', true);
                 $('#btn-json-viewer').removeAttr("disabled");
@@ -660,6 +743,36 @@
             $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
         }).find("li").eq(0).trigger("click");
 
+        $(function () {
+            $("#pre_case").sortable();
+            $("#pre_case").disableSelection();
+        });
+
+        $('#pre_collapse').mouseover(function () {
+            $('#pre_case').collapse('open');
+        });
+
+        $('#close_collapse').mouseover(function () {
+            $('#pre_case').collapse('close');
+        });
+        $('#belong_case_id').on('change', function () {
+            if ($('#belong_case_id').val() !== '请选择') {
+                case_id = $('#belong_case_id').val();
+                case_name = $('#belong_case_id option:selected').text();
+                var href = "<li id=" + case_id + "><a href='/api/edit_case/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                $("#pre_case").append(href);
+            }
+        });
+
+        function remove_self(id) {
+            $(id).remove();
+        }
+
+        $(function () {
+            $('#add_data').text('add ' + $('#DataType').val());
+            $('#del_data').text('del ' + $('#DataType').val());
+        });
     </script>
 {% endblock %}
 

@@ -58,25 +58,19 @@
                 <tbody>
 
                 {% for foo in task %}
-                    <tr>
-                        {% if foo.name == 'celery.backend_cleanup' %}
-                            <td>~</td>
-                        {% else %}
+                    {% if foo.name != 'celery.backend_cleanup' %}
+                        <tr>
                             <td><input type="checkbox" name="task_{{ foo.id }}" value="{{ foo.id }}"/></td>
-                        {% endif %}
-                        <td>{{ forloop.counter }}</td>
-                        {% if foo.enabled == True %}
-                            <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
-                        {% else %}
-                            <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
-                        {% endif %}
-                        <td style="color: #3b87ee">{{ foo.description }}(m/h/d/dM/MY)</td>
-                        <td>{{ foo.name }}</td>
-                        <td>{{ foo.kwargs }}</td>
-                        <td class="am-hide-sm-only">{{ foo.date_changed }}</td>
-                        {% if foo.name == 'celery.backend_cleanup' %}
-                            <td>系统任务，请勿操作哦</td>
-                        {% else %}
+                            <td>{{ forloop.counter }}</td>
+                            {% if foo.enabled == True %}
+                                <td class="am-hide-sm-only"><i class="am-icon-check am-text-warning"></i></td>
+                            {% else %}
+                                <td class="am-hide-sm-only"><i class="am-icon-close am-text-primary"></i></td>
+                            {% endif %}
+                            <td style="color: #3b87ee">{{ foo.description }}(m/h/d/dM/MY)</td>
+                            <td>{{ foo.name }}</td>
+                            <td>{{ foo.kwargs }}</td>
+                            <td class="am-hide-sm-only">{{ foo.date_changed }}</td>
                             <td>
                                 <div class="am-btn-toolbar">
                                     <div class="am-btn-group am-btn-group-xs">
@@ -98,9 +92,8 @@
                                     </div>
                                 </div>
                             </td>
-                        {% endif %}
-
-                    </tr>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
 
 

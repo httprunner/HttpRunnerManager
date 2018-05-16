@@ -15,14 +15,14 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables/parameters</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables/parameters/hooks</a></li>
                 <li><a href="javascript:;" data-target="#tab3">request</a></li>
             </ul>
 
             <div class="am-tabs-bd">
                 <div class="am-tab-panel" id="tab1">
                     <form class="form-horizontal" id="form_config">
-                        <div class="form-group has-feedback has-info">
+                        <div class="form-group">
                             <label for="test_index" class="col-md-2 control-label text-info" style="font-size: 14px;"
                                    hidden>配置索引:</label>
                             <div class="col-md-4">
@@ -32,23 +32,19 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="config_name" class="col-md-2 control-label text-info" style="font-size: 14px;">name:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="config_name" placeholder="配置名称"
-                                       name="config_name"
-                                       value="{{ info.name }}">
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">配置名称</div>
+                                <input type="text" class="form-control" id="config_name" name="config_name"
+                                       placeholder="配置名称" value="{{ info.name }}">
                             </div>
                         </div>
 
-
-                        <div class="form-group has-feedback has-info">
-                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
-                            <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select name="project" class="form-control"
-                                        onchange=info_ajax("#form_config",'/api/edit_config/')>
+                                        onclick="auto_load('#form_config', '/api/add_config/', '#belong_module_id', 'module')">
                                     <option value="{{ info.belong_project }}">{{ info.belong_project }}</option>
                                     {% for obj in project %}
                                         {% ifnotequal info.belong_project obj.project_name %}
@@ -56,27 +52,22 @@
                                         {% endifnotequal %}
                                     {% endfor %}
                                 </select>
-
                             </div>
                         </div>
-
-                        <div class="form-group has-success">
-                            <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
-                            <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属模块</div>
                                 <select id="belong_module_id" name="config_module" class="form-control">
-                                    <option value="{{ info.belong_module.module_name }}">{{ info.belong_module.module_name }}</option>
+                                    <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="config_author" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">author:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="config_author" placeholder="创建者"
-                                       name="config_author"
-                                       value="{{ info.author }}">
-                                <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">编写人员</div>
+                                <input type="text" class="form-control" id="config_author" name="config_author"
+                                       placeholder="创建者" value="{{ info.author }}">
                             </div>
                         </div>
                     </form>
@@ -86,6 +77,8 @@
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
                     <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('hooks')">add hooks</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('hooks')">del hooks</button>
                     <form id="config_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
                             <caption>Variables:</caption>
@@ -152,8 +145,8 @@
                             <tbody>
                             {% for foo in request.parameters %}
                                 <tr>
-                                    <td><input type="checkbox" name="params" style="width:55px"></td>
                                     {% for key, value in foo.items %}
+                                         <td><input type="checkbox" name="params" style="width:55px"></td>
                                         <td><textarea name='test[][key]'
                                                       style="width:100%; border: none">{{ key }}</textarea></td>
                                         <td><textarea name='test[][value]'
@@ -163,6 +156,72 @@
 
                                 </tr>
                             {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </form>
+
+                    <form id="config_hooks">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="hooks">
+                            <caption>hooks:</caption>
+                            <thead>
+                            <tr class="active text-success">
+                                <th width="5%" align="center">Option</th>
+                                <th width="47.5%" align="center">setup_hooks</th>
+                                <th width="47.5%" align="center">teardown_hooks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if request.setup_hooks|length >= request.teardown_hooks|length %}
+                                {% for foo in  request.setup_hooks %}
+                                    <tr>
+                                        <td><input type="checkbox" name="hooks" style="width:55px"></td>
+                                        <td><input type="text" name='test[][key]'
+                                                   value="{{ foo }}" style="width:100%; border: none"></td>
+                                        <td>
+                                            {% for foos in  request.teardown_hooks %}
+                                                {% if forloop.parentloop.counter0 == forloop.counter0 %}
+                                                    <input type="text" name='test[][value]'
+                                                           value="{{ foos }}"
+                                                           style="width:100%; border: none">
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if forloop.counter > request.teardown_hooks|length %}
+                                                <input type="text" name='test[][value]'
+                                                       value=""
+                                                       style="width:100%; border: none">
+
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                {% for foo in  request.teardown_hooks %}
+                                    <tr>
+                                        <td><input type="checkbox" name="hooks" style="width:55px"></td>
+                                        <td>
+                                            {% for foos in  request.setup_hooks %}
+                                                {% if forloop.parentloop.counter0 == forloop.counter0 %}
+                                                    <input type="text" name='test[][key]'
+                                                           value="{{ foos }}"
+                                                           style="width:100%; border: none">
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if forloop.counter > request.setup_hooks|length %}
+                                                <input type="text" name='test[][key]'
+                                                       value=""
+                                                       style="width:100%; border: none">
+
+                                            {% endif %}
+                                        </td>
+                                        <td><input type="text" name='test[][value]'
+                                                   value="{{ foo }}" style="width:100%; border: none"></td>
+
+                                    </tr>
+                                {% endfor %}
+
+                            {% endif %}
 
                             </tbody>
                         </table>
@@ -355,7 +414,7 @@
 
 
         $('#config_data_type').on('change', function () {
-            if ($('#config_data_type').val() == 'json') {
+            if ($('#config_data_type').val() === 'json') {
                 $('#add_data').attr('disabled', true);
                 $('#del_data').attr('disabled', true);
                 $('#btn-json-viewer').removeAttr("disabled");
@@ -412,6 +471,11 @@
                 $('#json-renderer').jsonViewer(input, options);
             });
             $('#btn-json-viewer').click();
+        });
+
+        $(function () {
+            $('#add_data').text('add ' + $('#config_data_type').val());
+            $('#del_data').text('del ' + $('#config_data_type').val());
         });
 
     </script>

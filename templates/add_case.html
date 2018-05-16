@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
     <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
         <div class="listbiaoti am-cf">
@@ -15,7 +14,7 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables/parameters</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables/parameters/hooks</a></li>
                 <li><a href="javascript:;" data-target="#tab3">request</a></li>
                 <li><a href="javascript:;" data-target="#tab4">extract/validate</a></li>
             </ul>
@@ -23,23 +22,20 @@
             <div class="am-tabs-bd">
                 <div class="am-tab-panel" id="tab1">
                     <form class="form-horizontal" id="form_message">
-                        <div class="form-group has-feedback has-info">
-                            <label for="case_name" class="col-md-2 control-label text-info" style="font-size: 14px;">name:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="case_name" placeholder="用例名称"
-                                       name="case_name"
-                                       value="">
-                                <span class="glyphicon glyphicon-certificate form-control-feedback"
-                                      aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">用例名称</div>
+                                <input type="text" class="form-control" id="case_name" name="case_name"
+                                       placeholder="用例名称">
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
-                            <label for="project" class="col-md-2 control-label text-info" style="font-size: 14px;">project:</label>
-                            <div class="col-md-4">
-                                <select name="project" class="form-control"
-                                        onchange=info_ajax("#form_message","/api/add_case/")>
-                                    <option value=请选择>请选择</option>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属项目</div>
+                                <select id='project' name="project" class="form-control"
+                                        onclick="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')">
+                                    <option value="请选择">请选择</option>
                                     {% for foo in project %}
                                         <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                     {% endfor %}
@@ -47,43 +43,58 @@
                             </div>
                         </div>
 
-                        <div class="form-group has-success">
-                            <label for="module" class="col-md-2 control-label text-info" style="font-size: 14px;">module:</label>
-                            <div class="col-md-4">
-                                <select id="belong_module_id" name="module" class="form-control">
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                                <select id="belong_module_id" name="module" class="form-control"
+                                        onclick="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
                                 </select>
                             </div>
                         </div>
 
-
-                        <div class="form-group has-feedback has-info">
-                            <label for="include" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">include:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name"
-                                       placeholder="config>case_name1>casename2"
-                                       name="include"
-                                       value="">
-                                <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">可选用例</div>
+                                <select id="belong_case_id" name="include" class="form-control">
+                                </select>
                             </div>
                         </div>
 
-                        <div class="form-group has-feedback has-info">
-                            <label for="author" class="col-md-2 control-label text-info"
-                                   style="font-size: 14px;">author:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="dev_name" placeholder="创建者" name="author"
-                                       value="{{ account }}">
-                                <span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">编写人员</div>
+                                <input type="text" class="form-control" id="author" name="author"
+                                       placeholder="用例编写人员" value="{{ account }}">
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">前置条件</div>
+
+                                <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
+                                   style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
+                                   data-am-collapse="{target: '#pre_case'}">
+                                    依 赖 用 例 执 行 顺 序
+                                </a>
+                                <nav>
+                                    <ul id="pre_case" class="am-nav am-collapse">
+                                    </ul>
+                                </nav>
+
+                            </div>
+                        </div>
+
                     </form>
                 </div>
+
                 <div class="am-tab-panel" id="tab2">
                     <button class="btn btn-info" value="添 加" onclick="add_row('variables')">add variables</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('variables')">del variables</button>
                     <button class="btn btn-info" value="添 加" onclick="add_params('params')">add param</button>
                     <button class="btn btn-danger" value="删 除" onclick="del_row('params')">del param</button>
+                    <button class="btn btn-info" value="添 加" onclick="add_row('hooks')">add hooks</button>
+                    <button class="btn btn-danger" value="删 除" onclick="del_row('hooks')">del hooks</button>
 
                     <form id="form_variables">
                         <table class="table table-hover table-condensed table-bordered table-striped" id="variables">
@@ -115,6 +126,22 @@
                             </tbody>
                         </table>
                     </form>
+
+                    <form id="form_hooks">
+                        <table class="table table-hover table-condensed table-bordered table-striped" id="hooks">
+                            <caption>hooks:</caption>
+                            <thead>
+                            <tr class="active text-success">
+                                <th width="5%" align="center">Option</th>
+                                <th width="47.5%" align="center">setup_hooks</th>
+                                <th width="47.5%" align="center">teardown_hooks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </form>
+
                 </div>
 
                 <div class="am-tab-panel" id="tab3">
@@ -126,26 +153,26 @@
                             </div>
                         </div>
 
-                         <div class="form-group ">
+                        <div class="form-group ">
                             <div class="input-group">
                                 <div class="input-group-addon">Method</div>
-                                   <select class="form-control" name="method" id="method">
-                                <option>POST</option>
-                                <option>GET</option>
-                                <option>PUT</option>
-                                <option>DELETE</option>
-                            </select>
+                                <select class="form-control" name="method" id="method">
+                                    <option>POST</option>
+                                    <option>GET</option>
+                                    <option>PUT</option>
+                                    <option>DELETE</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group ">
                             <div class="input-group">
                                 <div class="input-group-addon">Type</div>
-                                  <select class="form-control" name="DataType" id="DataType">
-                                <option>data</option>
-                                <option>json</option>
-                                <option>params</option>
-                            </select>
+                                <select class="form-control" name="DataType" id="DataType">
+                                    <option>data</option>
+                                    <option>json</option>
+                                    <option>params</option>
+                                </select>
                             </div>
                         </div>
 
@@ -227,6 +254,7 @@
                             </tbody>
                         </table>
                     </form>
+
                 </div>
             </div>
 
@@ -243,6 +271,8 @@
         </div>
     </div>
     <script>
+
+
         $('#DataType').on('change', function () {
             if ($('#DataType').val() == 'json') {
                 $('#add_data').attr('disabled', true);
@@ -308,6 +338,35 @@
             var target = $(this).children("a").attr("data-target");
             $(target).addClass("am-active").siblings(".am-tab-panel").removeClass("am-active");
         }).find("li").eq(0).trigger("click");
+
+        $(function () {
+            $("#pre_case").sortable();
+            $("#pre_case").disableSelection();
+        });
+
+        $('#pre_collapse').mouseover(function () {
+            $('#pre_case').collapse('open');
+        });
+
+        $('#close_collapse').mouseover(function () {
+            $('#pre_case').collapse('close');
+        });
+
+        $('#belong_case_id').on('change', function () {
+            if ($('#belong_case_id').val() !== '请选择') {
+                case_id = $('#belong_case_id').val();
+                case_name = $('#belong_case_id option:selected').text();
+                var href = "<li id=" + case_id + "><a href='/api/edit_case/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                $("#pre_case").append(href);
+            }
+        });
+
+        function remove_self(id) {
+            $(id).remove();
+        }
+
     </script>
+
 
 {% endblock %}

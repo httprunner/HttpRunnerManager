@@ -16,7 +16,8 @@
                         <label class="control-label col-md-1 text-primary" for="module_name">模块名称：</label>
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="module_name"
-                                   aria-describedby="inputSuccess3Status" name="module_name" placeholder="请输入模块名称" value="">
+                                   aria-describedby="inputSuccess3Status" name="module_name" placeholder="请输入模块名称"
+                                   value="">
                             <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -24,7 +25,7 @@
                         <label class="control-label col-md-1 text-primary" for="belong_project">所属项目：</label>
                         <div class="col-md-5">
                             <select name="belong_project" class="form-control">
-                            <option value="请选择">请选择</option>
+                                <option value="请选择">请选择</option>
                                 {% for foo in  data %}
                                     <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                 {% endfor %}

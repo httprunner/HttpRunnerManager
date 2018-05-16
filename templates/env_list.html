@@ -162,7 +162,8 @@
                 }
             });
         }
-         $('#select_all').click(function () {
+
+        $('#select_all').click(function () {
             var isChecked = $(this).prop("checked");
             $("input[name^='env']").prop("checked", isChecked);
         })
