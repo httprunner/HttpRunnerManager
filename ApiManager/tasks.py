@@ -6,7 +6,7 @@ import time
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
-from ApiManager.models import ProjectInfo, ModuleInfo
+from ApiManager.models import ProjectInfo
 from ApiManager.utils.operation import add_test_reports
 from ApiManager.utils.runner import run_by_project, run_by_module
 from httprunner import HttpRunner, logger
@@ -14,6 +14,12 @@ from httprunner import HttpRunner, logger
 
 @shared_task
 def main_hrun(testset_path, report_name):
+    """
+    用例运行
+    :param testset_path: dict or list
+    :param report_name: str
+    :return:
+    """
     logger.setup_logger('DEBUG')
     kwargs = {
         "failfast": False,
@@ -26,14 +32,20 @@ def main_hrun(testset_path, report_name):
 
 
 @shared_task
-def project_hrun(env_name, project):
+def project_hrun(base_url, project, config):
+    """
+    异步运行整个项目
+    :param env_name: str: 环境地址
+    :param project: str
+    :return:
+    """
     logger.setup_logger('DEBUG')
     kwargs = {
         "failfast": False,
     }
     runner = HttpRunner(**kwargs)
     id = ProjectInfo.objects.get(project_name=project).id
-    testcases_dict = run_by_project(id, env_name)
+    testcases_dict = run_by_project(id, base_url, config)
 
     run_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     runner.run(testcases_dict)
@@ -42,18 +54,24 @@ def project_hrun(env_name, project):
 
 
 @shared_task
-def module_hrun(env_name, project, module):
+def module_hrun(base_url, module, project, config):
+    """
+    异步运行模块
+    :param env_name: str: 环境地址
+    :param project: str：项目所属模块
+    :param module: str：模块名称
+    :return:
+    """
     logger.setup_logger('DEBUG')
     kwargs = {
         "failfast": False,
     }
     runner = HttpRunner(**kwargs)
     testcase_lists = []
-    module = module.split(',')
+    module = list(module)
     try:
-        for module_name in module:
-            id = ModuleInfo.objects.get(module_name__exact=module_name, belong_project__project_name=project).id
-            testcase_lists.extend(run_by_module(id, env_name))
+        for value in module:
+            testcase_lists.extend(run_by_module(value[0], base_url, config))
     except ObjectDoesNotExist:
         return '找不到模块信息'
     run_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
