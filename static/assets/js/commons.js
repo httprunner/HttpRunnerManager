@@ -1,29 +1,89 @@
 /*动态改变模块信息*/
-function show_module(module_info) {
+function show_module(module_info, id) {
     module_info = module_info.split('replaceFlag');
-    var a = $("#belong_module_id");
+    var a = $(id);
     a.empty();
     for (var i = 0; i < module_info.length; i++) {
-        var value = module_info[i];
-        a.prepend("<option value='" + value + "' >" + value + "</option>")
+        if (module_info[i] !== "") {
+            var value = module_info[i].split('^=');
+            a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
+        }
     }
+    a.prepend("<option value='请选择' >请选择</option>");
+
+}
+
+function show_case(case_info, id) {
+    case_info = case_info.split('replaceFlag');
+    var a = $(id);
+    a.empty();
+    for (var i = 0; i < case_info.length; i++) {
+        if (case_info[i] !== "") {
+            var value = case_info[i].split('^=');
+            a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
+        }
+    }
+    a.prepend("<option value='请选择' >单接口用例，无需依赖</option>");
 
 }
 
 /*表单信息异步传输*/
 function info_ajax(id, url) {
     var data = $(id).serializeJSON();
+    if (id === '#add_task') {
+        var include = [];
+        var i = 0;
+        $("ul#pre_case li a").each(function () {
+            include[i++] = [$(this).attr('id'), $(this).text()];
+        });
+        data['module'] = include;
+    }
+
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (data) {
+            if (data !== 'ok') {
+                if (data.indexOf('/api/') !== -1) {
+                    window.location.href = data;
+                } else {
+                    myAlert(data);
+                }
+            }
+            else {
+                window.location.reload();
+            }
+        }
+        ,
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    });
+
+}
+
+function auto_load(id, url, target, type) {
+    var data = $(id).serializeJSON();
     if (id === '#form_message') {
         data = {
             "test": {
-                "name": data
+                "name": data,
+                "type": type
             }
         }
-    }
-    else if (id === '#form_config') {
+    } else if (id === '#form_config') {
         data = {
             "config": {
-                "name": data
+                "name": data,
+                "type": type
+            }
+        }
+    } else {
+        data = {
+            "task": {
+                "name": data,
             }
         }
     }
@@ -33,16 +93,10 @@ function info_ajax(id, url) {
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (data) {
-            if (id !== '#form_message' && id !== '#form_config') {
-                if (data !== 'ok') {
-                    myAlert(data);
-                }
-                else {
-                    window.location.reload();
-                }
-            }
-            else {
-                show_module(data)
+            if (type === 'module') {
+                show_module(data, target)
+            } else {
+                show_case(data, target)
             }
         }
         ,
@@ -98,6 +152,30 @@ function del_data_ajax(id, url) {
     });
 }
 
+function copy_data_ajax(id, url) {
+    var data = {
+        "data": $(id).serializeJSON(),
+        'mode': 'copy'
+    };
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (data) {
+            if (data !== 'ok') {
+                myAlert(data);
+            }
+            else {
+                window.location.reload();
+            }
+        },
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    });
+}
+
 function case_ajax(type) {
     var url = $("#url").serializeJSON();
     var method = $("#method").serializeJSON();
@@ -105,8 +183,14 @@ function case_ajax(type) {
     var caseInfo = $("#form_message").serializeJSON();
     var variables = $("#form_variables").serializeJSON();
     var request_data = null;
-    if (dataType.DataType == 'json') {
-        request_data = eval('(' + $('#json-input').val() + ')');
+    if (dataType.DataType === 'json') {
+        try {
+            request_data = eval('(' + $('#json-input').val() + ')');
+        }
+        catch (err) {
+            myAlert('Json格式输入有误！')
+            return
+        }
     } else {
         request_data = $("#form_request_data").serializeJSON();
     }
@@ -114,7 +198,14 @@ function case_ajax(type) {
     var extract = $("#form_extract").serializeJSON();
     var validate = $("#form_validate").serializeJSON();
     var parameters = $('#form_params').serializeJSON();
-    var test = {
+    var hooks = $('#form_hooks').serializeJSON();
+    var include = [];
+    var i = 0;
+    $("ul#pre_case li a").each(function () {
+        include[i++] = [$(this).attr('id'), $(this).text()];
+    });
+    caseInfo['include'] = include;
+    const test = {
         "test": {
             "name": caseInfo,
             "parameters": parameters,
@@ -127,8 +218,8 @@ function case_ajax(type) {
                 "request_data": request_data
             },
             "extract": extract,
-            "validate": validate
-
+            "validate": validate,
+            "hooks": hooks,
         }
     };
     if (type === 'edit') {
@@ -145,7 +236,11 @@ function case_ajax(type) {
             if (data === 'session invalid') {
                 window.location.href = "/api/login/";
             } else {
-                myAlert(data)
+                if (data.indexOf('/api/') != -1) {
+                    window.location.href = data;
+                } else {
+                    myAlert(data);
+                }
             }
         },
         error: function () {
@@ -159,14 +254,22 @@ function config_ajax(type) {
     var caseInfo = $("#form_config").serializeJSON();
     var variables = $("#config_variables").serializeJSON();
     var parameters = $('#config_params').serializeJSON();
+    var hooks = $('#config_hooks').serializeJSON();
     var request_data = null;
     if (dataType.DataType === 'json') {
-        request_data = eval('(' + $('#json-input').val() + ')');
+        try {
+            request_data = eval('(' + $('#json-input').val() + ')');
+        }
+        catch (err) {
+            myAlert('Json格式输入有误！')
+            return
+        }
     } else {
         request_data = $("#config_request_data").serializeJSON();
     }
     var headers = $("#config_request_headers").serializeJSON();
-    var config = {
+
+    const config = {
         "config": {
             "name": caseInfo,
             "variables": variables,
@@ -175,7 +278,9 @@ function config_ajax(type) {
                 "headers": headers,
                 "type": dataType.DataType,
                 "request_data": request_data
-            }
+            },
+            "hooks": hooks,
+
         }
     };
     if (type === 'edit') {
@@ -192,7 +297,11 @@ function config_ajax(type) {
             if (data === 'session invalid') {
                 window.location.href = "/api/login/";
             } else {
-                myAlert(data)
+                if (data.indexOf('/api/') != -1) {
+                    window.location.href = data;
+                } else {
+                    myAlert(data);
+                }
             }
         },
         error: function () {
@@ -291,3 +400,7 @@ function add_params(id) {
     newTdObj1.innerHTML = key;
     newTdObj2.innerHTML = value;
 }
+
+
+
+
