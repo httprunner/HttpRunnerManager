@@ -34,8 +34,7 @@ Key Features
             'HOST': '127.0.0.1',  # 数据库所在服务器ip地址
             'PORT': '3306',  # 监听端口 默认3306即可
         }
-}
-}
+    }
     ```
 3. 安装rabbitmq消息中间件，启动服务，访问：http://host:15672/#/ host即为你部署rabbitmq的服务器ip地址
    username：guest、Password：guest, 成功登陆即可
