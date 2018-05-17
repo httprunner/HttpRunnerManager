@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponse
+from django.http import HttpResponse
 
 
 def process(request, **kwargs):
@@ -16,7 +16,6 @@ def process(request, **kwargs):
         # 执行view.py中的函数，并获取其返回值
         result = fun(request, index) if index else fun(request)
     except (ImportError, AttributeError):
-        raise
-        # return HttpResponse('404 Not Found')
+        return HttpResponse('404 Not Found')
 
     return result
