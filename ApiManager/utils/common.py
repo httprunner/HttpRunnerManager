@@ -146,11 +146,9 @@ def load_cases(**kwargs):
     :return: str: 用例信息
     """
     belong_project = kwargs.get('name').get('project')
-    module_name = kwargs.get('name').get('module')
+    module = kwargs.get('name').get('module')
     case_info = TestCaseInfo.objects.filter(belong_project=belong_project,
-                                            belong_module__module_name=module_name, type=1).values_list(
-        'id',
-        'name').order_by(
+                                            belong_module=module, type=1).values_list('id', 'name').order_by(
         '-create_time')
     case_info = list(case_info)
     string = ''
