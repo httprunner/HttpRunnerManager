@@ -147,6 +147,8 @@ def load_cases(**kwargs):
     """
     belong_project = kwargs.get('name').get('project')
     module = kwargs.get('name').get('module')
+    if module == '请选择':
+        return ''
     case_info = TestCaseInfo.objects.filter(belong_project=belong_project,
                                             belong_module=module, type=1).values_list('id', 'name').order_by(
         '-create_time')
