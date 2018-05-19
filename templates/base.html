@@ -13,15 +13,16 @@
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link rel="stylesheet" href="{% static "assets/css/amazeui.min.css" %}"/>
+    <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css"/>
     <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/jquery.json-viewer.css" %}">
 
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 
-    <script src="{% static "assets/js/amazeui.min.js" %}"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.amazeui.org/amazeui/2.7.2/js/amazeui.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
+    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="{% static "assets/js/app.js" %}"></script>
     <script src="{% static "assets/js/commons.js" %}"></script>
     <script src="{% static "assets/js/jquery.json-viewer.js" %}"></script>
@@ -59,20 +60,21 @@
                 <li><a href="/api/module_list/1/">模 块 列 表</a></li>
                 <li><a href="/api/add_module/">新 增 模 块</a></li>
             </ul>
-            <h3 class="am-icon-volume-up"><em></em> <a href="#">用例管理</a></h3>
+            <h3 class="am-icon-bug"><em></em> <a href="#">用例管理</a></h3>
             <ul>
                 <li><a href="/api/test_list/1/">用 例 列 表</a></li>
                 <li><a href="/api/config_list/1/">配 置 列 表</a></li>
                 <li><a href="/api/add_config/">新 增 配 置</a></li>
                 <li><a href="/api/add_case/">新 增 用 例</a></li>
             </ul>
-            <h3 class="am-icon-volume-up"><em></em> <a href="#">报告管理</a></h3>
+            <h3 class="am-icon-reorder"><em></em> <a href="#">报告管理</a></h3>
             <ul>
                 <li><a href="/api/report_list/1/">查看报告</a></li>
             </ul>
             <h3 class="am-icon-gears"><em></em> <a href="#">系统设置</a></h3>
             <ul>
                 <li><a href="/api/env_list/1/">运 行 环 境</a></li>
+                <li><a href="/api/periodictask/1/">定 时 任 务</a></li>
                 <li><a href="http://localhost:5555/dashboard">任 务 监 控</a></li>
             </ul>
         </div>
@@ -103,21 +105,21 @@
                         href="/api/add_case/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/add_task/'">新增任务<a
+                        href="/api/add_task/" class="am-close am-close-spin">~</a>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/test_list/1/'">用例列表<a
+                        href="/api/test_list/1/" class="am-close am-close-spin">~</a>
+                </button>
+            </li>
         </ul>
     </div>
-    <form id="form" action="/api/upload/" method="post" enctype="multipart/form-data">
-        <div class="am-modal am-modal-confirm" tabindex="-1" id="bulk_uploadcase">
-            <div class="am-modal-dialog">
-                <div class="am-modal-hd">
-                    <h5 class="modal-title" id="HttpRunnerManager">HttpRunnerManager</h5>
-                </div>
-                <div class="am-modal-bd" id="uploadfile">
-                    <input id="input-b9" name="file" type="file" class="file">
-                    <div id="kartik-file-errors"></div>
-                </div>
-            </div>
-        </div>
-    </form>
+
     {% block content %}
 
     {% endblock %}

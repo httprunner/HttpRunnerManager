@@ -27,14 +27,14 @@
             <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
                 <thead>
                 <tr class="am-success">
-                    <th class="table-check"><i class="am-icon-check am-text-warning"></i></th>
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
                     <th class="table-title">序号</th>
                     <th class="table-type">报告名称</th>
                     <th class="table-date am-hide-sm-only">开始时间</th>
                     <th class="table-title">测试结果</th>
                     <th class="table-title">总计用例</th>
                     <th class="table-title">成功用例</th>
-                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th width="163px" class="table-title">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,13 +46,27 @@
                         <td><a href="/api/view_report/{{ foo.id }}">{{ foo.report_name }}</a></td>
                         <td>{{ foo.start_at }}</td>
                         {% if foo.status == True %}
-                            <td style="color: #00e359 ">Pass</td>
+                            <td style="color: #00e359;  font-size: 15px ">Pass</td>
                         {% else %}
-                            <td style="color: red">Fail</td>
+                            <td style="color: red;  font-size: 15px">Fail</td>
                         {% endif %}
                         <td>{{ foo.testsRun }}</td>
                         <td>{{ foo.successes }}</td>
-                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '下载', trigger: 'hover focus'}"><span
+                                            class="am-icon-copy"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
+                                            onclick="del_data_ajax('{{ foo.id }}', '/api/report_list/1/')"><span
+                                            class="am-icon-trash-o"></span></button>
+                                </div>
+                            </div>
+                        </td>
 
                     </tr>
                 {% endfor %}
@@ -65,5 +79,12 @@
             <hr/>
         </form>
     </div>
+    <script type="text/javascript">
+        $('#select_all').click(function () {
+            var isChecked = $(this).prop("checked");
+            $("input[name^='report']").prop("checked", isChecked);
+        })
+
+    </script>
 
 {% endblock %}

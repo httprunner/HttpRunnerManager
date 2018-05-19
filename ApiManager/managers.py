@@ -36,7 +36,7 @@ class ProjectInfoManager(models.Manager):
         self.create(**kwargs)
 
     def update_project(self, id, **kwargs):  # 如此update_time才会自动更新！！
-        obj = self.get(id=int(id))
+        obj = self.get(id=id)
         obj.project_name = kwargs.get('project_name')
         obj.responsible_name = kwargs.get('responsible_name')
         obj.test_user = kwargs.get('test_user')
@@ -51,7 +51,7 @@ class ProjectInfoManager(models.Manager):
             return self.filter(project_name__exact=pro_name).count()
         else:
             if id is not None:
-                return self.get(id=int(id)).project_name
+                return self.get(id=id).project_name
             return self.get(project_name__exact=pro_name)
 
     def get_pro_info(self, type=True):
@@ -69,7 +69,7 @@ class ModuleInfoManager(models.Manager):
         self.create(**kwargs)
 
     def update_module(self, id, **kwargs):
-        obj = self.get(id=int(id))
+        obj = self.get(id=id)
         obj.module_name = kwargs.get('module_name')
         obj.test_user = kwargs.get('test_user')
         obj.simple_desc = kwargs.get('simple_desc')
@@ -77,18 +77,13 @@ class ModuleInfoManager(models.Manager):
 
         obj.save()
 
-    def get_module_name(self, module_name, type=True, id=None, project=None):
+    def get_module_name(self, module_name, type=True, id=None):
         if type:
             return self.filter(module_name__exact=module_name).count()
         else:
             if id is not None:
-                return self.get(id=int(id)).module_name
-            return self.get(belong_project__project_name__exact=project, module_name__exact=module_name)
-
-    def get_module_info(self, belong_project):
-        return self.filter(belong_project__project_name__exact=belong_project).values_list('module_name',
-                                                                                           flat=True).order_by(
-            '-create_time')
+                return self.get(id=id).module_name
+            return self.get(id=module_name)
 
 
 '''用例信息表操作'''
@@ -101,9 +96,10 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
 
-    def update_case(self, **kwargs):
+    def update_case(self, belong_module, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
-        obj = self.get(id=int(case_info.pop('test_index')))
+        obj = self.get(id=case_info.pop('test_index'))
+        obj.belong_module = belong_module
         obj.name = kwargs.get('test').get('name')
         obj.author = case_info.pop('author')
         obj.include = case_info.pop('include')
@@ -116,9 +112,10 @@ class TestCaseInfoManager(models.Manager):
                     belong_module=belong_module,
                     author=config_info.pop('config_author'), type=2, request=kwargs)
 
-    def update_config(self, **kwargs):
+    def update_config(self, belong_module, **kwargs):
         config_info = kwargs.get('config').pop('config_info')
-        obj = self.get(id=int(config_info.pop('test_index')))
+        obj = self.get(id=config_info.pop('test_index'))
+        obj.belong_module = belong_module
         obj.name = kwargs.get('config').get('name')
         obj.author = config_info.pop('config_author')
         obj.request = kwargs
@@ -130,7 +127,7 @@ class TestCaseInfoManager(models.Manager):
 
     def get_case_by_id(self, index, type=True):
         if type:
-            return self.filter(id=int(index)).all()
+            return self.filter(id=index).all()
         else:
             return self.get(id=index).name
 
@@ -143,14 +140,14 @@ class EnvInfoManager(models.Manager):
         self.create(**kwargs)
 
     def update_env(self, index, **kwargs):
-        obj = self.get(id=int(index))
+        obj = self.get(id=index)
         obj.env_name = kwargs.pop('env_name')
         obj.base_url = kwargs.pop('base_url')
         obj.simple_desc = kwargs.pop('simple_desc')
         obj.save()
 
     def get_env_name(self, index):
-        return self.get(id=int(index)).env_name
+        return self.get(id=index).env_name
 
     def delete_env(self, index):
-        self.get(id=int(index)).delete()
+        self.get(id=index).delete()

@@ -16,7 +16,8 @@
                         <label class="control-label col-md-1 text-primary" for="module_name">模块名称：</label>
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="module_name"
-                                   aria-describedby="inputSuccess3Status" name="module_name" placeholder="请输入模块名称" value="">
+                                   aria-describedby="inputSuccess3Status" name="module_name" placeholder="请输入模块名称"
+                                   value="">
                             <span class="glyphicon glyphicon-th-list form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -24,7 +25,7 @@
                         <label class="control-label col-md-1 text-primary" for="belong_project">所属项目：</label>
                         <div class="col-md-5">
                             <select name="belong_project" class="form-control">
-                            <option value="请选择">请选择</option>
+                                <option value="请选择">请选择</option>
                                 {% for foo in  data %}
                                     <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
                                 {% endfor %}
@@ -45,7 +46,7 @@
                         <label class="control-label col-md-1 text-primary" for="simple_desc">简要描述：</label>
                         <div class="col-md-5">
                             <textarea type="text" rows="3" class="form-control" id="simple_desc" name="simple_desc"
-                                      aria-describedby="inputSuccess3Status" placeholder="项目简单概述"></textarea>
+                                      aria-describedby="inputSuccess3Status" placeholder="模块简单概述"></textarea>
                             <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>
@@ -54,7 +55,7 @@
                         <label class="control-label col-md-1 text-primary" for="other_desc">其他信息：</label>
                         <div class="col-md-5">
                             <textarea type="text" rows="3" class="form-control" id="other_desc" name="other_desc"
-                                      aria-describedby="inputSuccess3Status" placeholder="项目其他相关信息描述"></textarea>
+                                      aria-describedby="inputSuccess3Status" placeholder="模块其他相关信息描述"></textarea>
                             <span class="glyphicon glyphicon-paperclip form-control-feedback" aria-hidden="true"></span>
                         </div>
                     </div>

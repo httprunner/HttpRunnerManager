@@ -1,7 +1,5 @@
-# Create your tests here.
-import os
+import os,django
 
-import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HttpRunnerManager.settings")
+django.setup()
 
-from ApiManager.models import ProjectInfo
-print(1)

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}新增任务{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+            <div class="listbiaoti am-cf">
+                <ul class="am-icon-flag on"> 系统设置</ul>
+                <dl class="am-icon-home" style="float: right;"> 当前位置： 定时任务 > <a href="#">新增任务</a></dl>
+            </div>
+            <div class="fbneirong">
+                <form class="form-horizontal" id="add_task">
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">任务名称</div>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="定时任务名称">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">运行环境</div>
+                            <select name="base_url" class="form-control">
+                                <option value="">自带环境</option>
+                                {% for foo in  env %}
+                                    <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">可选配置</div>
+                            <select name="config" id="config" class="form-control"
+                                    onmouseover="load_config('/api/load_config/')">
+                                <option value="">无需配置</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">选择项目</div>
+                            <select name="project" class="form-control"
+                                    onclick="auto_load('#add_task', '/api/add_task/', '#belong_module_id', 'module')">
+                                <option value="">请选择</option>
+                                {% for foo in  project %}
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">可选模块</div>
+                            <select id="belong_module_id" class="form-control" name="module">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">定时配置</div>
+                            <input type="text" class="form-control" id="crontab_time" name="crontab_time"
+                                   placeholder="请输入正确的crontab表达式 例如： 11 * * * *">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" id="close_collapse" style="color: #0a628f">模块列表</div>
+
+                            <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
+                               style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
+                               data-am-collapse="{target: '#pre_case'}">
+                                模 块 队 列
+                            </a>
+                            <nav>
+                                <ul id="pre_case" class="am-nav am-collapse">
+                                </ul>
+                            </nav>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <a class="btn btn-primary" onclick="info_ajax('#add_task', '/api/add_task/')">点 击 提 交
+                            </a>
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $("#pre_case").sortable();
+            $("#pre_case").disableSelection();
+        });
+
+        $('#pre_collapse').mouseover(function () {
+            $('#pre_case').collapse('open');
+        });
+
+        $('#close_collapse').mouseover(function () {
+            $('#pre_case').collapse('close');
+        });
+
+        $('#belong_module_id').on('change', function () {
+            if ($('#belong_module_id').val() !== '请选择') {
+                module_id = $('#belong_module_id').val();
+                module_name = $('#belong_module_id option:selected').text();
+                var href = "<li id=" + module_id + "><a href='/api/edit_case/" + module_id + "/' id = " + module_id + ">" + module_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + module_id + "')>✖</i></li>";
+                $("#pre_case").append(href);
+            }
+        });
+
+        function remove_self(id) {
+            $(id).remove();
+        }
+
+        function load_config(url) {
+            var data = {
+                "mode": 'auto_load',
+            };
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    show_config(data);
+                }, error: function () {
+                    myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                }
+            });
+        }
+
+        function show_config(config_info) {
+            config_info = config_info.split('replaceFlag');
+            var a = $('#config');
+            a.empty();
+            for (var i = 0; i < config_info.length; i++) {
+                if (config_info[i] !== "") {
+                    var value = config_info[i].split('^=');
+                    a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
+                }
+            }
+            a.prepend("<option value='' >无需配置</option>");
+
+        }
+    </script>
+
+{% endblock %}
