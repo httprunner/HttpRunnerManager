@@ -327,7 +327,10 @@ def copy_test_data(id, name):
     test.id = None
     test.name = name
     request = eval(test.request)
-    request.get('test')['name'] = name
+    if 'test' in request.keys():
+        request.get('test')['name'] = name
+    else:
+        request.get('config')['name'] = name
     test.request = request
     test.save()
     logging.info('{name}用例/配置添加成功'.format(name=name))
