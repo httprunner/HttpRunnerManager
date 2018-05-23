@@ -161,7 +161,6 @@ def add_case(request):
         if request.is_ajax():
             try:
                 testcase_info = json.loads(request.body.decode('utf-8'))
-                print(testcase_info)
             except ValueError:
                 logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=testcase_info))
                 return '用例信息解析异常'
@@ -698,7 +697,10 @@ def upload_file(request):
         try:
             project_name = request.POST.get('project')
             module_name = request.POST.get('module')
-        except Exception as e:
+            if project_name == '请选择' or module_name == '请选择':
+                respon = json.dumps({"status": '项目或模块不能为空'})
+                return HttpResponse(respon)
+        except KeyError as e:
             respon = json.dumps({"status": e})
             return HttpResponse(respon)
         obj = request.FILES.getlist('upload')
@@ -712,16 +714,14 @@ def upload_file(request):
         # 上传文件个数
         fileNum = len(obj)
         if fileNum > 1:
-            print('批量上传开启')
             file_list = []
             for index,filename in enumerate(obj):
                 temp_save = upload_path + filename.name
                 file_list.append(temp_save)
                 if '\\' in temp_save:
-                    temp_save = temp_save.replace('\\\\', '\\')
+                    temp_save = temp_save.replace('\\', '/')
                 # 上传文件落地至upload文件夹
                 try:
-
                     f = open(temp_save, 'wb')
                     for line in obj[index].chunks():
                         f.write(line)
@@ -730,12 +730,10 @@ def upload_file(request):
                     respon = json.dumps({"status": e})
                     return HttpResponse(respon)
         elif fileNum == 1:
-            print("单文件上传开启")
-            print(obj[0])
             temp_save = upload_path + obj[0].name
-            # windows 和linux兼容处理
+        # windows 和linux兼容处理
             if '\\' in temp_save:
-                temp_save = temp_save.replace('\\\\', '\\')
+                temp_save = temp_save.replace('\\', '/')
             # 上传文件落地至upload文件夹
             try:
                 f = open(temp_save, 'wb')
@@ -743,7 +741,6 @@ def upload_file(request):
                     f.write(line)
                 f.close()
             except Exception as e:
-                print(e)
                 respon = json.dumps({"status": e})
                 return HttpResponse(respon)
         else:
@@ -760,9 +757,8 @@ def upload_file(request):
                 return HttpResponse(respon)
         elif fileNum > 1:
             for file in file_list:
-                print(file)
                 try:
-                    upload_file_logic(file)
+                    upload_file_logic(file, project_name, module_name)
                     respon = json.dumps({"status": "上传成功"})
                 except Exception as e:
                     respon = json.dumps({"status": e})
@@ -776,21 +772,16 @@ def get_project_info(request):
      :return:
      """
     if request.session.get('login_status'):
-        acount = request.session["now_account"]
         if request.is_ajax():
             try:
                 project_info = json.loads(request.body.decode('utf-8'))
             except ValueError:
-                logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=project_info))
-                return '用例信息解析异常'
+                logger.error('获取项目信息异常：{testcase_info}'.format(testcase_info=project_info))
+                return '获取信息解析异常'
             msg = load_modules(**project_info)
             return HttpResponse(get_ajax_msg(msg, '/api/test_list/1/'))
         elif request.method == 'GET':
-            manage_info = {
-                'account': acount,
-                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time'),
-            }
-            return render_to_response('add_case.html', manage_info)
+            return render_to_response("不支持此种方式请求接口")
     else:
         return HttpResponseRedirect("/api/login/")
 
