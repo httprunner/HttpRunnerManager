@@ -83,6 +83,8 @@ class ModuleInfoManager(models.Manager):
         else:
             if id is not None:
                 return self.get(id=id).module_name
+            else:
+                return self.get(module_name=module_name)
             return self.get(id=module_name)
 
 
