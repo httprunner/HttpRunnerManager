@@ -327,7 +327,10 @@ def copy_test_data(id, name):
     test.id = None
     test.name = name
     request = eval(test.request)
-    request.get('test')['name'] = name
+    if 'test' in request.keys():
+        request.get('test')['name'] = name
+    else:
+        request.get('config')['name'] = name
     test.request = request
     test.save()
     logging.info('{name}用例/配置添加成功'.format(name=name))
@@ -344,6 +347,7 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     """
     kwargs.get('time').pop('start_at')
     report_name = report_name if report_name else start_at
+    kwargs['html_report_name'] = report_name
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),

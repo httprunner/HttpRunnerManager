@@ -9,7 +9,7 @@ function show_module(module_info, id) {
             a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
         }
     }
-    a.prepend("<option value='请选择' >请选择</option>");
+    a.prepend("<option value='请选择' selected>请选择</option>");
 
 }
 
@@ -23,7 +23,7 @@ function show_case(case_info, id) {
             a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
         }
     }
-    a.prepend("<option value='请选择' >单接口用例，无需依赖</option>");
+    a.prepend("<option value='请选择' selected>单接口用例，无需依赖</option>");
 
 }
 

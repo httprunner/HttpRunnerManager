@@ -77,7 +77,7 @@ class TestCaseInfo(BaseTable):
     name = models.CharField('用例/配置名称', max_length=50)
     belong_project = models.CharField('所属项目', max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
-    include = models.CharField('包含config/test', max_length=200, null=True)
+    include = models.CharField('包含config/test', max_length=400, null=True)
     author = models.CharField('编写人员', max_length=20)
     request = models.TextField('请求信息')
     objects = TestCaseInfoManager()
