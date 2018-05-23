@@ -4,7 +4,7 @@ from djcelery.models import PeriodicTask
 
 from ApiManager.models import ModuleInfo, TestCaseInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
-    add_register_data
+    add_register_data, add_upload_data
 from ApiManager.utils.task_opt import create_task
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -127,7 +127,9 @@ def load_modules(**kwargs):
     :param kwargs:  dict：项目相关信息
     :return: str: module_info
     """
-    belong_project = kwargs.get('name').get('project')
+    # belong_project = kwargs.get('name').get('project')
+    belong_project = kwargs.get('task').get('name').get('project')
+
     module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project).values_list(
         'id',
         'module_name').order_by(
@@ -244,9 +246,12 @@ def case_info_logic(type=True, **kwargs):
             return '请先添加模块'
 
         name = test.pop('name')
-        test.setdefault('name', name.pop('case_name'))
+        try:
+            test.setdefault('name', name.pop('case_name'))
 
-        test.setdefault('case_info', name)
+            test.setdefault('case_info', name)
+        except Exception as e:
+            pass
 
         validate = test.pop('validate')
         if validate:
@@ -466,3 +471,36 @@ def register_info_logic(**kwargs):
     :return:
     """
     return add_register_data(**kwargs)
+
+
+def upload_file_logic(files, project=None, module=None):
+    """
+
+    :param file: 需要解析的文件，可以是列表形式
+    :return:  统一返回结果列表
+    """
+    import yaml
+    # res = []
+    # 判断是单一文件还是批量文件
+    if project is None or module is None:
+        pass
+    else:
+        project_info = {"project": project, "module": module}
+    if isinstance(files, (list, str)):
+        # 单文件直接进行解析
+        if isinstance(files, str):
+            with open(files) as f:
+                x = yaml.load(f)
+            for case in x:
+                add_upload_data(case, project_info)
+        else:
+            # 批量文件需要循环解析
+
+            for file in files:
+                with open(file) as f:
+                    x = yaml.load(f)
+                    case_info_logic(x)
+            # return res
+    else:
+        print('入参类型错误，需要list或者str类型')
+        return

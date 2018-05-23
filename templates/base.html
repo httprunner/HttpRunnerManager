@@ -1,7 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="zh-CN">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}{% endblock %}</title>
@@ -12,25 +11,65 @@
 
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
+    <!--最高优先级引用   -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="{% static "assets/css/admin.css" %}">
-    <link rel="stylesheet" href="{% static "assets/css/common.css" %}">
-    <link rel="stylesheet" href="{% static "assets/css/jquery.json-viewer.css" %}">
-
-
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/css/fileinput.css"/>
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/js/fileinput.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/js/fileinput.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/css/fileinput.min.css"/>
+
+    <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="{% static 'assets/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/jquery.json-viewer.css' %}">
+
     <script src="http://cdn.amazeui.org/amazeui/2.7.2/js/amazeui.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
     <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="{% static "assets/js/app.js" %}"></script>
-    <script src="{% static "assets/js/commons.js" %}"></script>
-    <script src="{% static "assets/js/jquery.json-viewer.js" %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    <script src="{% static 'assets/js/commons.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.json-viewer.js' %}"></script>
 
 </head>
 <body class="modal-open">
-
-
+<form  enctype="multipart/form-data" id="upload_project_info">
+    <div class="modal fade" id="bulk_uploadcase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">HttpRunnerManager</h4>
+                </div>
+                <div class="modal-body">
+                    <input name="upload" id="uploadfile" type="file" class="file" multiple/>
+                    <div id="kartik-file-errors"></div>
+                </div>
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">所属项目</div>
+                            <select id='project' name="project" class="form-control"
+                                    onchange="auto_load('#upload_project_info', '/api/get_project_info/', '#upload_belong_module_id', 'module')">
+                                <option value="请选择">请选择</option>
+                                {% for foo in project %}
+                                <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                            <select id="upload_belong_module_id" name="module" class="form-control"
+                                    onchange="auto_load('#upload_project_info', '/api/get_project_info/', '#belong_case_id', 'case')">
+                            </select>
+                        </div>
+                    </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</form>
 <div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
     <div class="am-modal-dialog">
         <div class="am-modal-hd">HttpRunnerManager</div>
@@ -134,8 +173,53 @@
             defaultPlay: true,//默认是否执行效果（默认true）
             returnDefault: false //鼠标从.sideMen移走后返回默认状态（默认false）
         });
+        function initFileInput(ctrlName, uploadUrl) {
+            var control = $('#' + ctrlName);
+            control.fileinput({
+                resizeImage : true,
+                resizePreference : 'width',
+                uploadAsync:false,                             //采用同步上传
+                language : 'zh', //设置语言
+                uploadUrl: '/api/upload_file/',
+                allowedFileExtensions : [ 'yml', 'json'],//接收的文件后缀
+                showUpload : true, //是否显示上传按钮
+                showRemove: false,
+                showCaption : true,//是否显示标题
+                browseClass : "btn btn-primary", //按钮样式
+                previewFileIcon : "<i class='glyphicon glyphicon-king'></i>",
+                maxFileCount : 10,
+                msgFilesTooMany : "选择文件超过了最大数量",
+                maxFileSize : 2000,
+                uploadExtraData:
+                    function(){     //上传时要传输的其他参数
+                        project_name = $('#project option:selected').text();//选中的文本
+                        module_name = $('#upload_belong_module_id option:selected').text();//选中的文本
+                        return {"project":project_name,"module":module_name};
+                    },
+                showClose : false,//显示右上角X关闭
+                overwriteInitial: false, //是否显示预览
+                dropZoneEnabled: false,//是否显示拖拽区域
+            });
+            control.on('fileerror', function(event, data, msg) {
+                myAlert(msg)
+            });
+            control.on("filebatchuploadsuccess", function (event, data) {
+                var obj = data.response;
+                console.log(data.response);
+                $("#bulk_uploadcase").trigger('click');
+                myAlert(obj.status);
+            });
+//            control.on('filepreupload', function(event, data, previewId, index) {
+//                    var form = data.form, files = data.files, extra = data.extra,
+//                        response = data.response, reader = data.reader;
+//                    console.log('File pre upload triggered');
+//                });
+        }
+        initFileInput("uploadfile", "api/upload_file");
+
     </script>
 </div>
+
 
 </body>
 </html>

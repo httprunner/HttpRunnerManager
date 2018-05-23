@@ -51,6 +51,7 @@
                                             <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
                                         {% endifnotequal %}
                                     {% endfor %}
+                                    <option value="请选择">请选择</option>
                                 </select>
                             </div>
                         </div>
@@ -146,7 +147,7 @@
                             {% for foo in request.parameters %}
                                 <tr>
                                     {% for key, value in foo.items %}
-                                         <td><input type="checkbox" name="params" style="width:55px"></td>
+                                        <td><input type="checkbox" name="params" style="width:55px"></td>
                                         <td><textarea name='test[][key]'
                                                       style="width:100%; border: none">{{ key }}</textarea></td>
                                         <td><textarea name='test[][value]'

@@ -1,6 +1,8 @@
 import json
 import logging
+import os
 
+import sys
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
@@ -8,9 +10,9 @@ from djcelery.models import PeriodicTask
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, upload_file_logic, load_modules
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
-    del_report_data
+    del_report_data, add_upload_data
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
 from ApiManager.utils.task_opt import delete_task, change_task_status
@@ -159,6 +161,7 @@ def add_case(request):
         if request.is_ajax():
             try:
                 testcase_info = json.loads(request.body.decode('utf-8'))
+                print(testcase_info)
             except ValueError:
                 logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=testcase_info))
                 return '用例信息解析异常'
@@ -684,3 +687,111 @@ def test_deposit(request):
 
 def test_index(request, id):
     return JsonResponse({'code': 'error', 'status': False})
+
+
+def upload_file(request):
+    import os
+    if request.method == 'GET':
+        return HttpResponse('上传失败，请使用POST方法上传文件')
+    elif request.method == 'POST':
+        # 用于获取前端批量上传上来的文件，Django默认只能接收一个文件，使用getlist接收多个文件
+        try:
+            project_name = request.POST.get('project')
+            module_name = request.POST.get('module')
+        except Exception as e:
+            respon = json.dumps({"status": e})
+            return HttpResponse(respon)
+        obj = request.FILES.getlist('upload')
+        pro_path = sys.path[0]
+        upload_path = pro_path+'/upload/'
+        import shutil
+        # 清空upload下所有文件
+        shutil.rmtree(upload_path)
+        # 重建upload文件夹
+        os.mkdir(upload_path)
+        # 上传文件个数
+        fileNum = len(obj)
+        if fileNum > 1:
+            print('批量上传开启')
+            file_list = []
+            for index,filename in enumerate(obj):
+                temp_save = upload_path + filename.name
+                file_list.append(temp_save)
+                if '\\' in temp_save:
+                    temp_save = temp_save.replace('\\\\', '\\')
+                # 上传文件落地至upload文件夹
+                try:
+
+                    f = open(temp_save, 'wb')
+                    for line in obj[index].chunks():
+                        f.write(line)
+                    f.close()
+                except Exception as e:
+                    respon = json.dumps({"status": e})
+                    return HttpResponse(respon)
+        elif fileNum == 1:
+            print("单文件上传开启")
+            print(obj[0])
+            temp_save = upload_path + obj[0].name
+            # windows 和linux兼容处理
+            if '\\' in temp_save:
+                temp_save = temp_save.replace('\\\\', '\\')
+            # 上传文件落地至upload文件夹
+            try:
+                f = open(temp_save, 'wb')
+                for line in obj[0].chunks():
+                    f.write(line)
+                f.close()
+            except Exception as e:
+                print(e)
+                respon = json.dumps({"status": e})
+                return HttpResponse(respon)
+        else:
+            respon = json.dumps({"status": u'文件上传失败，请重试'})
+            return HttpResponse(respon)
+        # 数据入库主逻辑
+        if fileNum == 1:
+            try:
+                upload_file_logic(temp_save, project_name, module_name),
+                respon = json.dumps({"status": "上传成功"})
+                return HttpResponse(respon)
+            except Exception as e:
+                respon = json.dumps({"status": e})
+                return HttpResponse(respon)
+        elif fileNum > 1:
+            for file in file_list:
+                print(file)
+                try:
+                    upload_file_logic(file)
+                    respon = json.dumps({"status": "上传成功"})
+                except Exception as e:
+                    respon = json.dumps({"status": e})
+            return HttpResponse(respon)
+
+
+def get_project_info(request):
+    """
+     获取项目相关信息
+     :param request:
+     :return:
+     """
+    if request.session.get('login_status'):
+        acount = request.session["now_account"]
+        if request.is_ajax():
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('用例信息解析异常：{testcase_info}'.format(testcase_info=project_info))
+                return '用例信息解析异常'
+            msg = load_modules(**project_info)
+            return HttpResponse(get_ajax_msg(msg, '/api/test_list/1/'))
+        elif request.method == 'GET':
+            manage_info = {
+                'account': acount,
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time'),
+            }
+            return render_to_response('add_case.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+

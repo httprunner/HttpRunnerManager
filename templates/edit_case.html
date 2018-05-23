@@ -52,12 +52,13 @@
                                 <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select name="project" class="form-control"
                                         onchange="auto_load('#form_message', '/api/edit_case/', '#belong_module_id', 'module')">
-                                    <option value="{{ info.belong_project }}">{{ info.belong_project }}</option>
+                                    <option value="{{ info.belong_project }}" selected>{{ info.belong_project }}</option>
                                     {% for obj in project %}
                                         {% ifnotequal info.belong_project obj.project_name %}
                                             <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
                                         {% endifnotequal %}
                                     {% endfor %}
+                                    <option value="请选择">请选择</option>
                                 </select>
                             </div>
                         </div>

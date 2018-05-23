@@ -129,11 +129,17 @@ def add_case_data(type, **kwargs):
     :param kwargs: dict
     :return: ok or tips
     """
-    case_info = kwargs.get('test').get('case_info')
+    try:
+        case_info = kwargs.get('test').get('case_info')
+    except:
+        pass
     case_opt = TestCaseInfo.objects
     name = kwargs.get('test').get('name')
-    module = case_info.get('module')
-    project = case_info.get('project')
+    try:
+        module = case_info.get('module')
+        project = case_info.get('project')
+    except:
+       pass
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
     try:
         if type:
@@ -327,7 +333,10 @@ def copy_test_data(id, name):
     test.id = None
     test.name = name
     request = eval(test.request)
-    request.get('test')['name'] = name
+    if 'test' in request.keys():
+        request.get('test')['name'] = name
+    else:
+        request.get('config')['name'] = name
     test.request = request
     test.save()
     logging.info('{name}用例/配置添加成功'.format(name=name))
@@ -344,6 +353,7 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     """
     kwargs.get('time').pop('start_at')
     report_name = report_name if report_name else start_at
+    kwargs['html_report_name'] = report_name
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
@@ -354,3 +364,26 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     }
 
     TestReports.objects.create(**test_reports)
+
+
+def add_upload_data(data, project_info=None):
+    """
+
+    :param data: 要入库的数据
+    :return:
+    """
+    if project_info is None:
+        pass
+    else:
+        project=project_info.get('project')
+        module = project_info.get('module')
+    if len(data) == 1:
+        name = data.get('test').get('name')
+        # data.get('test').pop('name')
+        data.get('test')['case_info'] = {'name': name, 'project': project, 'module': module, 'author': '', 'include':[]}
+        add_case_data(type=True, **data)
+    elif len(data) > 1:
+        pass
+    else:
+        print('数据为空')
+        return

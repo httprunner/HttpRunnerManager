@@ -144,9 +144,9 @@
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_module/'">新增模块
                 </button>
-                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
-                        data-toggle="modal" data-target="#bulk_uploadcase">批量导入
-                </button>
+                <!--<button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"-->
+                        <!--data-toggle="modal" data-target="#bulk_uploadcase">批量导入-->
+                <!--</button>-->
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="run_test('batch', '/api/run_batch_test/', 'module')">运行
                 </button>
@@ -370,7 +370,7 @@
                     a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
                 }
             }
-            a.prepend("<option value='' >无需配置</option>");
+            a.prepend("<option value='' selected>无需配置</option>");
 
         }
 
