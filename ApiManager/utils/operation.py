@@ -347,6 +347,7 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     """
     kwargs.get('time').pop('start_at')
     report_name = report_name if report_name else start_at
+    kwargs['html_report_name'] = report_name
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
