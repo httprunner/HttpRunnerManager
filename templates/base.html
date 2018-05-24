@@ -173,7 +173,7 @@
             defaultPlay: true,//默认是否执行效果（默认true）
             returnDefault: false //鼠标从.sideMen移走后返回默认状态（默认false）
         });
-        function initFileInput(ctrlName, uploadUrl) {
+        function initFileInput(ctrlName) {
             var control = $('#' + ctrlName);
             control.fileinput({
                 resizeImage : true,
@@ -181,7 +181,7 @@
                 uploadAsync:false,                             //采用同步上传
                 language : 'zh', //设置语言
                 uploadUrl: '/api/upload_file/',
-                allowedFileExtensions : [ 'yml', 'json'],//接收的文件后缀
+                allowedFileExtensions : [ 'yml', 'yaml', 'json'],//接收的文件后缀
                 showUpload : true, //是否显示上传按钮
                 showRemove: false,
                 showCaption : true,//是否显示标题
@@ -206,10 +206,14 @@
             control.on("filebatchuploadsuccess", function (event, data) {
                 var obj = data.response;
                 $("#bulk_uploadcase").trigger('click');
-                myAlert(obj.status);
+                if (obj.status.indexOf('/api/') !== -1) {
+                    window.location.href = obj.status;
+                }else {
+                    myAlert(obj.status);
+                }
             });
         }
-        initFileInput("uploadfile", "api/upload_file");
+        initFileInput("uploadfile");
 
     </script>
 </div>
