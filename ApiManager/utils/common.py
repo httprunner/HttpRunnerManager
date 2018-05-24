@@ -1,6 +1,9 @@
-import logging
-
 import io
+import json
+import logging
+import os
+from json import JSONDecodeError
+
 import yaml
 from djcelery.models import PeriodicTask
 
@@ -477,16 +480,27 @@ def upload_file_logic(files, project, module, account):
     """
 
     for file in files:
-        with io.open(file, 'r', encoding='utf-8') as stream:
-            yaml_content = yaml.load(stream)
-            for test_case in yaml_content:
-                if 'test' in test_case.keys():#忽略config
-                    name = test_case.get('test').get('name')
-                    test_case.get('test')['case_info'] = {
-                        'name': name,
-                        'project': project,
-                        'module': module,
-                        'author': account,
-                        'include': []
-                    }
-                    add_case_data(type=True, **test_case)
+        file_suffix = os.path.splitext(file)[1].lower()
+        if file_suffix == '.json':
+            with io.open(file, encoding='utf-8') as data_file:
+                try:
+                    content = json.load(data_file)
+                except JSONDecodeError:
+                    err_msg = u"JSONDecodeError: JSON file format error: {}".format(file)
+                    logging.error(err_msg)
+
+        elif file_suffix in ['.yaml', '.yml']:
+            with io.open(file, 'r', encoding='utf-8') as stream:
+                content = yaml.load(stream)
+
+        for test_case in content:
+            if 'test' in test_case.keys():  # 忽略config
+                name = test_case.get('test').get('name')
+                test_case.get('test')['case_info'] = {
+                    'name': name,
+                    'project': project,
+                    'module': module,
+                    'author': account,
+                    'include': []
+                }
+                add_case_data(type=True, **test_case)
