@@ -1,10 +1,12 @@
+import io
 import logging
 
+import yaml
 from djcelery.models import PeriodicTask
 
 from ApiManager.models import ModuleInfo, TestCaseInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
-    add_register_data, add_upload_data
+    add_register_data
 from ApiManager.utils.task_opt import create_task
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -473,30 +475,24 @@ def register_info_logic(**kwargs):
     return add_register_data(**kwargs)
 
 
-def upload_file_logic(files, project, module):
+def upload_file_logic(files, project, module, account):
     """
 
     :param file: 需要解析的文件，可以是列表形式
     :return:  统一返回结果列表
     """
-    import yaml
-    # 判断是单一文件还是批量文件
-    if project is None or module is None:
-        project_info = None
-    else:
-        project_info = {"project": project, "module": module}
-    if isinstance(files, (list, str)):
-        # 单文件直接进行解析
-        if isinstance(files, str):
-            with open(files) as f:
-                x = yaml.load(f)
-            for case in x:
-                add_upload_data(case, project_info)
-        else:
-            # 批量文件需要循环解析
-            for file in files:
-                with open(file) as f:
-                    x = yaml.load(f)
-                    case_info_logic(x)
-    else:
-        logger.info('入参类型错误，需要list或者str类型')
+
+    for file in files:
+        with io.open(file, 'r', encoding='utf-8') as stream:
+            yaml_content = yaml.load(stream)
+
+            for test_case in yaml_content:
+                name = test_case.get('test').get('name')
+                test_case.get('test')['case_info'] = {
+                    'name': name,
+                    'project': project,
+                    'module': module,
+                    'author': account,
+                    'include': []
+                }
+                add_case_data(type=True, **test_case)
