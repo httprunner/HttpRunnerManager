@@ -1,6 +1,8 @@
 import json
 import logging
 import os
+import platform
+import shutil
 import sys
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -675,61 +677,43 @@ def add_task(request):
 
 
 def upload_file(request):
-    import platform
-    import shutil
-    separator = '\\' if platform.system() == 'Windows' else '/'
-    if request.method == 'POST':
-        try:
-            project_name = request.POST.get('project')
-            module_name = request.POST.get('module')
-        except KeyError as e:
-            return JsonResponse({"status": e})
+    if request.session.get('login_status'):
+        account = request.session["now_account"]
+        separator = '\\' if platform.system() == 'Windows' else '/'
+        if request.method == 'POST':
+            try:
+                project_name = request.POST.get('project')
+                module_name = request.POST.get('module')
+            except KeyError as e:
+                return JsonResponse({"status": e})
 
-        if project_name == '请选择' or module_name == '请选择':
-            return JsonResponse({"status": '项目或模块不能为空'})
+            if project_name == '请选择' or module_name == '请选择':
+                return JsonResponse({"status": '项目或模块不能为空'})
 
-        obj = request.FILES.getlist('upload')
-        upload_path = sys.path[0] + separator + 'upload'+ separator
-        if os.path.exists(upload_path):
-            shutil.rmtree(upload_path)
-        os.mkdir(upload_path)
-        # 上传文件个数
-        file_num = len(obj)
-        if file_num > 1:
+            upload_path = sys.path[0] + separator + 'upload' + separator
+
+            if os.path.exists(upload_path):
+                shutil.rmtree(upload_path)
+
+            os.mkdir(upload_path)
+
+            upload_obj = request.FILES.getlist('upload')
             file_list = []
-            for index, filename in enumerate(obj):
-                temp_save = upload_path + filename.name
-                file_list.append(temp_save)
+            for i in range(len(upload_obj)):
+                temp_path = upload_path + upload_obj[i].name
+                file_list.append(temp_path)
                 try:
-                    with open(temp_save, 'wb') as data:
-                        for line in obj[index].chunks():
+                    with open(temp_path, 'wb') as data:
+                        for line in upload_obj[i].chunks():
                             data.write(line)
                 except IOError as e:
                     return JsonResponse({"status": e})
-        elif file_num == 1:
-            temp_save = upload_path + obj[0].name
-            try:
-                with open(temp_save, 'wb') as data:
-                    for line in obj[0].chunks():
-                        data.write(line)
-            except IOError as e:
-                return JsonResponse({"status": e})
+
+            upload_file_logic(file_list, project_name, module_name, account)
+
+            return JsonResponse({'status': '/api/test_list/1/'})
         else:
-            return JsonResponse({"status": '文件上传失败，请重试'})
-        # 数据入库主逻辑
-        if file_num == 1:
-            try:
-                upload_file_logic(temp_save, project_name, module_name)
-                return JsonResponse({"status": "上传成功"})
-            except IOError as e:
-                return JsonResponse({"status": e})
-        elif file_num > 1:
-            for file in file_list:
-                try:
-                    upload_file_logic(file, project_name, module_name)
-                    return JsonResponse({"status": "上传成功"})
-                except Exception as e:
-                    return JsonResponse({"status": e})
+            return HttpResponseRedirect("/api/login/")
 
 
 def get_project_info(request):
