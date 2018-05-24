@@ -1,5 +1,7 @@
 import logging
 
+import io
+import yaml
 from djcelery.models import PeriodicTask
 
 from ApiManager.models import ModuleInfo, TestCaseInfo
@@ -466,3 +468,25 @@ def register_info_logic(**kwargs):
     :return:
     """
     return add_register_data(**kwargs)
+
+
+def upload_file_logic(files, project, module, account):
+    """
+    :param file: 需要解析的文件，可以是列表形式
+    :return:  统一返回结果列表
+    """
+
+    for file in files:
+        with io.open(file, 'r', encoding='utf-8') as stream:
+            yaml_content = yaml.load(stream)
+            for test_case in yaml_content:
+                if 'test' in test_case.keys():#忽略config
+                    name = test_case.get('test').get('name')
+                    test_case.get('test')['case_info'] = {
+                        'name': name,
+                        'project': project,
+                        'module': module,
+                        'author': account,
+                        'include': []
+                    }
+                    add_case_data(type=True, **test_case)

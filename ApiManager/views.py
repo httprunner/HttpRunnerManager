@@ -1,6 +1,11 @@
 import json
 import logging
+import platform
+import shutil
 
+import sys
+
+import os
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
@@ -8,7 +13,7 @@ from djcelery.models import PeriodicTask
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -672,15 +677,60 @@ def add_task(request):
         return HttpResponseRedirect("/api/login/")
 
 
-def test_login(request):
-    if request.POST.get('username') == 'lcc' and request.POST.get('password') == 'lcc':
-        return JsonResponse({'code': 'success', 'status': True})
+def upload_file(request):
+    if request.session.get('login_status'):
+        account = request.session["now_account"]
+        separator = '\\' if platform.system() == 'Windows' else '/'
+        if request.method == 'POST':
+            try:
+                project_name = request.POST.get('project')
+                module_name = request.POST.get('module')
+            except KeyError as e:
+                return JsonResponse({"status": e})
+
+            if project_name == '请选择' or module_name == '请选择':
+                return JsonResponse({"status": '项目或模块不能为空'})
+
+            upload_path = sys.path[0] + separator + 'upload' + separator
+
+            if os.path.exists(upload_path):
+                shutil.rmtree(upload_path)
+
+            os.mkdir(upload_path)
+
+            upload_obj = request.FILES.getlist('upload')
+            file_list = []
+            for i in range(len(upload_obj)):
+                temp_path = upload_path + upload_obj[i].name
+                file_list.append(temp_path)
+                try:
+                    with open(temp_path, 'wb') as data:
+                        for line in upload_obj[i].chunks():
+                            data.write(line)
+                except IOError as e:
+                    return JsonResponse({"status": e})
+
+            upload_file_logic(file_list, project_name, module_name, account)
+
+            return JsonResponse({'status': '/api/test_list/1/'})
+        else:
+            return HttpResponseRedirect("/api/login/")
 
 
-def test_deposit(request):
-    if request.POST.get('code') == 'success' and request.POST.get('money') == '1':
-        return JsonResponse({'code': 'error', 'status': False})
-
-
-def test_index(request, id):
-    return JsonResponse({'code': 'error', 'status': False})
+def get_project_info(request):
+    """
+     获取项目相关信息
+     :param request:
+     :return:
+     """
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                project_info = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logger.error('获取项目信息异常：{project_info}'.format(project_info=project_info))
+                return HttpResponse('获取信息解析异常')
+            msg = load_modules(**project_info.pop('task'))
+            return HttpResponse(msg)
+    else:
+        return HttpResponseRedirect("/api/login/")
