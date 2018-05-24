@@ -129,11 +129,17 @@ def add_case_data(type, **kwargs):
     :param kwargs: dict
     :return: ok or tips
     """
-    case_info = kwargs.get('test').get('case_info')
+    try:
+        case_info = kwargs.get('test').get('case_info')
+    except KeyError:
+        pass
     case_opt = TestCaseInfo.objects
     name = kwargs.get('test').get('name')
-    module = case_info.get('module')
-    project = case_info.get('project')
+    try:
+        module = case_info.get('module')
+        project = case_info.get('project')
+    except:
+        pass
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
     try:
         if type:

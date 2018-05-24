@@ -1572,3 +1572,102 @@ Traceback (most recent call last):
   File "D:\HttpRunnerManager\ApiManager\utils\pagination.py", line 140, in get_pager_info
     return page_list, info, sum
 UnboundLocalError: local variable 'info' referenced before assignment
+2018-05-24 13:39:29,066 [HttpRunnerManager:36] [views:login] [INFO]- yinquanwang 登录成功
+2018-05-24 13:39:41,916 [HttpRunnerManager:152] [operation:add_case_data] [INFO]- test_deposit用例更新成功
+2018-05-24 13:46:34,437 [HttpRunnerManager:152] [operation:add_case_data] [INFO]- test_deposit用例更新成功
+2018-05-24 13:58:26,354 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/upload_file/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 713, in upload_file
+    upload_file_logic(file_list, project_name, module_name, account)
+  File "D:/HttpRunnerManager\ApiManager\utils\common.py", line 492, in upload_file_logic
+    add_case_data(type=True, **test_case)
+  File "D:/HttpRunnerManager\ApiManager\utils\operation.py", line 137, in add_case_data
+    belong_module = ModuleInfo.objects.get_module_name(module, type=False)
+  File "D:/HttpRunnerManager\ApiManager\managers.py", line 86, in get_module_name
+    return self.get(id=module_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 394, in get
+    clone = self.filter(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1215, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1085, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "E:\Python35\lib\site-packages\django\db\models\lookups.py", line 18, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "E:\Python35\lib\site-packages\django\db\models\lookups.py", line 68, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "E:\Python35\lib\site-packages\django\db\models\fields\__init__.py", line 947, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'module 2'
+2018-05-24 14:00:27,582 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/upload_file/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 713, in upload_file
+    upload_file_logic(file_list, project_name, module_name, account)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 492, in upload_file_logic
+    add_case_data(type=True, **test_case)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 137, in add_case_data
+    belong_module = ModuleInfo.objects.get_module_name(module, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 86, in get_module_name
+    return self.get(id=module_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 394, in get
+    clone = self.filter(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 836, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 854, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1253, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1277, in _add_q
+    split_subq=split_subq,
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1215, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "E:\Python35\lib\site-packages\django\db\models\sql\query.py", line 1085, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "E:\Python35\lib\site-packages\django\db\models\lookups.py", line 18, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "E:\Python35\lib\site-packages\django\db\models\lookups.py", line 68, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "E:\Python35\lib\site-packages\django\db\models\fields\__init__.py", line 947, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'module 2'
+2018-05-24 14:02:23,292 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- 发发用例添加成功
+2018-05-24 14:06:52,162 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token1用例添加成功
+2018-05-24 14:06:52,174 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id1用例添加成功
+2018-05-24 14:07:11,111 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token1用例添加成功
+2018-05-24 14:07:11,124 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id1用例添加成功
+2018-05-24 14:07:11,153 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token2用例添加成功
+2018-05-24 14:07:11,163 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id2用例添加成功
+2018-05-24 14:09:49,770 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token1用例添加成功
+2018-05-24 14:09:49,781 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id1用例添加成功
+2018-05-24 14:10:26,578 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token1用例添加成功
+2018-05-24 14:10:26,590 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id1用例添加成功
+2018-05-24 14:10:26,621 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/get-token2用例添加成功
+2018-05-24 14:10:26,634 [HttpRunnerManager:143] [operation:add_case_data] [INFO]- /api/users/$user_id2用例添加成功
+2018-05-24 14:10:46,216 [HttpRunnerManager:152] [operation:add_case_data] [INFO]- /api/users/$user_id2用例更新成功

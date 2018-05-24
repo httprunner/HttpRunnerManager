@@ -207,17 +207,17 @@ LOGGING = {
         'django.request': {
             'handlers': ['request_handler'],
             'level': 'DEBUG',
-            'propagate': False
+            'propagate': True
         },
         'HttpRunnerManager': {
             'handlers': ['scprits_handler', 'console'],
             'level': 'DEBUG',
-            'propagate': False
+            'propagate': True
         },
         'scripts': {
             'handlers': ['scprits_handler', 'console'],
             'level': 'DEBUG',
-            'propagate': False
+            'propagate': True
         },
     }
 }
