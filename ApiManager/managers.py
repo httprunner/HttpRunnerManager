@@ -84,8 +84,8 @@ class ModuleInfoManager(models.Manager):
             if id is not None:
                 return self.get(id=id).module_name
             else:
-                return self.get(module_name=module_name)
-            return self.get(id=module_name)
+                return self.get(id=module_name)
+
 
 
 '''用例信息表操作'''
