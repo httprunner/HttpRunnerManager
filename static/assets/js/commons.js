@@ -80,6 +80,13 @@ function auto_load(id, url, target, type) {
                 "type": type
             }
         }
+    } else if (id === '#upload_project_info') {
+        data = {
+            "test": {
+                "name": data,
+                "type": type
+            }
+        }
     } else {
         data = {
             "task": {

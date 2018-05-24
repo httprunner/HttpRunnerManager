@@ -726,6 +726,7 @@ def get_project_info(request):
         if request.is_ajax():
             try:
                 project_info = json.loads(request.body.decode('utf-8'))
+                project_info = project_info.pop('test')
             except ValueError:
                 logger.error('获取项目信息异常：{project_info}'.format(project_info=project_info))
                 return HttpResponse('获取信息解析异常')
