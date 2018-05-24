@@ -473,17 +473,16 @@ def register_info_logic(**kwargs):
     return add_register_data(**kwargs)
 
 
-def upload_file_logic(files, project=None, module=None):
+def upload_file_logic(files, project, module):
     """
 
     :param file: 需要解析的文件，可以是列表形式
     :return:  统一返回结果列表
     """
     import yaml
-    # res = []
     # 判断是单一文件还是批量文件
     if project is None or module is None:
-        pass
+        project_info = None
     else:
         project_info = {"project": project, "module": module}
     if isinstance(files, (list, str)):
@@ -495,12 +494,9 @@ def upload_file_logic(files, project=None, module=None):
                 add_upload_data(case, project_info)
         else:
             # 批量文件需要循环解析
-
             for file in files:
                 with open(file) as f:
                     x = yaml.load(f)
                     case_info_logic(x)
-            # return res
     else:
-        print('入参类型错误，需要list或者str类型')
-        return
+        logger.info('入参类型错误，需要list或者str类型')
