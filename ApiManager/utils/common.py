@@ -1,5 +1,7 @@
 import io
+import json
 import logging
+import os
 
 import yaml
 from djcelery.models import PeriodicTask
@@ -129,9 +131,7 @@ def load_modules(**kwargs):
     :param kwargs:  dict：项目相关信息
     :return: str: module_info
     """
-    # belong_project = kwargs.get('name').get('project')
-    belong_project = kwargs.get('task').get('name').get('project')
-
+    belong_project = kwargs.get('name').get('project')
     module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project).values_list(
         'id',
         'module_name').order_by(
@@ -483,16 +483,39 @@ def upload_file_logic(files, project, module, account):
     """
 
     for file in files:
-        with io.open(file, 'r', encoding='utf-8') as stream:
-            yaml_content = yaml.load(stream)
+        suffix = os.path.splitext(file)[-1].replace(".", "")
 
-            for test_case in yaml_content:
-                name = test_case.get('test').get('name')
-                test_case.get('test')['case_info'] = {
-                    'name': name,
-                    'project': project,
-                    'module': module,
-                    'author': account,
-                    'include': []
-                }
-                add_case_data(type=True, **test_case)
+        if suffix == 'json':
+            with open(file, 'r', encoding='utf-8') as stream:
+                json_content = json.load(stream)
+                print(json_content)
+                if isinstance(json_content, list):
+                    for case in json_content:
+                        if "config" in case.keys():
+                            pass
+                        else:
+                            name = case.get('test').get('name')
+
+                            case.get('test')['case_info'] = {
+                                'name': name,
+                                'project': project,
+                                'module': module,
+                                'author': account,
+                                'include': []
+                            }
+                            add_case_data(type=True, **case)
+        elif suffix =='yml':
+            with io.open(file, 'r', encoding='utf-8') as stream:
+
+                yaml_content = yaml.load(stream)
+
+                for test_case in yaml_content:
+                    name = test_case.get('test').get('name')
+                    test_case.get('test')['case_info'] = {
+                                'name': name,
+                                'project': project,
+                                'module': module,
+                                'author': account,
+                                'include': []
+                        }
+                    add_case_data(type=True, **test_case)
