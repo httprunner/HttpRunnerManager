@@ -475,8 +475,12 @@ def register_info_logic(**kwargs):
 
 def upload_file_logic(files, project, module, account):
     """
-    :param file: 需要解析的文件，可以是列表形式
-    :return:  统一返回结果列表
+    解析yaml或者json用例
+    :param files:
+    :param project:
+    :param module:
+    :param account:
+    :return:
     """
 
     for file in files:
@@ -503,4 +507,16 @@ def upload_file_logic(files, project, module, account):
                     'author': account,
                     'include': []
                 }
+
+                if 'validate' in test_case.get('test').keys():  # 适配validate两种格式
+                    validate = test_case.get('test').pop('validate')
+                    new_validate = []
+                    for check in validate:
+                        if 'comparator' not in check.keys():
+                            for key, value in check.items():
+                                tmp_check = {"check": value[0], "comparator": key, "expected": value[1]}
+                                new_validate.append(tmp_check)
+
+                    test_case.get('test')['validate'] = new_validate
+
                 add_case_data(type=True, **test_case)
