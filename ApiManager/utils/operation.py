@@ -170,7 +170,7 @@ def add_config_data(type, **kwargs):
     case_opt = TestCaseInfo.objects
     config_info = kwargs.get('config').get('config_info')
     name = kwargs.get('config').get('name')
-    module = config_info.get('config_module')
+    module = config_info.get('module')
     project = config_info.get('project')
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
 

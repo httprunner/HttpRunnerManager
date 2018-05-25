@@ -327,15 +327,15 @@ def config_info_logic(type=True, **kwargs):
         logging.debug('配置原始信息: {kwargs}'.format(kwargs=kwargs))
         if config.get('name').get('config_name') is '':
             return '配置名称不可为空'
-        if config.get('name').get('config_author') is '':
+        if config.get('name').get('author') is '':
             return '创建者不能为空'
         if config.get('name').get('project') == '请选择':
             return '请选择项目'
-        if config.get('name').get('config_module') == '请选择':
+        if config.get('name').get('module') == '请选择':
             return '请选择模块'
         if config.get('name').get('project') == '':
             return '请先添加项目'
-        if config.get('name').get('config_module') == '':
+        if config.get('name').get('module') == '':
             return '请先添加模块'
 
         name = config.pop('name')
@@ -498,15 +498,18 @@ def upload_file_logic(files, project, module, account):
                 content = yaml.load(stream)
 
         for test_case in content:
+            test_dict = {
+                'project': project,
+                'module': module,
+                'author': account,
+                'include': []
+            }
+            if 'config' in test_case.keys():
+                test_case.get('config')['config_info'] = test_dict
+                add_config_data(type=True, **test_case)
+
             if 'test' in test_case.keys():  # 忽略config
-                name = test_case.get('test').get('name')
-                test_case.get('test')['case_info'] = {
-                    'name': name,
-                    'project': project,
-                    'module': module,
-                    'author': account,
-                    'include': []
-                }
+                test_case.get('test')['case_info'] = test_dict
 
                 if 'validate' in test_case.get('test').keys():  # 适配validate两种格式
                     validate = test_case.get('test').pop('validate')
