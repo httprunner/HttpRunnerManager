@@ -216,7 +216,7 @@
                                             class='material-icons'>low_priority</i></td>
                                     <td class='timestamp'>req_headers</td>
                                     <td class='step-details'>
-                                        {% for key, value in record.meta_data.request_headers.items %}
+                                        {% for key, value in record.meta_data.request_headers.items() %}
                                             <div>
                                                 <strong>{{ key }}</strong>: {{ value | safe }}
                                             </div>
@@ -233,7 +233,7 @@
                                             class='material-icons'>low_priority</i></td>
                                     <td class='timestamp'>resp_headers</td>
                                     <td class='step-details'>
-                                        {% for key, value in record.meta_data.response_headers.items %}
+                                        {% for key, value in record.meta_data.response_headers.items() %}
                                             <div>
                                                 <strong>{{ key }}</strong>: {{ value | safe }}
                                             </div>
