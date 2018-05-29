@@ -64,7 +64,7 @@ Key Features
 6. 命令行窗口切换到HttpRunnerManager目录 生成数据库迁移脚本,并生成表结构
     ```bash
         python manage.py makemigrations ApiManager
-        python manage.py makemigrations
+        python manage.py migrate
     ```
 
 7. 创建超级用户，用户后台管理数据库，并按提示输入相应用户名，密码，邮箱。 如不需用，可跳过此步骤
