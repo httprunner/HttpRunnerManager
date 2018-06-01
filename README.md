@@ -95,10 +95,10 @@ Key Features
 
 新手入门手册
 -----------
-1、首先需要注意一个新用户,注册成功后会自动跳转到登录页面，正常登录即可访问页面
+1、首先需要注册一个新用户,注册成功后会自动跳转到登录页面，正常登录即可访问页面
 ![注册页面](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/register_01.png)<br>
 <br>
-2、首页，登陆后默认跳转到首页，左侧为菜单栏，上排有快捷操作按钮，当前只简单的做了项目，模块，用例，配置的统计
+2、登陆后默认跳转到首页，左侧为菜单栏，上排有快捷操作按钮，当前只简单的做了项目，模块，用例，配置的统计
 ![首页](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/index_01.png)<br>
 <br>
 3、首先应该先添加一个项目，用例都是以项目为维度进行管理, 注意简要描述和其他信息可以为空, 添加成功后会自动重定向到项目列表
