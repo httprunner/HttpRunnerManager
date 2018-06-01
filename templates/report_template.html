@@ -52,7 +52,7 @@
                     class='material-icons'>bug_report</i></a></li>
         </ul>
         <!-- report name -->
-        <span class='report-name'>{{ html_report_name }} - TestReport</span>
+        <span class='report-name'>Test Report: {{ html_report_name }}</span>
         <!-- report headline -->
         <span class='report-headline'></span>
         <!-- nav-right -->
@@ -167,7 +167,7 @@
                                 test-id='{{ forloop.counter }}'>
                                 <div class='test-heading'>
                                     <span class='test-name'>{{ record.name }}</span>
-                                    <span class='test-time'>{{ record.meta_data.response_time }} ms</span>
+                                    <span class='test-time'>{{ record.meta_data.response_time_ms }} ms</span>
                                     <span class='test-status right pass'>pass</span>
                                 </div>
                                 {% elif record.status == 'error' %}
@@ -175,13 +175,13 @@
                                 test-id='{{ forloop.counter }}'>
                             <div class='test-heading'>
                                 <span class='test-name'>{{ record.name }}</span>
-                                <span class='test-time'>{{ record.meta_data.response_time }} ms</span>
+                                <span class='test-time'>{{ record.meta_data.response_time_ms }} ms</span>
                                 <span class='test-status right fail'>fail</span>
                             </div>
                         {% endif %}
                     <div class='test-content hide'>
                         <div class='test-time-info'>
-                            <span class='label start-time'>{{ record.meta_data.response_time }} ms</span>
+                            <span class='label start-time'>{{ record.meta_data.response_time_ms }} ms</span>
                         </div>
                         <div class='test-steps'>
                             <table class='bordered table-results'>
@@ -243,7 +243,13 @@
                                     <td class='status debug' title='debug' alt='debug'><i
                                             class='material-icons'>low_priority</i></td>
                                     <td class='timestamp'>resp_body</td>
-                                    <td class='step-details'>{{ record.meta_data.response_body | safe }}</td>
+                                    <td class='step-details'>
+                                        {% if record.meta_data.response_data_type == "image" %}
+                                            <img src="{{ record.meta_data.response_body }}"/>
+                                        {% else %}
+                                            <pre>{{ record.meta_data.response_body | safe }}</pre>
+                                        {% endif %}
+                                    </td>
                                 </tr>
 
                                 <tr class='log' status='debug'>
