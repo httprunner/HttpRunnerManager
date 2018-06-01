@@ -1687,3 +1687,547 @@ ValueError: invalid literal for int() with base 10: 'module 2'
 2018-05-24 14:10:44,929 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/136/ HTTP/1.1" 200 32713
 2018-05-24 14:10:46,218 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 17
 2018-05-24 14:10:46,302 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48156
+2018-05-25 10:15:52,087 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 302 0
+2018-05-25 10:15:52,097 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-05-25 10:15:52,137 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/css-index.css HTTP/1.1" 200 21336
+2018-05-25 10:15:52,146 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/custom.js HTTP/1.1" 200 5955
+2018-05-25 10:15:52,158 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/jquery.sticky.js HTTP/1.1" 200 7138
+2018-05-25 10:15:52,165 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/wow.min.js HTTP/1.1" 200 6300
+2018-05-25 10:15:52,177 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/owl.carousel.min.js HTTP/1.1" 200 23936
+2018-05-25 10:15:52,190 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/logo.png HTTP/1.1" 200 11481
+2018-05-25 10:15:52,199 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/bg.jpg HTTP/1.1" 200 134726
+2018-05-25 10:15:52,211 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/loading.GIF HTTP/1.1" 200 63798
+2018-05-25 10:15:53,874 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-05-25 10:15:53,919 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-05-25 10:15:53,996 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/admin.css HTTP/1.1" 200 20853
+2018-05-25 10:15:53,998 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/common.css HTTP/1.1" 200 731
+2018-05-25 10:15:54,010 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/app.js HTTP/1.1" 200 21264
+2018-05-25 10:15:54,011 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/jquery.json-viewer.css HTTP/1.1" 200 1083
+2018-05-25 10:15:54,037 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/commons.js HTTP/1.1" 200 13069
+2018-05-25 10:15:54,054 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/jquery.json-viewer.js HTTP/1.1" 200 5475
+2018-05-25 10:15:57,947 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-05-25 10:16:03,138 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48220
+2018-05-25 10:16:09,290 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-05-25 10:16:19,281 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/get_project_info/ HTTP/1.1" 200 62
+2018-05-25 10:16:21,467 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/upload_file/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 713, in upload_file
+    upload_file_logic(file_list, project_name, module_name, account)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 509, in upload_file_logic
+    add_config_data(type=True, **test_case)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 175, in add_config_data
+    belong_module = ModuleInfo.objects.get_module_name(module, type=False)
+  File "D:\HttpRunnerManager\ApiManager\managers.py", line 87, in get_module_name
+    return self.get(id=module_name)
+  File "E:\Python35\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\db\models\query.py", line 403, in get
+    self.model._meta.object_name
+ApiManager.models.DoesNotExist: ModuleInfo matching query does not exist.
+2018-05-25 10:16:21,538 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/upload_file/ HTTP/1.1" 500 18138
+2018-05-25 10:22:25,854 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-05-25 10:22:26,194 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-05-25 10:22:26,207 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-05-25 10:22:30,599 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/add_config/ HTTP/1.1" 200 24829
+2018-05-25 10:22:32,266 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 24
+2018-05-25 10:22:38,962 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 62
+2018-05-25 10:22:41,597 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 19
+2018-05-25 10:22:41,637 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 23077
+2018-05-25 10:22:44,179 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/157/ HTTP/1.1" 200 25975
+2018-05-25 10:22:45,197 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 19
+2018-05-25 10:22:45,235 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 23077
+2018-05-25 10:22:46,385 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/157/ HTTP/1.1" 200 25975
+2018-05-25 10:22:50,072 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 19
+2018-05-25 10:22:50,111 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 23077
+2018-05-25 10:22:52,365 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/157/ HTTP/1.1" 200 25975
+2018-05-25 10:22:56,624 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 34062
+2018-05-25 10:23:02,241 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 23077
+2018-05-25 10:23:03,312 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/157/ HTTP/1.1" 200 25975
+2018-05-25 10:23:05,658 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 19
+2018-05-25 10:23:05,699 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 23081
+2018-05-25 10:23:07,096 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/157/ HTTP/1.1" 200 25979
+2018-05-25 10:23:09,282 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-05-25 10:23:15,235 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/get_project_info/ HTTP/1.1" 200 62
+2018-05-25 10:23:19,233 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/upload_file/ HTTP/1.1" 200 31
+2018-05-25 10:23:19,328 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48217
+2018-05-25 10:23:24,562 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 24721
+2018-05-25 10:23:27,965 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/158/ HTTP/1.1" 200 47784
+2018-05-25 10:23:57,092 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48217
+2018-05-25 17:02:24,152 [django.request:93] [base:get_response] [WARNING]- Not Found: /lotto/
+2018-05-25 17:02:24,154 [django.server:124] [basehttp:log_message] [WARNING]- "GET /lotto/ HTTP/1.1" 404 2401
+2018-05-25 17:03:38,801 [django.request:93] [base:get_response] [WARNING]- Not Found: /lotto/
+2018-05-25 17:03:38,802 [django.server:124] [basehttp:log_message] [WARNING]- "GET /lotto/ HTTP/1.1" 404 2401
+2018-05-25 17:05:21,631 [django.request:93] [base:get_response] [WARNING]- Not Found: /lotto/
+2018-05-25 17:05:21,632 [django.server:124] [basehttp:log_message] [WARNING]- "GET /lotto/ HTTP/1.1" 404 2401
+2018-05-25 17:06:18,380 [django.request:93] [base:get_response] [WARNING]- Not Found: /
+2018-05-25 17:06:18,382 [django.server:124] [basehttp:log_message] [WARNING]- "GET / HTTP/1.1" 404 2365
+2018-05-25 17:06:18,539 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-05-25 17:06:18,546 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-05-25 17:06:24,022 [django.request:93] [base:get_response] [WARNING]- Not Found: /lotto/
+2018-05-25 17:06:24,023 [django.server:124] [basehttp:log_message] [WARNING]- "GET /lotto/ HTTP/1.1" 404 2401
+2018-05-25 17:06:24,151 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-05-25 17:06:57,947 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-25 17:07:16,835 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-25 17:10:10,889 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-25 17:10:41,390 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-25 17:25:54,967 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-25 17:28:06,664 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/lotto/ HTTP/1.1" 200 189
+2018-05-31 17:36:38,894 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_valid
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\utils\deprecation.py", line 93, in __call__
+    response = self.process_request(request)
+  File "E:\Python35\lib\site-packages\django\middleware\common.py", line 61, in process_request
+    path = self.get_full_path_with_slash(request)
+  File "E:\Python35\lib\site-packages\django\middleware\common.py", line 99, in get_full_path_with_slash
+    'url': request.get_host() + new_path,
+RuntimeError: You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to 127.0.0.1:8000/api/test_login_valid/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+2018-05-31 17:36:41,772 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_valid HTTP/1.1" 500 69548
+2018-05-31 17:37:00,789 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/test_login_valid/ HTTP/1.1" 200 32
+2018-05-31 17:45:21,559 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_json/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 749, in test_login_json
+    info = json.loads(request.body.decode("utf-8"))
+  File "E:\Python35\lib\json\__init__.py", line 319, in loads
+    return _default_decoder.decode(s)
+  File "E:\Python35\lib\json\decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "E:\Python35\lib\json\decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2018-05-31 17:45:23,865 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_json/ HTTP/1.1" 500 90316
+2018-05-31 17:46:16,756 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_json/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 749, in test_login_json
+    info = json.loads(request.body)
+  File "E:\Python35\lib\json\__init__.py", line 312, in loads
+    s.__class__.__name__))
+TypeError: the JSON object must be str, not 'bytes'
+2018-05-31 17:46:16,955 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_json/ HTTP/1.1" 500 79467
+2018-05-31 17:46:50,053 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_json/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 749, in test_login_json
+    info = json.loads(request.body.decode("utf-8"))
+  File "E:\Python35\lib\json\__init__.py", line 319, in loads
+    return _default_decoder.decode(s)
+  File "E:\Python35\lib\json\decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "E:\Python35\lib\json\decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+2018-05-31 17:46:50,462 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_json/ HTTP/1.1" 500 91600
+2018-05-31 17:48:28,764 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_json/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 750, in test_login_json
+    info = json.loads(request.body)
+  File "E:\Python35\lib\json\__init__.py", line 312, in loads
+    s.__class__.__name__))
+TypeError: the JSON object must be str, not 'bytes'
+2018-05-31 17:48:30,855 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_json/ HTTP/1.1" 500 80712
+2018-05-31 17:50:01,770 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_login_json/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:/HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:/HttpRunnerManager\ApiManager\views.py", line 750, in test_login_json
+    info = json.loads(request.body)
+  File "E:\Python35\lib\json\__init__.py", line 312, in loads
+    s.__class__.__name__))
+TypeError: the JSON object must be str, not 'bytes'
+2018-05-31 17:50:02,027 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/test_login_json/ HTTP/1.1" 500 80732
+2018-05-31 17:50:23,030 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/test_login_json/ HTTP/1.1" 200 32
+2018-06-01 09:08:04,905 [django.request:93] [base:get_response] [WARNING]- Not Found: /
+2018-06-01 09:08:04,907 [django.server:124] [basehttp:log_message] [WARNING]- "GET / HTTP/1.1" 404 2365
+2018-06-01 09:08:05,083 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 09:08:05,100 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 09:08:11,158 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index HTTP/1.1" 301 0
+2018-06-01 09:08:12,796 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 302 0
+2018-06-01 09:08:12,841 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 09:08:12,865 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/logo.png HTTP/1.1" 200 11481
+2018-06-01 09:08:12,869 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/css-index.css HTTP/1.1" 200 21336
+2018-06-01 09:08:12,894 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/custom.js HTTP/1.1" 200 5955
+2018-06-01 09:08:12,898 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/jquery.sticky.js HTTP/1.1" 200 7138
+2018-06-01 09:08:12,914 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/wow.min.js HTTP/1.1" 200 6300
+2018-06-01 09:08:12,992 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/bg.jpg HTTP/1.1" 200 134726
+2018-06-01 09:08:12,997 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/owl.carousel.min.js HTTP/1.1" 200 23936
+2018-06-01 09:08:13,000 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/loading.GIF HTTP/1.1" 200 63798
+2018-06-01 09:08:20,011 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-06-01 09:08:20,086 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 09:08:20,123 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/common.css HTTP/1.1" 200 731
+2018-06-01 09:08:20,124 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/admin.css HTTP/1.1" 200 20853
+2018-06-01 09:08:20,137 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/css/jquery.json-viewer.css HTTP/1.1" 200 1083
+2018-06-01 09:08:20,178 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/app.js HTTP/1.1" 200 21264
+2018-06-01 09:08:20,188 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/commons.js HTTP/1.1" 200 13069
+2018-06-01 09:08:20,210 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/js/jquery.json-viewer.js HTTP/1.1" 200 5475
+2018-06-01 09:08:22,137 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/report_list/1/ HTTP/1.1" 200 15083
+2018-06-01 09:08:23,617 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75 HTTP/1.1" 301 0
+2018-06-01 09:08:23,651 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 71925
+2018-06-01 09:10:42,781 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 71925
+2018-06-01 09:11:42,532 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 71925
+2018-06-01 09:15:29,174 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 71912
+2018-06-01 09:15:52,886 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 71925
+2018-06-01 09:16:37,144 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 09:18:11,254 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 09:18:15,599 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-06-01 09:18:19,397 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48217
+2018-06-01 09:18:23,663 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/4/ HTTP/1.1" 200 40754
+2018-06-01 09:18:26,757 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 09:18:30,863 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 34063
+2018-06-01 09:18:35,007 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 09:19:01,475 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_batch_test/ HTTP/1.1" 200 79175
+2018-06-01 09:21:46,385 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 09:21:47,961 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48217
+2018-06-01 09:21:49,774 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/4/ HTTP/1.1" 200 40754
+2018-06-01 09:21:53,898 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48689
+2018-06-01 09:22:05,240 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 17
+2018-06-01 09:22:05,298 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48189
+2018-06-01 09:22:08,027 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 09:22:09,276 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/test_login/ HTTP/1.1" 200 13
+2018-06-01 09:22:09,283 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 200 21679
+2018-06-01 09:22:39,780 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 09:22:42,307 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48189
+2018-06-01 09:22:43,108 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48661
+2018-06-01 09:22:51,925 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 17
+2018-06-01 09:22:51,989 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48189
+2018-06-01 09:22:53,551 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 09:22:54,419 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/test_login_valid/ HTTP/1.1" 200 32
+2018-06-01 09:22:54,432 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 200 21595
+2018-06-01 09:23:12,581 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 09:23:13,750 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 200 19840
+2018-06-01 10:22:23,752 [django.request:93] [base:get_response] [WARNING]- Not Found: /
+2018-06-01 10:22:23,761 [django.server:124] [basehttp:log_message] [WARNING]- "GET / HTTP/1.1" 404 2365
+2018-06-01 10:22:32,678 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 302 0
+2018-06-01 10:22:32,690 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 10:22:40,318 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-06-01 10:22:40,348 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 10:22:44,623 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48189
+2018-06-01 10:22:45,603 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-06-01 10:22:45,633 [django.server:124] [basehttp:log_message] [ERROR]- "GET /api/project_list/1/ HTTP/1.1" 500 59
+2018-06-01 10:22:45,730 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48667
+2018-06-01 10:22:48,148 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 0
+2018-06-01 10:22:50,148 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 15
+2018-06-01 10:22:52,406 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 30275
+2018-06-01 10:22:53,675 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/add_project/ HTTP/1.1" 200 16631
+2018-06-01 10:23:00,815 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_project/ HTTP/1.1" 200 20
+2018-06-01 10:23:00,866 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 33054
+2018-06-01 10:23:11,267 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/add_module/ HTTP/1.1" 200 15422
+2018-06-01 10:23:15,446 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_module/ HTTP/1.1" 200 19
+2018-06-01 10:23:15,513 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 36793
+2018-06-01 10:23:18,099 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48189
+2018-06-01 10:23:18,911 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48997
+2018-06-01 10:23:22,921 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 10
+2018-06-01 10:23:24,111 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 15
+2018-06-01 10:23:26,352 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_case/ HTTP/1.1" 200 0
+2018-06-01 10:23:27,762 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 17
+2018-06-01 10:23:27,829 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 48191
+2018-06-01 10:23:35,317 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/project_list/1/ HTTP/1.1" 200 33054
+2018-06-01 10:23:44,168 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 36793
+2018-06-01 10:24:47,095 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 24721
+2018-06-01 10:24:48,752 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/158/ HTTP/1.1" 200 48114
+2018-06-01 10:24:51,363 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 10
+2018-06-01 10:24:52,874 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 44
+2018-06-01 10:24:59,885 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/edit_config/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 491, in edit_config
+    msg = config_info_logic(type=False, **testconfig_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 389, in config_info_logic
+    return add_config_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 190, in add_config_data
+    logger.info('{name}配置更新成功: {kwargs}}'.format(name=name, kwargs = kwargs))
+ValueError: Single '}' encountered in format string
+2018-06-01 10:24:59,924 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/edit_config/ HTTP/1.1" 500 17643
+2018-06-01 10:25:21,455 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/edit_config/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 491, in edit_config
+    msg = config_info_logic(type=False, **testconfig_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 389, in config_info_logic
+    return add_config_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 190, in add_config_data
+    logger.info('{name}配置更新成功: {kwargs}}'.format(name=name, kwargs = kwargs))
+ValueError: Single '}' encountered in format string
+2018-06-01 10:25:21,473 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/edit_config/ HTTP/1.1" 500 17643
+2018-06-01 10:25:46,856 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 24723
+2018-06-01 10:25:47,959 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/107/ HTTP/1.1" 200 27189
+2018-06-01 10:25:50,083 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 10
+2018-06-01 10:25:51,773 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/edit_config/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 491, in edit_config
+    msg = config_info_logic(type=False, **testconfig_lists)
+  File "D:\HttpRunnerManager\ApiManager\utils\common.py", line 389, in config_info_logic
+    return add_config_data(type, **kwargs)
+  File "D:\HttpRunnerManager\ApiManager\utils\operation.py", line 190, in add_config_data
+    logger.info('{name}配置更新成功: {kwargs}}'.format(name=name, kwargs=kwargs))
+ValueError: Single '}' encountered in format string
+2018-06-01 10:25:51,797 [django.server:124] [basehttp:log_message] [ERROR]- "POST /api/edit_config/ HTTP/1.1" 500 17640
+2018-06-01 10:26:08,472 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 19
+2018-06-01 10:26:10,191 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 24725
+2018-06-01 10:26:13,585 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_config/107/ HTTP/1.1" 200 27187
+2018-06-01 10:26:15,907 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/add_config/ HTTP/1.1" 200 62
+2018-06-01 10:26:18,401 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_config/ HTTP/1.1" 200 19
+2018-06-01 10:26:18,436 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/config_list/1/ HTTP/1.1" 200 24723
+2018-06-01 11:53:28,567 [django.request:93] [base:get_response] [WARNING]- Not Found: /
+2018-06-01 11:53:28,568 [django.server:124] [basehttp:log_message] [WARNING]- "GET / HTTP/1.1" 404 2365
+2018-06-01 11:53:32,870 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 302 0
+2018-06-01 11:53:32,880 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 11:53:40,288 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-06-01 11:53:40,310 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 11:53:42,334 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 53357
+2018-06-01 11:53:47,778 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/4/ HTTP/1.1" 200 44503
+2018-06-01 11:53:58,808 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/106/ HTTP/1.1" 200 49261
+2018-06-01 11:54:07,318 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/106/ HTTP/1.1" 200 49261
+2018-06-01 11:54:16,851 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/98/ HTTP/1.1" 200 47705
+2018-06-01 11:55:19,286 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/98/ HTTP/1.1" 200 47705
+2018-06-01 12:01:57,598 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_list/4/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\template\smartif.py", line 175, in translate_token
+    op = OPERATORS[token]
+KeyError: '|'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in test_list
+    return render_to_response('test_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 955, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 888, in __init__
+    super().__init__(*args, **kwargs)
+  File "E:\Python35\lib\site-packages\django\template\smartif.py", line 166, in __init__
+    mapped_tokens.append(self.translate_token(token))
+  File "E:\Python35\lib\site-packages\django\template\smartif.py", line 177, in translate_token
+    return self.create_var(token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 891, in create_var
+    return TemplateLiteral(self.template_parser.compile_filter(value), value)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 568, in compile_filter
+    return FilterExpression(token, self)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 668, in __init__
+    "from '%s'" % (token[upto:], token))
+django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '|' from '|'
+2018-06-01 12:02:00,343 [django.server:124] [basehttp:log_message] [ERROR]- "GET /api/test_list/4/ HTTP/1.1" 500 230216
+2018-06-01 12:02:00,695 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 12:02:00,708 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 12:03:51,385 [django.request:118] [exception:handle_uncaught_exception] [ERROR]- Internal Server Error: /api/test_list/4/
+Traceback (most recent call last):
+  File "E:\Python35\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "E:\Python35\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\HttpRunnerManager\HttpRunnerManager\activator.py", line 17, in process
+    result = fun(request, index) if index else fun(request)
+  File "D:\HttpRunnerManager\ApiManager\views.py", line 405, in test_list
+    return render_to_response('test_list.html', manage_info)
+  File "E:\Python35\lib\site-packages\django\shortcuts.py", line 27, in render_to_response
+    content = loader.render_to_string(template_name, context, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "E:\Python35\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 144, in get_template
+    template, origin = self.find_template(template_name)
+  File "E:\Python35\lib\site-packages\django\template\engine.py", line 126, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "E:\Python35\lib\site-packages\django\template\loaders\base.py", line 30, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 160, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 198, in compile_nodelist
+    return parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 290, in do_extends
+    nodelist = parser.parse()
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\loader_tags.py", line 233, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 815, in do_for
+    nodelist_loop = parser.parse(('empty', 'endfor',))
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 483, in parse
+    raise self.error(token, e)
+  File "E:\Python35\lib\site-packages\django\template\base.py", line 481, in parse
+    compiled_result = compile_func(self, token)
+  File "E:\Python35\lib\site-packages\django\template\defaulttags.py", line 955, in do_if
+    condition = TemplateIfParser(parser, bits).parse()
+  File "E:\Python35\lib\site-packages\django\template\smartif.py", line 194, in parse
+    self.current_token.display())
+django.template.exceptions.TemplateSyntaxError: Unused '3' at end of if expression.
+2018-06-01 12:03:51,499 [django.server:124] [basehttp:log_message] [ERROR]- "GET /api/test_list/4/ HTTP/1.1" 500 205226
+2018-06-01 12:03:51,850 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 12:03:51,859 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 12:04:00,863 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/4/ HTTP/1.1" 200 42173
+2018-06-01 12:04:01,440 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 12:04:01,449 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 12:05:45,367 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 49307
+2018-06-01 12:05:46,874 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/171/ HTTP/1.1" 200 50608
+2018-06-01 12:05:49,058 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48995
+2018-06-01 13:03:20,056 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/add_case/ HTTP/1.1" 302 0
+2018-06-01 13:03:20,069 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 13:33:27,128 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 302 0
+2018-06-01 13:33:27,138 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 13:33:34,899 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-06-01 13:33:34,924 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 13:33:37,912 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 49307
+2018-06-01 13:33:39,747 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/edit_case/103/ HTTP/1.1" 200 48995
+2018-06-01 13:34:09,537 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/edit_case/ HTTP/1.1" 200 17
+2018-06-01 13:34:09,590 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 49307
+2018-06-01 13:34:11,198 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 13:34:16,767 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 13:34:20,214 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 200 19606
+2018-06-01 14:03:57,686 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/load_config/ HTTP/1.1" 200 90
+2018-06-01 14:04:01,215 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 200 19755
+2018-06-01 14:04:01,424 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 14:05:22,593 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/run_test/ HTTP/1.1" 302 0
+2018-06-01 14:05:22,606 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/login/ HTTP/1.1" 200 5508
+2018-06-01 14:05:22,915 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 14:05:30,024 [django.server:124] [basehttp:log_message] [INFO]- "POST /api/login/ HTTP/1.1" 302 0
+2018-06-01 14:05:30,046 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 14:05:32,567 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/report_list/1/ HTTP/1.1" 200 15083
+2018-06-01 14:05:33,933 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 72095
+2018-06-01 14:05:40,239 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 14:05:41,361 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 49307
+2018-06-01 14:05:45,069 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 36793
+2018-06-01 14:05:49,115 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/module_list/1/ HTTP/1.1" 200 36793
+2018-06-01 14:05:56,141 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/report_list/1/ HTTP/1.1" 200 15083
+2018-06-01 14:05:59,396 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 72095
+2018-06-01 14:09:35,958 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 72095
+2018-06-01 14:09:36,290 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 14:09:36,304 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 14:09:37,494 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 72095
+2018-06-01 14:09:37,687 [django.server:124] [basehttp:log_message] [INFO]- "GET /favicon.ico HTTP/1.1" 302 0
+2018-06-01 14:09:37,692 [django.server:124] [basehttp:log_message] [INFO]- "GET /static/assets/img/favicon.ico HTTP/1.1" 200 67646
+2018-06-01 14:09:59,429 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 14:10:02,078 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/report_list/1/ HTTP/1.1" 200 15083
+2018-06-01 14:10:03,027 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/view_report/75/ HTTP/1.1" 200 72117
+2018-06-01 14:10:52,517 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/index/ HTTP/1.1" 200 12346
+2018-06-01 14:10:56,034 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/1/ HTTP/1.1" 200 49307
+2018-06-01 14:10:58,495 [django.server:124] [basehttp:log_message] [INFO]- "GET /api/test_list/4/ HTTP/1.1" 200 42173
