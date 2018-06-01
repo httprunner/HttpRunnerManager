@@ -101,6 +101,7 @@ class TestCaseInfoManager(models.Manager):
     def update_case(self, belong_module, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
         obj = self.get(id=case_info.pop('test_index'))
+        obj.belong_project = case_info.pop('project')
         obj.belong_module = belong_module
         obj.name = kwargs.get('test').get('name')
         obj.author = case_info.pop('author')
@@ -118,6 +119,7 @@ class TestCaseInfoManager(models.Manager):
         config_info = kwargs.get('config').pop('config_info')
         obj = self.get(id=config_info.pop('test_index'))
         obj.belong_module = belong_module
+        obj.belong_project = config_info.pop('project')
         obj.name = kwargs.get('config').get('name')
         obj.author = config_info.pop('author')
         obj.request = kwargs
