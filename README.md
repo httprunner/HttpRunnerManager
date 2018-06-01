@@ -4,23 +4,24 @@ HttpRunnerManager
 Design Philosophy
 -----------------
 
-基于HttpRunner的接口自动化测试平台: `Requests`_, `djcelery`_ and `Django`_. HttpRunner手册: http://cn.httprunner.org/
+基于HttpRunner的接口自动化测试平台: `HttpRunner`_, `djcelery`_ and `Django`_. HttpRunner手册: http://cn.httprunner.org/
 
 Key Features
 ------------
 
-- 项目管理：新增项目，列表展示及相关操作，支持用例批量上传
-- 模块管理：为项目新增模块，用例和配置都归属于module
+- 项目管理：新增项目、列表展示及相关操作，支持用例批量上传(标准化的HttpRunner json和yaml用例脚本)
+- 模块管理：为项目新增模块，用例和配置都归属于module，module和project支持同步和异步方式
 - 用例管理：分为添加config与test子功能，config定义全部变量和request等相关信息 request可以为公共参数和请求头，也可定义全部变量
-- 场景管理：可以动态添加用例，跨项目跨模块，支持拖拽排序
-- 运行方式：可单个test，单个module，单个project，也可选择多个批量运行，运行时可以灵活选择配置和环境，其中配置支持跨项目
-- 分布执行：单个用例和批量执行结果会直接在前端展示，模块和项目执行可选择为同步异步方式
+- 场景管理：可以动态加载可引用的用例，跨项目、跨模快，依赖用例列表支持拖拽排序和删除
+- 运行方式：可单个test，单个module，单个project，也可选择多个批量运行，支持自定义测试计划，运行时可以灵活选择配置和环境，
+- 分布执行：单个用例和批量执行结果会直接在前端展示，模块和项目执行可选择为同步或者异步方式，
 - 环境管理：可添加运行环境，运行用例时可以一键切换环境
-- 报告查看：所有异步执行的用例均可在线查看报告，可自主命名，为空默认时间戳保存
-- 定时任务：可设置定时任务，遵循crontab表达式，可在线开启、关闭
+- 报告查看：所有异步执行的用例均可在线查看报告，可自主命名，为空默认时间戳保存，
+- 定时任务：可设置定时任务，遵循crontab表达式，可在线开启、关闭，完毕后支持邮件通知
+- 持续集成：jenkins对接，开发中。。。
 
 本地开发环境部署
----------------
+--------
 1. 安装mysql数据库服务端(推荐5.7+),并设置为utf-8编码，创建相应HttpRunner数据库，设置好相应用户名、密码，启动mysql
 
 2. 修改:HttpRunnerManager/HttpRunnerManager/settings.py里DATABASES字典相关配置
@@ -55,16 +56,16 @@ Key Features
         CELERY_RESULT_SERIALIZER = 'json'
 
         CELERY_TASK_RESULT_EXPIRES = 7200  # celery任务执行结果的超时时间，
-        CELERYD_CONCURRENCY = 25  # celery worker的并发数 也是命令行-c指定的数目 根据服务器配置实际更改 一般25即可
-        CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
+        CELERYD_CONCURRENCY = 10  # celery worker的并发数 也是命令行-c指定的数目 根据服务器配置实际更改 默认10
+        CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，默认100
     ```
 
 5. 命令行窗口执行pip install -r requirements.txt 安装工程所依赖的库文件
 
 6. 命令行窗口切换到HttpRunnerManager目录 生成数据库迁移脚本,并生成表结构
     ```bash
-        python manage.py makemigrations ApiManager
-        python manage.py migrate
+        python manage.py makemigrations ApiManager #生成数据迁移脚本
+        python manage.py migrate  #应用到db生成数据表
     ```
 
 7. 创建超级用户，用户后台管理数据库，并按提示输入相应用户名，密码，邮箱。 如不需用，可跳过此步骤
@@ -79,9 +80,9 @@ Key Features
 
 9. 启动worker, 如果选择同步执行并确保不会使用到定时任务，那么此步骤可忽略
     ```bash
-        python manage.py celery -A HttpRunnerManager worker --loglevel=info
-        python manage.py celery beat --loglevel=info
-        celery flower
+        python manage.py celery -A HttpRunnerManager worker --loglevel=info  #启动worker
+        python manage.py celery beat --loglevel=info #启动定时任务监听器
+        celery flower #启动任务监控后台
     ```
 
 10. 访问：http://localhost:5555/dashboard 即可查看任务列表和状态
@@ -89,6 +90,8 @@ Key Features
 11. 浏览器输入：http://127.0.0.1:8000/api/register/  注册用户，开始尽情享用平台吧
 
 12. 浏览器输入http://127.0.0.1:8000/admin/  输入步骤6设置的用户名、密码，登录后台运维管理系统，可后台管理数据
+
+### 生产环境uwsgi+nginx部署参考：https://www.jianshu.com/p/d6f9138fab7b
 
 新手入门手册
 -----------
@@ -131,11 +134,18 @@ Key Features
 ![模块列表](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/module_list_01.jpg)<br>
 <br>
 12、异步运行的用例还有定时任务生成的报告均会存储在数据库，可以在线点击查看，当前不提供下载功能
-![报告展示](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/report_list_01.jpg)<br>
+![报告持久化](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/report_list_01.jpg)<br>
 <br>
+13、高大上的报告(基于extentreports实现), 可以一键翻转主题哦
+![最终报告01](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/reports_01.jpg)<br>
+<br>
+![最终报告02](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/reports_02.jpg)<br>
 
-###  后续计划
-因时间限制，平台可能还有很多潜在的bug，使用中如遇到问题，欢迎issue, 后续邮件、mock这块还有很多优化点会持续更新，请关注
+
+
+###  未完待续
+因时间限制，平台可能还有很多潜在的bug，使用中如遇到问题，欢迎issue, 后续邮件、mock这块还有很多优化点会持续更新
+如果任何疑问好好的建议欢迎github提issue, 或者可以直接加群(628448476)，反馈会比较快
 
 
 
