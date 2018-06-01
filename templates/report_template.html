@@ -82,7 +82,9 @@
                         <i class='material-icons'>warning</i> Status
                     </a>
                     <ul id='tests-toggle' class='dropdown-content'>
-                        <li status='fail'><a href='#!'>Fail<i class='material-icons red-text'>cancel</i></a></li>
+                        <li status='pass'><a href='#!'>Pass <i class='material-icons green-text'>check_circle</i></a>
+                        </li>
+                        <li status='fail'><a href='#!'>Fail <i class='material-icons red-text'>cancel</i></a></li>
                         <li class='divider'></li>
                         <li status='clear' clear='true'><a href='#!'>Clear Filters <i
                                 class='material-icons'>clear</i></a></li>
@@ -163,7 +165,7 @@
                 <ul id='test-collection' class='test-collection'>
                     {% for record in records %}
                         {% if record.status == 'success' %}
-                            <li class='test displayed active  ' status='pass' bdd='pass'
+                            <li class='test displayed active pass' status='pass' bdd='pass'
                                 test-id='{{ forloop.counter }}'>
                                 <div class='test-heading'>
                                     <span class='test-name'>{{ record.name }}</span>
@@ -171,7 +173,7 @@
                                     <span class='test-status right pass'>pass</span>
                                 </div>
                                 {% elif record.status == 'error' %}
-                            <li class='test displayed active  ' status='fail' bdd='fail'
+                            <li class='test displayed active fail' status='fail' bdd='fail'
                                 test-id='{{ forloop.counter }}'>
                             <div class='test-heading'>
                                 <span class='test-name'>{{ record.name }}</span>
