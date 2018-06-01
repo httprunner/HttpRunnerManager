@@ -140,7 +140,7 @@ def add_case_data(type, **kwargs):
 
             if case_opt.get_case_name(name, module, project) < 1:
                 case_opt.insert_case(belong_module, **kwargs)
-                logger.info('{name}用例添加成功'.format(name=name))
+                logger.info('{name}用例添加成功: {kwargs}'.format(name=name, kwargs=kwargs))
             else:
                 return '用例或配置已存在，请重新编辑'
         else:
@@ -149,7 +149,7 @@ def add_case_data(type, **kwargs):
                     and case_opt.get_case_name(name, module, project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
             case_opt.update_case(belong_module, **kwargs)
-            logger.info('{name}用例更新成功'.format(name=name))
+            logger.info('{name}用例更新成功: {kwargs}'.format(name=name, kwargs=kwargs))
 
     except DataError:
         logger.error('用例信息：{kwargs}过长！！'.format(kwargs=kwargs))
@@ -178,7 +178,7 @@ def add_config_data(type, **kwargs):
         if type:
             if case_opt.get_case_name(name, module, project) < 1:
                 case_opt.insert_config(belong_module, **kwargs)
-                logger.info('{name}配置添加成功'.format(name=name))
+                logger.info('{name}配置添加成功: {kwargs}'.format(name=name, kwargs=kwargs))
             else:
                 return '用例或配置已存在，请重新编辑'
         else:
@@ -187,7 +187,7 @@ def add_config_data(type, **kwargs):
                     and case_opt.get_case_name(name, module, project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
             case_opt.update_config(belong_module, **kwargs)
-            logger.info('{name}配置更新成功'.format(name=name))
+            logger.info('{name}配置更新成功: {kwargs}'.format(name=name, kwargs=kwargs))
     except DataError:
         logger.error('{name}配置信息过长：{kwargs}'.format(name=name, kwargs=kwargs))
         return '字段长度超长，请重新编辑'
