@@ -84,13 +84,7 @@ class ModuleInfoManager(models.Manager):
             if id is not None:
                 return self.get(id=id).module_name
             else:
-<<<<<<< .merge_file_xIxZPo
-                return self.get(module_name=module_name)
-            return self.get(id=module_name)
-=======
                 return self.get(id=module_name)
-
->>>>>>> .merge_file_PeG8rW
 
 
 '''用例信息表操作'''
@@ -101,55 +95,39 @@ class TestCaseInfoManager(models.Manager):
         case_info = kwargs.get('test').pop('case_info')
         self.create(name=kwargs.get('test').get('name'), belong_project=case_info.pop('project'),
                     belong_module=belong_module,
-<<<<<<< .merge_file_xIxZPo
-                    author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
-=======
-                    author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs, interface_url=kwargs.get('test').get('request').get('url'))
->>>>>>> .merge_file_PeG8rW
+                    author=case_info.pop('author'),
+                    include=case_info.pop('include'),
+                    request=kwargs,
+                    interface_url=kwargs.get('test').get('request').get('url'))
 
     def update_case(self, belong_module, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
         obj = self.get(id=case_info.pop('test_index'))
-<<<<<<< .merge_file_xIxZPo
-=======
         obj.belong_project = case_info.pop('project')
->>>>>>> .merge_file_PeG8rW
         obj.belong_module = belong_module
         obj.name = kwargs.get('test').get('name')
         obj.author = case_info.pop('author')
         obj.include = case_info.pop('include')
         obj.request = kwargs
-<<<<<<< .merge_file_xIxZPo
-=======
         obj.interface_url = kwargs.get('test').get('request').get('url')
->>>>>>> .merge_file_PeG8rW
         obj.save()
 
     def insert_config(self, belong_module, **kwargs):
         config_info = kwargs.get('config').pop('config_info')
         self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
                     belong_module=belong_module,
-<<<<<<< .merge_file_xIxZPo
-                    author=config_info.pop('config_author'), type=2, request=kwargs)
-=======
                     author=config_info.pop('author'), type=2, request=kwargs)
->>>>>>> .merge_file_PeG8rW
 
     def update_config(self, belong_module, **kwargs):
-        config_info = kwargs.get('config').pop('config_info')
-        obj = self.get(id=config_info.pop('test_index'))
+        case_info = kwargs.get('test').pop('case_info')
+        obj = self.get(id=case_info.pop('test_index'))
+        obj.belong_project = case_info.pop('project')
         obj.belong_module = belong_module
-<<<<<<< .merge_file_xIxZPo
-        obj.name = kwargs.get('config').get('name')
-        obj.author = config_info.pop('config_author')
-=======
-        obj.belong_project = config_info.pop('project')
-        obj.name = kwargs.get('config').get('name')
-        obj.author = config_info.pop('author')
->>>>>>> .merge_file_PeG8rW
+        obj.name = kwargs.get('test').get('name')
+        obj.author = case_info.pop('author')
+        obj.include = case_info.pop('include')
         obj.request = kwargs
         obj.save()
-
     def get_case_name(self, name, module_name, belong_project):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).filter(
             belong_project__exact=belong_project).count()

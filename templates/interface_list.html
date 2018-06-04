@@ -50,32 +50,26 @@
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 接口列表</ul>
-            <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">配置展示</a></dl>
-            <dl>
-                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
-                        onclick="location='/api/add_case/'">新增用例
-                </button>
-                <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
-                        onclick="location='/api/add_config/'">新增配置
-                </button>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">接口列表展示</a></dl>
+
             </dl>
         </div>
 
-        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-            <form id="pro_filter" method="post" action="/api/interface_list/1/">
-                <ul>
-                    <li>
-                    <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="创建者"/></li>
+        <!--<div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">-->
+            <!--<form id="pro_filter" method="post" action="/api/interface_list/1/">-->
+                <!--<ul>-->
+                    <!--<li>-->
+                    <!--<li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"-->
+                                                        <!--class="am-form-field am-input-sm am-input-xm"-->
+                                                        <!--placeholder="创建者"/></li>-->
 
-                    <button class="am-btn am-radius am-btn-xs am-btn-success"
-                            style="margin-top: -1px;">搜索
-                    </button>
-                    </li>
-                </ul>
-            </form>
-        </div>
+                    <!--<button class="am-btn am-radius am-btn-xs am-btn-success"-->
+                            <!--style="margin-top: -1px;">搜索-->
+                    <!--</button>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</form>-->
+        <!--</div>-->
 
 
         <form class="am-form am-g" id='test_list' name="test_list">
@@ -89,8 +83,7 @@
                     <th class="table-type">所属模块</th>
                     <th class="table-type">创建者</th>
                     <th class="table-date am-hide-sm-only">创建时间</th>
-                    <th width="163px" class="table-title">操作</th>
-                    <th width="163px" class="table-title">用例个数</th>
+                    <th class="table-type">用例个数</th>
 
                 </tr>
                 </thead>
@@ -104,46 +97,19 @@
                         </td>
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
-                        <td>{{ foo.author }}</td>
                         <td class="am-hide-sm-only">{{ foo.create_time }}</td>
-                        <td>
-                            <div class="am-btn-toolbar">
-                                <div class="am-btn-group am-btn-group-xs">
-                                    <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
-                                            data-am-popover="{content: '复制', trigger: 'hover focus'}"
-                                            onclick="copy('#copy_list', '{{ foo.id }}')"><span
-                                            class="am-icon-copy"></span></button>
-                                    <button type="button"
-                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
-                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
-                                            onclick="invalid('{{ foo.id }}')"><span
-                                            class="am-icon-trash-o"></span></button>
-                                </div>
-                            </div>
                         <td>
                             <ul>
                                <input type="submit" class="btn btn-success" value="{{ foo.num }}">
                                 </input>
                             </ul>
                         </td>
-                        </td>
-                    </tr>
+                        </tr>
                     </form>
 
                 {% endfor %}
                 </tbody>
             </table>
-
-            <div class="am-btn-group am-btn-group-xs">
-                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_case/'"><span
-                        class="am-icon-plus"></span> 新增用例
-                </button>
-                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_config/'"><span
-                        class="am-icon-plus"></span> 新增配置
-                </button>
-            </div>
-
             <ul class="am-pagination am-fr">
                 {{ page_list }}
             </ul>

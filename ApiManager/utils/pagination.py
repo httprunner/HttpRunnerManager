@@ -118,8 +118,8 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
     elif url == '/api/periodictask/':
-        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled','date_changed') \
-            if name is not '' else obj.all().values('id', 'name','kwargs','enabled','date_changed', 'description')
+        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled', 'date_changed') \
+            if name is not '' else obj.all().values('id', 'name', 'kwargs', 'enabled', 'date_changed', 'description')
     elif url != '/api/env_list/':
         if url == '/api/test_list/' or url == '/api/config_list/':
             obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
@@ -145,14 +145,24 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             if user is not '':
                 obj = obj.raw("""SELECT *, COUNT(`TestCaseInfo`.`interface_url`) AS `num` 
                                          FROM `TestCaseInfo` 
-                                         WHERE author= %s
+                                         WHERE author= %s 
+                                         AND `TestCaseInfo`.`interface_url` IS NOT NULL 
+                                         AND `TestCaseInfo`.`interface_url` <> 'null' 
+                                         AND `TestCaseInfo`.`interface_url` <> '' 
                                          GROUP BY `TestCaseInfo`.`interface_url` 
                                          ORDER BY belong_module_id desc""", [user])
             else:
-                obj = obj.raw("""SELECT *, COUNT(`TestCaseInfo`.`interface_url`) AS `num` 
-                                         FROM `TestCaseInfo` 
-                                         GROUP BY `TestCaseInfo`.`interface_url` 
-                                         ORDER BY belong_module_id desc""")
+                obj = obj.raw("""SELECT*,COUNT( `TestCaseInfo`.`interface_url` ) AS `num` 
+                                    FROM
+                                        `TestCaseInfo` 
+                                    WHERE
+                                        `TestCaseInfo`.`interface_url` IS NOT NULL 
+                                        AND `TestCaseInfo`.`interface_url` <> 'null' 
+                                        AND `TestCaseInfo`.`interface_url` <> '' 
+                                    GROUP BY
+                                        `TestCaseInfo`.`interface_url` 
+                                    ORDER BY
+                                        belong_module_id DESC""")
     total = len(list(obj))
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]

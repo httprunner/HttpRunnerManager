@@ -80,10 +80,7 @@ class TestCaseInfo(BaseTable):
     include = models.CharField('包含config/test', max_length=400, null=True)
     author = models.CharField('编写人员', max_length=20)
     request = models.TextField('请求信息')
-<<<<<<< .merge_file_kGuUv6
-=======
     interface_url = models.TextField('接口请求地址', null=True)
->>>>>>> .merge_file_dkXEnH
     objects = TestCaseInfoManager()
 
 
