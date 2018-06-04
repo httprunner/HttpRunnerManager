@@ -245,7 +245,6 @@
                             var json2map = JSON.stringify(data);
                             var obj = JSON.parse(json2map);
                             obj['env_name'] = $('#env_name').val();
-                            obj['config'] = $('#config_name').val();
                             post('/api/run_batch_test/', obj)
                         },
                         onCancel: function () {
