@@ -88,7 +88,7 @@ def customer_pager(base_url, current_page, total_page):
     return mark_safe(result)  # 把字符串转成html语言
 
 
-def get_pager_info(Model, filter_query, url, id, per_items=10):
+def get_pager_info(Model, filter_query, url, id, per_items=12):
     """
     筛选列表信息
     :param Model: Models实体类
@@ -118,13 +118,8 @@ def get_pager_info(Model, filter_query, url, id, per_items=10):
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
     elif url == '/api/periodictask/':
-        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled',
-                                                     'date_changed') if name is not '' else obj.all().values('id',
-                                                                                                             'name',
-                                                                                                             'kwargs',
-                                                                                                             'enabled',
-                                                                                                             'date_changed',
-                                                                                                             'description')
+        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled','date_changed') \
+            if name is not '' else obj.all().values('id', 'name','kwargs','enabled','date_changed', 'description')
     elif url != '/api/env_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
         if belong_project and belong_module is not '':

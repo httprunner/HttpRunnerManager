@@ -431,17 +431,20 @@ def task_logic(**kwargs):
 
 def set_filter_session(request):
     """
-    查询session
+    update session
     :param request:
     :return:
     """
-    request.session['user'] = '' if 'user' not in request.POST.keys() else request.POST.get('user')
-    request.session['name'] = '' if 'name' not in request.POST.keys() else request.POST.get('name')
-    request.session['belong_project'] = '' if 'belong_project' not in request.POST.keys() else request.POST.get(
-        'belong_project')
-    request.session['belong_module'] = '' if 'belong_module' not in request.POST.keys() else request.POST.get(
-        'belong_module')
-    request.session['report_name'] = '' if 'report_name' not in request.POST.keys() else request.POST.get('report_name')
+    if 'user' in request.POST.keys():
+        request.session['user'] = request.POST.get('user')
+    if 'name' in request.POST.keys():
+        request.session['name'] = request.POST.get('name')
+    if 'belong_project' in request.POST.keys():
+        request.session['belong_project'] = request.POST.get('belong_project')
+    if 'belong_module' in request.POST.keys():
+        request.session['belong_module'] = request.POST.get('belong_module')
+    if 'report_name' in request.POST.keys():
+        request.session['report_name'] = request.POST.get('report_name')
 
     filter_query = {
         'user': request.session['user'],
@@ -452,6 +455,19 @@ def set_filter_session(request):
     }
 
     return filter_query
+
+
+def init_filter_session(request):
+    """
+    init session
+    :param request:
+    :return:
+    """
+    request.session['user'] = ''
+    request.session['name'] = ''
+    request.session['belong_project'] = ''
+    request.session['belong_module'] = ''
+    request.session['report_name'] = ''
 
 
 def get_ajax_msg(msg, success):
