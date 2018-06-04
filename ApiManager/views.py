@@ -1,11 +1,10 @@
 import json
 import logging
+import os
 import platform
 import shutil
-
 import sys
 
-import os
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
@@ -13,7 +12,8 @@ from djcelery.models import PeriodicTask
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic, \
+    init_filter_session
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -74,6 +74,8 @@ def log_out(request):
         logger.info('{username}退出'.format(username=request.session['now_account']))
         try:
             del request.session['now_account']
+            del request.session['login_status']
+            init_filter_session(request, type=False)
         except KeyError:
             logging.error('session invalid')
         return HttpResponseRedirect("/api/login/")
@@ -97,6 +99,7 @@ def index(request):
             'config_length': config_length,
             'account': request.session["now_account"]
         }
+        init_filter_session(request)
         return render_to_response('index.html', manage_info)
     else:
         return HttpResponseRedirect("/api/login/")
@@ -785,3 +788,24 @@ def get_project_info(request):
             return HttpResponse(msg)
     else:
         return HttpResponseRedirect("/api/login/")
+
+
+def test_login_valid(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username == 'lcc' and password == 'lcc':
+            return JsonResponse({"status": True, "code": "0001"})
+        else:
+            return JsonResponse({"status": False, "code": "0009"})
+
+
+def test_login_json(request):
+    if request.method == 'POST':
+        info = json.loads(request.body.decode('utf-8'))
+        username = info.get("username")
+        password = info.get("password")
+        if username == 'lcc' and password == 'lcc':
+            return JsonResponse({"status": True, "code": "0001"})
+        else:
+            return JsonResponse({"status": False, "code": "0009"})
