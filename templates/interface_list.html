@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}配置信息{% endblock %}
+{% block title %}接口信息{% endblock %}
 {% load staticfiles %}
 {% block content %}
     <div class="am-modal am-modal-prompt" tabindex="-1" id="my-copy">
@@ -49,7 +49,7 @@
 
     <div class="admin-biaogelist">
         <div class="listbiaoti am-cf">
-            <ul class="am-icon-flag on"> 配置列表</ul>
+            <ul class="am-icon-flag on"> 接口列表</ul>
             <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">配置展示</a></dl>
             <dl>
                 <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
@@ -62,19 +62,8 @@
         </div>
 
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
-            <form id="pro_filter" method="post" action="/api/config_list/1/">
+            <form id="pro_filter" method="post" action="/api/interface_list/1/">
                 <ul>
-                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
-                                                        name="belong_project"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="所属项目"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.belong_module }}" type="text"
-                                                        name="belong_module"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="所属模块"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="配置名称"/></li>
                     <li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
                                                         class="am-form-field am-input-sm am-input-xm"
@@ -101,14 +90,17 @@
                     <th class="table-type">创建者</th>
                     <th class="table-date am-hide-sm-only">创建时间</th>
                     <th width="163px" class="table-title">操作</th>
+                    <th width="163px" class="table-title">用例个数</th>
+
                 </tr>
                 </thead>
                 <tbody>
                 {% for foo in test %}
-                    <tr>
+                    <form id="interface_num" method="GET" action="/api/interface_list/1/">
+                        <tr>
                         <td><input type="checkbox" name="config_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="/api/edit_config/{{ foo.id }}/">{{ foo.name }}</a>
+                        <td><input type="hidden" name="interface_url" value="{{ foo.interface_url }}">{{ foo.interface_url }}</a>
                         </td>
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
@@ -127,11 +119,18 @@
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
                                             onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
-
                                 </div>
                             </div>
+                        <td>
+                            <ul>
+                               <input type="submit" class="btn btn-success" value="{{ foo.num }}">
+                                </input>
+                            </ul>
+                        </td>
                         </td>
                     </tr>
+                    </form>
+
                 {% endfor %}
                 </tbody>
             </table>

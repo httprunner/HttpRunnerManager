@@ -95,9 +95,6 @@
                 <button type="button" class="am-btn am-btn-warning am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_config/'">新增配置
                 </button>
-                <!--<button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"-->
-                        <!--data-toggle="modal" data-target="#bulk_uploadcase">批量导入-->
-                <!--</button>-->
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="my_submit('/api/load_config/')">运行
                 </button>
@@ -149,20 +146,32 @@
                 {% for foo in test %}
                     <tr>
                         <td><input type="checkbox" name="testcase_{{ foo.id }}" value="{{ foo.id }}"/></td>
-                        <td onmouseover="$('#pre_case{{ foo.id }}').collapse('close')">{{ forloop.counter }}</td>
-                        <td><a onmouseover="$('#pre_case{{ foo.id }}').collapse('open')"
-                               href="/api/edit_case/{{ foo.id }}/"
-                               data-am-collapse="{target: '#pre_case{{ foo.id }}'}">{{ foo.name }}</a>
-                            <nav>
-                                <ul id="pre_case{{ foo.id }}" class="am-nav am-collapse">
-                                    {% for path in foo.include|convert_eval %}
-                                        <li id="{{ path.0 }}">
-                                            <a href="/api/edit_case/{{ path.0 }}/" id="{{ path.0 }}"
-                                               style="color:rosybrown">{{ path.1 }}</a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </nav>
+                        <td onmouseover="coolspc({{ foo.id }})">{{ forloop.counter }}</td>
+                        <td>
+                            {% if foo.include != '[]'  %}
+                                <div style="float: left">
+                                <a id="co{{ foo.id }}" class="am-icon-plus-square-o am-icon-fw" style="display: block"
+                                   onclick="coolspo({{ foo.id }})"></a>
+                                <a id="cc{{ foo.id }}" class="am-icon-minus-square-o am-icon-fw" style="display: none"
+                                   onclick="coolspc({{ foo.id }})"></a>
+                            </div>
+                            
+                            {% endif %}
+
+                            <div style="float: left">
+                                <a href="/api/edit_case/{{ foo.id }}/"
+                                   data-am-collapse="{target: '#pre_case{{ foo.id }}'}">{{ foo.name }}</a>
+                                <nav>
+                                    <ul id="pre_case{{ foo.id }}" class="am-nav am-collapse">
+                                        {% for path in foo.include|convert_eval %}
+                                            <li id="{{ path.0 }}">
+                                                <a href="/api/edit_case/{{ path.0 }}/" id="{{ path.0 }}"
+                                                   style="color:rosybrown">{{ path.1 }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </nav>
+                            </div>
                         </td>
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
@@ -213,6 +222,17 @@
         </form>
     </div>
     <script type="text/javascript">
+        function coolspo(id) {
+            $('#co' + id).css('display', 'none');
+            $('#cc' + id).css('display', 'block');
+            $('#pre_case' + id).collapse('open');
+        }
+
+        function coolspc(id) {
+            $('#co' + id).css('display', 'block');
+            $('#cc' + id).css('display', 'none');
+            $('#pre_case' + id).collapse('close');
+        }
 
         function my_submit(url) {
             if ($("input:checked").size() == 0) {

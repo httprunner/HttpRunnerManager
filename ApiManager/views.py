@@ -1,10 +1,11 @@
 import json
 import logging
-import os
 import platform
 import shutil
+
 import sys
 
+import os
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
@@ -12,7 +13,7 @@ from djcelery.models import PeriodicTask
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, upload_file_logic, load_modules
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -442,6 +443,56 @@ def config_list(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
+def interface_list(request, id):
+    """
+    接口列表
+    :param request:
+    :param id: str or int：当前页
+    :return:
+    """
+    if request.session.get('login_status'):
+        acount = request.session["now_account"]
+        filter_query = set_filter_session(request)
+        if request.method == 'GET':
+            if request.GET.get('interface_url') is None:
+                test_list = get_pager_info(
+                    TestCaseInfo, filter_query, '/api/interface_list/', id)
+                manage_info = {
+                    'account': acount,
+                    'test': test_list[1],
+                    'page_list': test_list[0],
+                    'info': filter_query,
+                    'env': EnvInfo.objects.all().order_by('-create_time')
+                }
+                return render_to_response('interface_list.html', manage_info)
+            else:
+                filter_query['interface_url'] = request.GET.get('interface_url')
+                test_list = get_pager_info(
+                    TestCaseInfo, filter_query, '/api/test_list/', id)
+                manage_info = {
+                    'account': acount,
+                    'test': test_list[1],
+                    'page_list': test_list[0],
+                    'info': filter_query,
+                    'env': EnvInfo.objects.all().order_by('-create_time')
+                }
+                return render_to_response('test_list.html', manage_info)
+        else:
+            test_list = get_pager_info(
+                TestCaseInfo, filter_query, '/api/interface_list/', id)
+            manage_info = {
+                'account': acount,
+                'test': test_list[1],
+                'page_list': test_list[0],
+                'info': filter_query,
+                'env': EnvInfo.objects.all().order_by('-create_time')
+            }
+            return render_to_response('interface_list.html', manage_info)
+
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
 def edit_case(request, id=None):
     """
     编辑用例
@@ -730,7 +781,7 @@ def get_project_info(request):
             except ValueError:
                 logger.error('获取项目信息异常：{project_info}'.format(project_info=project_info))
                 return HttpResponse('获取信息解析异常')
-            msg = load_modules(**project_info)
-            return HttpResponse(get_ajax_msg(msg, '/api/test_list/1/'))
+            msg = load_modules(**project_info.pop('task'))
+            return HttpResponse(msg)
     else:
         return HttpResponseRedirect("/api/login/")

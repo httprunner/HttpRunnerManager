@@ -1,6 +1,7 @@
 <!doctype html>
 <html class="no-js" lang="zh-CN">
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}{% endblock %}</title>
@@ -11,7 +12,6 @@
 
     {% load staticfiles %}
     <meta name="apple-mobile-web-app-title" content="HttpRunnerManager"/>
-    <!--最高优先级引用   -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-fileinput/4.4.8/css/fileinput.css"/>
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
@@ -34,8 +34,9 @@
 
 </head>
 <body class="modal-open">
-<form  enctype="multipart/form-data" id="upload_project_info">
-    <div class="modal fade" id="bulk_uploadcase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<form enctype="multipart/form-data" id="upload_project_info">
+    <div class="modal fade" id="bulk_uploadcase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -46,30 +47,30 @@
                     <input name="upload" id="uploadfile" type="file" class="file" multiple/>
                     <div id="kartik-file-errors"></div>
                 </div>
-                    <div class="form-group">
-                        <div class="input-group col-md-8" style="margin-left: 15px">
-                            <div class="input-group-addon" style="color: #0a628f">所属项目</div>
-                            <select id='project' name="project" class="form-control"
-                                    onchange="auto_load('#upload_project_info', '/api/get_project_info/', '#upload_belong_module_id', 'module')">
-                                <option value="请选择">请选择</option>
-                                {% for foo in project %}
+                <div class="form-group">
+                    <div class="input-group col-md-8" style="margin-left: 15px">
+                        <div class="input-group-addon" style="color: #0a628f">所属项目</div>
+                        <select id='project' name="project" class="form-control"
+                                onchange="auto_load('#upload_project_info', '/api/get_project_info/', '#upload_belong_module_id', 'module')">
+                            <option value="请选择">请选择</option>
+                            {% for foo in project %}
                                 <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <div class="input-group col-md-8" style="margin-left: 15px">
-                            <div class="input-group-addon" style="color: #0a628f">所属模块</div>
-                            <select id="upload_belong_module_id" name="module" class="form-control"
-                                    onchange="auto_load('#upload_project_info', '/api/get_project_info/', '#belong_case_id', 'case')">
-                            </select>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group col-md-8" style="margin-left: 15px">
+                        <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                        <select id="upload_belong_module_id" name="module" class="form-control">
+                        </select>
                     </div>
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
 </form>
+
 <div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
     <div class="am-modal-dialog">
         <div class="am-modal-hd">HttpRunnerManager</div>
@@ -103,6 +104,7 @@
             <ul>
                 <li><a href="/api/test_list/1/">用 例 列 表</a></li>
                 <li><a href="/api/config_list/1/">配 置 列 表</a></li>
+                <li><a href="/api/interface_list/1/">接 口 列 表</a></li>
                 <li><a href="/api/add_config/">新 增 配 置</a></li>
                 <li><a href="/api/add_case/">新 增 用 例</a></li>
             </ul>
@@ -114,7 +116,7 @@
             <ul>
                 <li><a href="/api/env_list/1/">运 行 环 境</a></li>
                 <li><a href="/api/periodictask/1/">定 时 任 务</a></li>
-                <li><a href="http://localhost:5555/dashboard">任 务 监 控</a></li>
+                <li><a href="http://127.0.0.1:5555/dashboard">任 务 监 控</a></li>
             </ul>
         </div>
         <!-- sideMenu End -->
@@ -129,9 +131,23 @@
             </li>
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
-                        onclick="location='/api/add_module/'">新增模块
-                    <a href="/api/add_module/" class="am-close am-close-spin">~</a></button>
+                        onclick="location='/api/project_list/1/'">项目列表<a
+                        href="/api/project_list/1/" class="am-close am-close-spin">~</a>
+                </button>
             </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/module_list/1/'">模块列表<a
+                        href="/api/module_list/1/" class="am-close am-close-spin">~</a>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
+                        onclick="location='/api/test_list/1/'">用例列表<a
+                        href="/api/test_list/1/" class="am-close am-close-spin">~</a>
+                </button>
+            </li>
+
             <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
                         onclick="location='/api/add_config/'">新增配置<a
@@ -148,12 +164,6 @@
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
                         onclick="location='/api/add_task/'">新增任务<a
                         href="/api/add_task/" class="am-close am-close-spin">~</a>
-                </button>
-            </li>
-            <li>
-                <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
-                        onclick="location='/api/test_list/1/'">用例列表<a
-                        href="/api/test_list/1/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
         </ul>
@@ -173,34 +183,35 @@
             defaultPlay: true,//默认是否执行效果（默认true）
             returnDefault: false //鼠标从.sideMen移走后返回默认状态（默认false）
         });
+
         function initFileInput(ctrlName) {
             var control = $('#' + ctrlName);
             control.fileinput({
-                resizeImage : true,
-                resizePreference : 'width',
-                uploadAsync:false,                             //采用同步上传
-                language : 'zh', //设置语言
+                resizeImage: true,
+                resizePreference: 'width',
+                uploadAsync: false,                             //采用同步上传
+                language: 'zh', //设置语言
                 uploadUrl: '/api/upload_file/',
-                allowedFileExtensions : [ 'yml', 'yaml', 'json'],//接收的文件后缀
-                showUpload : true, //是否显示上传按钮
+                allowedFileExtensions: ['yml', 'yaml', 'json'],//接收的文件后缀
+                showUpload: true, //是否显示上传按钮
                 showRemove: false,
-                showCaption : true,//是否显示标题
-                browseClass : "btn btn-primary", //按钮样式
-                previewFileIcon : "<i class='glyphicon glyphicon-king'></i>",
-                maxFileCount : 10,
-                msgFilesTooMany : "选择文件超过了最大数量",
-                maxFileSize : 2000,
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                maxFileCount: 10,
+                msgFilesTooMany: "选择文件超过了最大数量",
+                maxFileSize: 2000,
                 uploadExtraData:
-                    function(){     //上传时要传输的其他参数
-                        project_name = $('#project option:selected').text();//选中的文本
-                        module_name = $('#upload_belong_module_id option:selected').text();//选中的文本
-                        return {"project":project_name,"module":module_name};
+                    function () {     //上传时要传输的其他参数
+                        project_name = $('#project option:selected').val();//选中的文本
+                        module_name = $('#upload_belong_module_id option:selected').val();//选中的文本
+                        return {"project": project_name, "module": module_name};
                     },
-                showClose : false,//显示右上角X关闭
+                showClose: false,//显示右上角X关闭
                 overwriteInitial: false, //是否显示预览
                 dropZoneEnabled: false,//是否显示拖拽区域
             });
-            control.on('fileerror', function(event, data, msg) {
+            control.on('fileerror', function (event, data, msg) {
                 myAlert(msg)
             });
             control.on("filebatchuploadsuccess", function (event, data) {
@@ -208,16 +219,15 @@
                 $("#bulk_uploadcase").trigger('click');
                 if (obj.status.indexOf('/api/') !== -1) {
                     window.location.href = obj.status;
-                }else {
+                } else {
                     myAlert(obj.status);
                 }
             });
         }
-        initFileInput("uploadfile");
 
+        initFileInput("uploadfile");
     </script>
 </div>
-
 
 </body>
 </html>
