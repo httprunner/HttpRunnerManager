@@ -457,17 +457,24 @@ def set_filter_session(request):
     return filter_query
 
 
-def init_filter_session(request):
+def init_filter_session(request, type = True):
     """
     init session
     :param request:
     :return:
     """
-    request.session['user'] = ''
-    request.session['name'] = ''
-    request.session['belong_project'] = ''
-    request.session['belong_module'] = ''
-    request.session['report_name'] = ''
+    if type:
+        request.session['user'] = ''
+        request.session['name'] = ''
+        request.session['belong_project'] = ''
+        request.session['belong_module'] = ''
+        request.session['report_name'] = ''
+    else:
+        del request.session['user']
+        del request.session['name']
+        del request.session['belong_project']
+        del request.session['belong_module']
+        del request.session['report_name']
 
 
 def get_ajax_msg(msg, success):

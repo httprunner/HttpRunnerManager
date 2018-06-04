@@ -74,6 +74,8 @@ def log_out(request):
         logger.info('{username}退出'.format(username=request.session['now_account']))
         try:
             del request.session['now_account']
+            del request.session['login_status']
+            init_filter_session(request, type=False)
         except KeyError:
             logging.error('session invalid')
         return HttpResponseRedirect("/api/login/")
@@ -745,6 +747,7 @@ def test_login_valid(request):
             return JsonResponse({"status": True, "code": "0001"})
         else:
             return JsonResponse({"status": False, "code": "0009"})
+
 
 def test_login_json(request):
     if request.method == 'POST':
