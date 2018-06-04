@@ -10,11 +10,6 @@
 
         <div class="listbiaoti am-cf">
             <ul class="am-icon-flag on"> 用例修改</ul>
-            {% comment %} <ul>
-                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="post('/api/run_test/', {'id':'{{ info.id }}', 'mode':'run_by_test'})">运行
-                </button>
-            </ul>{% endcomment %}
             <dl class="am-icon-home" style="float: right;">当前位置： 用例管理 > <a href="#">修改用例</a></dl>
         </div>
 
@@ -52,7 +47,8 @@
                                 <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select name="project" class="form-control"
                                         onchange="auto_load('#form_message', '/api/edit_case/', '#belong_module_id', 'module')">
-                                    <option value="{{ info.belong_project }}" selected>{{ info.belong_project }}</option>
+                                    <option value="{{ info.belong_project }}"
+                                            selected>{{ info.belong_project }}</option>
                                     {% for obj in project %}
                                         {% ifnotequal info.belong_project obj.project_name %}
                                             <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
@@ -67,8 +63,20 @@
                             <div class="input-group col-md-4 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">所属模块</div>
                                 <select id="belong_module_id" name="module" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
+                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case'),
+                                        auto_load('#form_message', '/api/add_case/', '#config', 'config')">
                                     <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">引用配置</div>
+                                <select id="config" name="config" class="form-control">
+                                    {% if 'config' in include.0.keys %}
+                                        <option value="{{ include.0.config.0 }}">{{ include.0.config.1 }}</option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>
@@ -101,10 +109,13 @@
                                 <nav>
                                     <ul id="pre_case" class="am-nav am-collapse">
                                         {% for foo in info.include|convert_eval %}
-                                            <li id="{{ foo.0 }}">
-                                                <a href="/api/edit_case/{{ foo.0 }}/" id="{{ foo.0 }}">{{ foo.1 }}</a>
-                                                <i class="js-remove" onclick=remove_self('#{{ foo.0 }}')>✖</i></li>
+                                            {% if foo|convert_eval == 'list' %}
+                                                <li id="{{ foo.0 }}">
+                                                    <a href="/api/edit_case/{{ foo.0 }}/"
+                                                       id="{{ foo.0 }}">{{ foo.1 }}</a>
+                                                    <i class="js-remove" onclick=remove_self('#{{ foo.0 }}')>✖</i></li>
 
+                                            {% endif %}
                                         {% endfor %}
 
                                     </ul>
