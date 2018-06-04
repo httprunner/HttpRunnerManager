@@ -12,7 +12,7 @@ from djcelery.models import PeriodicTask
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic, \
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
     init_filter_session
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
@@ -175,7 +175,7 @@ def add_case(request):
         elif request.method == 'GET':
             manage_info = {
                 'account': acount,
-                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time'),
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
             }
             return render_to_response('add_case.html', manage_info)
     else:
@@ -228,9 +228,8 @@ def run_test(request):
             id = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
-            config = kwargs.pop('config')
-            testcases_dict = run_by_module(id, base_url, config) if type == 'module' \
-                else run_by_project(id, base_url, config)
+            testcases_dict = run_by_module(id, base_url) if type == 'module' \
+                else run_by_project(id, base_url)
             report_name = kwargs.get('report_name', None)
             if not testcases_dict:
                 return HttpResponse('没有用例哦')
@@ -239,13 +238,12 @@ def run_test(request):
         else:
             id = request.POST.get('id')
             base_url = request.POST.get('env_name')
-            config = request.POST.get('config')
             type = request.POST.get('type', None)
             if type:
-                testcases_dict = run_by_module(id, base_url, config) if type == 'module' \
-                    else run_by_project(id, base_url, config)
+                testcases_dict = run_by_module(id, base_url) if type == 'module' \
+                    else run_by_project(id, base_url)
             else:
-                testcases_dict = run_by_single(id, base_url, config)
+                testcases_dict = run_by_single(id, base_url)
             if testcases_dict:
                 runner.run(testcases_dict)
                 return render_to_response('report_template.html', runner.summary)
@@ -275,9 +273,8 @@ def run_batch_test(request):
             test_list = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
-            config = kwargs.pop('config')
             report_name = kwargs.get('report_name', None)
-            testcases_dict = run_by_batch(test_list, base_url, config, type=type)
+            testcases_dict = run_by_batch(test_list, base_url, type=type)
             if not testcases_dict:
                 return HttpResponse('没有用例哦')
             main_hrun.delay(testcases_dict, report_name)
@@ -285,12 +282,11 @@ def run_batch_test(request):
         else:
             type = request.POST.get('type', None)
             base_url = request.POST.get('env_name')
-            config = request.POST.get('config')
             test_list = request.body.decode('utf-8').split('&')
             if type:
-                testcases_lists = run_by_batch(test_list, base_url, config, type=type, mode=True)
+                testcases_lists = run_by_batch(test_list, base_url, type=type, mode=True)
             else:
-                testcases_lists = run_by_batch(test_list, base_url, config)
+                testcases_lists = run_by_batch(test_list, base_url)
             if testcases_lists:
                 runner.run(testcases_lists)
                 return render_to_response('report_template.html', runner.summary)
@@ -466,10 +462,12 @@ def edit_case(request, id=None):
 
         test_info = TestCaseInfo.objects.get_case_by_id(id)
         request = eval(test_info[0].request)
+        include = eval(test_info[0].include)
         manage_info = {
             'account': acount,
             'info': test_info[0],
             'request': request['test'],
+            'include': include,
             'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
         }
         return render_to_response('edit_case.html', manage_info)
@@ -636,23 +634,6 @@ def periodictask(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
-def load_config(request):
-    """
-    接收ajax请求，返回指定项目下的配置
-    :param request:
-    :return:
-    """
-    if request.session.get('login_status'):
-        if request.is_ajax():
-            try:
-                kwargs = json.loads(request.body.decode('utf-8'))
-            except ValueError:
-                logging.error('指定项目信息解析异常: {kwargs}'.format(kwargs=kwargs))
-                return '配置信息加载异常'
-            msg = load_configs()
-            return HttpResponse(msg)
-
-
 def add_task(request):
     """
     添加任务
@@ -732,7 +713,7 @@ def get_project_info(request):
                 project_info = json.loads(request.body.decode('utf-8'))
             except ValueError:
                 logger.error('获取项目信息异常：{project_info}'.format(project_info=project_info))
-                return HttpResponse('获取信息解析异常')
+                return HttpResponse('项目信息解析异常')
             msg = load_modules(**project_info.pop('task'))
             return HttpResponse(msg)
     else:
