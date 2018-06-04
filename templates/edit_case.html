@@ -109,7 +109,7 @@
                                 <nav>
                                     <ul id="pre_case" class="am-nav am-collapse">
                                         {% for foo in info.include|convert_eval %}
-                                            {% if foo|convert_eval == 'list' %}
+                                            {% if foo|data_type == 'list' %}
                                                 <li id="{{ foo.0 }}">
                                                     <a href="/api/edit_case/{{ foo.0 }}/"
                                                        id="{{ foo.0 }}">{{ foo.1 }}</a>
