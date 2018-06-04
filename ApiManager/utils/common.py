@@ -133,10 +133,8 @@ def load_modules(**kwargs):
     :return: str: module_info
     """
     belong_project = kwargs.get('name').get('project')
-    module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project).values_list(
-        'id',
-        'module_name').order_by(
-        '-create_time')
+    module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project)\
+        .values_list('id', 'module_name').order_by('-create_time')
     module_info = list(module_info)
     string = ''
     for value in module_info:
@@ -144,7 +142,7 @@ def load_modules(**kwargs):
     return string[:len(string) - 11]
 
 
-def load_cases(**kwargs):
+def load_cases(type = 1, **kwargs):
     """
     加载指定项目模块下的用例
     :param kwargs: dict: 项目与模块信息
@@ -154,28 +152,11 @@ def load_cases(**kwargs):
     module = kwargs.get('name').get('module')
     if module == '请选择':
         return ''
-    case_info = TestCaseInfo.objects.filter(belong_project=belong_project,
-                                            belong_module=module, type=1).values_list('id', 'name').order_by(
-        '-create_time')
+    case_info = TestCaseInfo.objects.filter(belong_project=belong_project,belong_module=module, type=type).\
+        values_list('id', 'name').order_by('-create_time')
     case_info = list(case_info)
     string = ''
     for value in case_info:
-        string = string + str(value[0]) + '^=' + value[1] + 'replaceFlag'
-    return string[:len(string) - 11]
-
-
-def load_configs():
-    """
-    加载指定项目下的配置信息
-    :return:
-    """
-    config_info = TestCaseInfo.objects.filter(type=2).values_list(
-        'id',
-        'name').order_by(
-        '-create_time')
-    config_info = list(config_info)
-    string = ''
-    for value in config_info:
         string = string + str(value[0]) + '^=' + value[1] + 'replaceFlag'
     return string[:len(string) - 11]
 
@@ -230,7 +211,13 @@ def case_info_logic(type=True, **kwargs):
     '''
     if 'request' not in test.keys():
         type = test.pop('type')
-        return load_modules(**test) if type == 'module' else load_cases(**test)
+        if type == 'module':
+            return load_modules(**test)
+        elif type == 'case':
+            return load_cases(**test)
+        else:
+            return load_cases(type=2, **test)
+
     else:
         logging.info('用例原始信息: {kwargs}'.format(kwargs=kwargs))
         if test.get('name').get('case_name') is '':
@@ -240,13 +227,13 @@ def case_info_logic(type=True, **kwargs):
         if test.get('request').get('url') is '':
             return '接口地址不能为空'
         if test.get('name').get('module') == '请选择':
-            return '请选择模块'
+            return '请选择或者添加模块'
         if test.get('name').get('project') == '请选择':
             return '请选择项目'
         if test.get('name').get('project') == '':
             return '请先添加项目'
         if test.get('name').get('module') == '':
-            return '请先添加模块'
+            return '请添加模块'
 
         name = test.pop('name')
         test.setdefault('name', name.pop('case_name'))
@@ -332,11 +319,11 @@ def config_info_logic(type=True, **kwargs):
         if config.get('name').get('project') == '请选择':
             return '请选择项目'
         if config.get('name').get('module') == '请选择':
-            return '请选择模块'
+            return '请选择或者添加模块'
         if config.get('name').get('project') == '':
             return '请先添加项目'
         if config.get('name').get('module') == '':
-            return '请先添加模块'
+            return '请添加模块'
 
         name = config.pop('name')
         config.setdefault('name', name.pop('config_name'))
@@ -422,8 +409,10 @@ def task_logic(**kwargs):
     if PeriodicTask.objects.filter(name__exact=kwargs.get('name')).count() > 0:
         return '任务名称重复，请重新命名'
     desc = " ".join(str(i) for i in crontab_time)
-    name = kwargs.pop('name')
+    name = kwargs.get('name')
+
     if 'module' in kwargs.keys():
+        kwargs.pop('project')
         return create_task(name, 'ApiManager.tasks.module_hrun', kwargs, crontab, desc)
     else:
         return create_task(name, 'ApiManager.tasks.project_hrun', kwargs, crontab, desc)
@@ -457,7 +446,7 @@ def set_filter_session(request):
     return filter_query
 
 
-def init_filter_session(request, type = True):
+def init_filter_session(request, type=True):
     """
     init session
     :param request:

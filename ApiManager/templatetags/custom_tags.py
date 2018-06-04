@@ -14,7 +14,7 @@ def data_type(value):
 
 
 @register.filter(name='convert_eval')
-def data_type(value):
+def convert_eval(value):
     """
     数据eval转换 自建filter
     :param value:

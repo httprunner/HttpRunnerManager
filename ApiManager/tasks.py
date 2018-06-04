@@ -32,7 +32,7 @@ def main_hrun(testset_path, report_name):
 
 
 @shared_task
-def project_hrun(base_url, project, config):
+def project_hrun(name, base_url, project):
     """
     异步运行整个项目
     :param env_name: str: 环境地址
@@ -45,16 +45,16 @@ def project_hrun(base_url, project, config):
     }
     runner = HttpRunner(**kwargs)
     id = ProjectInfo.objects.get(project_name=project).id
-    testcases_dict = run_by_project(id, base_url, config)
+    testcases_dict = run_by_project(id, base_url)
 
     run_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     runner.run(testcases_dict)
-    add_test_reports(run_time, report_name=project, **runner.summary)
+    add_test_reports(run_time, report_name=name, **runner.summary)
     return runner.summary
 
 
 @shared_task
-def module_hrun(base_url, module, project, config):
+def module_hrun(name, base_url, module):
     """
     异步运行模块
     :param env_name: str: 环境地址
@@ -71,10 +71,10 @@ def module_hrun(base_url, module, project, config):
     module = list(module)
     try:
         for value in module:
-            testcase_lists.extend(run_by_module(value[0], base_url, config))
+            testcase_lists.extend(run_by_module(value[0], base_url))
     except ObjectDoesNotExist:
         return '找不到模块信息'
     run_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     runner.run(testcase_lists)
-    add_test_reports(run_time, report_name=project, **runner.summary)
+    add_test_reports(run_time, report_name=name, **runner.summary)
     return runner.summary
