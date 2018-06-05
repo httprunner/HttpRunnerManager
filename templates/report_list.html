@@ -57,7 +57,8 @@
                                 <div class="am-btn-group am-btn-group-xs">
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
-                                            data-am-popover="{content: '下载', trigger: 'hover focus'}"><span
+                                            data-am-popover="{content: '下载', trigger: 'hover focus'}"
+                                            onclick="download_report('{{ foo.id }}')"><span
                                             class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
@@ -84,6 +85,13 @@
             var isChecked = $(this).prop("checked");
             $("input[name^='report']").prop("checked", isChecked);
         })
+
+        function download_report(id) {
+            var $eleForm = $("<form method='get'></form>");
+            $eleForm.attr("action", "/api/download_report/"+id);
+            $(document.body).append($eleForm);
+            $eleForm.submit();
+        }
 
     </script>
 
