@@ -5,7 +5,7 @@ import platform
 import shutil
 import sys
 
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
 
@@ -718,6 +718,37 @@ def get_project_info(request):
             return HttpResponse(msg)
     else:
         return HttpResponseRedirect("/api/login/")
+
+
+def download_report(request, id):
+    if request.method == 'GET':
+        report_dir_path = os.path.join(os.getcwd(), "reports")
+        if os.path.exists(report_dir_path):
+            shutil.rmtree(report_dir_path)
+
+        runner = HttpRunner()
+        runner.summary = eval(TestReports.objects.get(id=id).reports)
+        runner.gen_html_report()
+
+        html_report_name = runner.summary.get('time')['start_at'] + '.html'
+        report_dir_path = os.path.join(report_dir_path, html_report_name)
+
+        def file_iterator(file_name, chunk_size=512):
+            with open(file_name, encoding='utf-8') as f:
+                while True:
+                    c = f.read(chunk_size)
+                    if c:
+                        yield c
+                    else:
+                        break
+
+        the_file_name = report_dir_path
+        response = StreamingHttpResponse(file_iterator(the_file_name))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
+        return response
+
+
 
 
 def test_login_valid(request):
