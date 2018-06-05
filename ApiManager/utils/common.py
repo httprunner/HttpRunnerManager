@@ -150,10 +150,14 @@ def load_cases(type = 1, **kwargs):
     """
     belong_project = kwargs.get('name').get('project')
     module = kwargs.get('name').get('module')
-    if module == '请选择':
-        return ''
-    case_info = TestCaseInfo.objects.filter(belong_project=belong_project,belong_module=module, type=type).\
+    if type == 1:
+        if module == '请选择':
+            return ''
+        case_info = TestCaseInfo.objects.filter(belong_project=belong_project,belong_module=module, type=type).\
         values_list('id', 'name').order_by('-create_time')
+    elif type == 2:
+        case_info = TestCaseInfo.objects.filter(belong_project=belong_project, type=type). \
+            values_list('id', 'name').order_by('-create_time')
     case_info = list(case_info)
     string = ''
     for value in case_info:
