@@ -13,7 +13,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session
+    init_filter_session, get_total_values
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -92,13 +92,17 @@ def index(request):
         module_length = ModuleInfo.objects.count()
         test_length = TestCaseInfo.objects.filter(type__exact=1).count()
         config_length = TestCaseInfo.objects.filter(type__exact=2).count()
+
+        total = get_total_values()
         manage_info = {
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
             'config_length': config_length,
-            'account': request.session["now_account"]
+            'account': request.session["now_account"],
+            'total': total
         }
+
         init_filter_session(request)
         return render_to_response('index.html', manage_info)
     else:
