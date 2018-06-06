@@ -564,7 +564,7 @@ def get_total_values():
         if not total_success:
             total_success = 0
 
-        total_percent = total_success / total_run * 100 if total_run != 0 else 0.0
+        total_percent = round(total_success / total_run * 100, 2) if total_run != 0 else 0.00
         total['pass'].append(total_success)
         total['fail'].append(total_run - total_success)
         total['percent'].append(total_percent)

@@ -129,7 +129,7 @@
             var max_pass = Math.max.apply(null, option.series[2].data);
 
             option.yAxis[0].max = Math.max(max_fail, max_pass) + 10;
-            option.yAxis[0].interval = Math.max(max_fail, max_pass) / 10;
+            option.yAxis[0].interval = parseInt(Math.max(max_fail, max_pass) / 10);
             myChart.setOption(option, true);
         }
 
