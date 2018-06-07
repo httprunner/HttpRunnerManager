@@ -5,9 +5,11 @@ import platform
 import shutil
 import sys
 
+import paramiko
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
+from dwebsocket import accept_websocket
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
@@ -753,6 +755,25 @@ def download_report(request, id):
         return response
 
 
+@accept_websocket
+def echo(request):
+    if not request.is_websocket():
+        return render_to_response('echo.html')
+    else:
+        servers = []
+        for message in request.websocket:
+            servers.append(message.decode('utf-8'))
+            if len(servers) == 4:
+                break
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(servers[0], 22, username=servers[1], password=servers[2], timeout=10)
+        while True:
+            cmd = servers[3]
+            stdin, stdout, stderr = client.exec_command(cmd)
+            for i, line in enumerate(stdout):
+                request.websocket.send(bytes(line, encoding='utf8'))
+            client.close()
 
 
 def test_login_valid(request):

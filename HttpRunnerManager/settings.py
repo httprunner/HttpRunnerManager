@@ -54,6 +54,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MIDDLEWARE_CLASSES = [
+    'dwebsocket.middleware.WebSocketMiddleware'
+]
+
 ROOT_URLCONF = 'HttpRunnerManager.urls'
 
 TEMPLATES = [
