@@ -124,13 +124,12 @@ class TestCaseInfoManager(models.Manager):
                     author=config_info.pop('author'), type=2, request=kwargs)
 
     def update_config(self, belong_module, **kwargs):
-        case_info = kwargs.get('test').pop('case_info')
-        obj = self.get(id=case_info.pop('test_index'))
-        obj.belong_project = case_info.pop('project')
+        config_info = kwargs.get('config').pop('config_info')
+        obj = self.get(id=config_info.pop('test_index'))
         obj.belong_module = belong_module
-        obj.name = kwargs.get('test').get('name')
-        obj.author = case_info.pop('author')
-        obj.include = case_info.pop('include')
+        obj.belong_project = config_info.pop('project')
+        obj.name = kwargs.get('config').get('name')
+        obj.author = config_info.pop('author')
         obj.request = kwargs
         obj.save()
 
