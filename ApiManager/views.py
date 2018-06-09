@@ -5,15 +5,17 @@ import platform
 import shutil
 import sys
 
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+import paramiko
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
+from dwebsocket import accept_websocket
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session
+    init_filter_session, get_total_values
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
 from ApiManager.utils.pagination import get_pager_info
@@ -92,13 +94,17 @@ def index(request):
         module_length = ModuleInfo.objects.count()
         test_length = TestCaseInfo.objects.filter(type__exact=1).count()
         config_length = TestCaseInfo.objects.filter(type__exact=2).count()
+
+        total = get_total_values()
         manage_info = {
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
             'config_length': config_length,
-            'account': request.session["now_account"]
+            'account': request.session["now_account"],
+            'total': total
         }
+
         init_filter_session(request)
         return render_to_response('index.html', manage_info)
     else:
@@ -758,6 +764,56 @@ def get_project_info(request):
             return HttpResponse(msg)
     else:
         return HttpResponseRedirect("/api/login/")
+
+
+def download_report(request, id):
+    if request.method == 'GET':
+        report_dir_path = os.path.join(os.getcwd(), "reports")
+        if os.path.exists(report_dir_path):
+            shutil.rmtree(report_dir_path)
+
+        runner = HttpRunner()
+        runner.summary = eval(TestReports.objects.get(id=id).reports)
+        runner.gen_html_report()
+
+        html_report_name = runner.summary.get('time')['start_at'] + '.html'
+        report_dir_path = os.path.join(report_dir_path, html_report_name)
+
+        def file_iterator(file_name, chunk_size=512):
+            with open(file_name, encoding='utf-8') as f:
+                while True:
+                    c = f.read(chunk_size)
+                    if c:
+                        yield c
+                    else:
+                        break
+
+        the_file_name = report_dir_path
+        response = StreamingHttpResponse(file_iterator(the_file_name))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
+        return response
+
+
+@accept_websocket
+def echo(request):
+    if not request.is_websocket():
+        return render_to_response('echo.html')
+    else:
+        servers = []
+        for message in request.websocket:
+            servers.append(message.decode('utf-8'))
+            if len(servers) == 4:
+                break
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(servers[0], 22, username=servers[1], password=servers[2], timeout=10)
+        while True:
+            cmd = servers[3]
+            stdin, stdout, stderr = client.exec_command(cmd)
+            for i, line in enumerate(stdout):
+                request.websocket.send(bytes(line, encoding='utf8'))
+            client.close()
 
 
 def test_login_valid(request):

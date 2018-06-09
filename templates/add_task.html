@@ -15,7 +15,7 @@
                     <div class="form-group">
                         <div class="input-group col-md-4 col-md-offset-1">
                             <div class="input-group-addon" style="color: #0a628f">任务名称</div>
-                            <input type="text" class="form-control" id="name" name="name"
+                            <input type="text" class="form-control" id="name" name="name" value=""
                                    placeholder="定时任务名称">
                         </div>
                     </div>
@@ -57,7 +57,15 @@
                         <div class="input-group col-md-4 col-md-offset-1">
                             <div class="input-group-addon" style="color: #0a628f">定时配置</div>
                             <input type="text" class="form-control" id="crontab_time" name="crontab_time"
-                                   placeholder="请输入正确的crontab表达式 例如： 11 * * * *">
+                                   placeholder="请输入正确的crontab表达式 例如： 11 * * * *" value="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">接收邮件</div>
+                            <input type="text" class="form-control" id="receiver" name="receiver"
+                                   placeholder="xx@qq.com, xx@163.com 为空不发送报告" value="">
                         </div>
                     </div>
 

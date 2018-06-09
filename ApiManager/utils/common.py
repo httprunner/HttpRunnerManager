@@ -1,3 +1,4 @@
+import datetime
 import io
 import json
 import logging
@@ -5,9 +6,10 @@ import os
 from json import JSONDecodeError
 
 import yaml
+from django.db.models import Sum
 from djcelery.models import PeriodicTask
 
-from ApiManager.models import ModuleInfo, TestCaseInfo
+from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data
 from ApiManager.utils.task_opt import create_task
@@ -133,7 +135,7 @@ def load_modules(**kwargs):
     :return: str: module_info
     """
     belong_project = kwargs.get('name').get('project')
-    module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project)\
+    module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project) \
         .values_list('id', 'module_name').order_by('-create_time')
     module_info = list(module_info)
     string = ''
@@ -142,7 +144,7 @@ def load_modules(**kwargs):
     return string[:len(string) - 11]
 
 
-def load_cases(type = 1, **kwargs):
+def load_cases(type=1, **kwargs):
     """
     加载指定项目模块下的用例
     :param kwargs: dict: 项目与模块信息
@@ -150,10 +152,14 @@ def load_cases(type = 1, **kwargs):
     """
     belong_project = kwargs.get('name').get('project')
     module = kwargs.get('name').get('module')
-    if module == '请选择':
-        return ''
-    case_info = TestCaseInfo.objects.filter(belong_project=belong_project,belong_module=module, type=type).\
-        values_list('id', 'name').order_by('-create_time')
+    if type == 1:
+        if module == '请选择':
+            return ''
+        case_info = TestCaseInfo.objects.filter(belong_project=belong_project, belong_module=module, type=type). \
+            values_list('id', 'name').order_by('-create_time')
+    elif type == 2:
+        case_info = TestCaseInfo.objects.filter(belong_project=belong_project, type=type). \
+            values_list('id', 'name').order_by('-create_time')
     case_info = list(case_info)
     string = ''
     for value in case_info:
@@ -535,3 +541,33 @@ def upload_file_logic(files, project, module, account):
                     test_case.get('test')['validate'] = new_validate
 
                 add_case_data(type=True, **test_case)
+
+
+def get_total_values():
+    total = {
+        'pass': [],
+        'fail': [],
+        'percent': []
+    }
+    today = datetime.date.today()
+    for i in range(-11, 1):
+        begin = today + datetime.timedelta(days=i)
+        end = begin + datetime.timedelta(days=1)
+
+        total_run = TestReports.objects.filter(create_time__range=(begin, end)).aggregate(testRun=Sum('testsRun'))[
+            'testRun']
+        total_success = TestReports.objects.filter(create_time__range=(begin, end)).aggregate(success=Sum('successes'))[
+            'success']
+
+        if not total_run:
+            total_run = 0
+        if not total_success:
+            total_success = 0
+
+        total_percent = round(total_success / total_run * 100, 2) if total_run != 0 else 0.00
+        total['pass'].append(total_success)
+        total['fail'].append(total_run - total_success)
+        total['percent'].append(total_percent)
+
+    return total
+

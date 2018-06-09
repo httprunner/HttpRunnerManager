@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>实验室</title>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">//<![CDATA[
+    $(function () {
+        $('#connect_websocket').click(function () {
+            if (window.s) {
+                window.s.close();
+            }
+            var socket = new WebSocket("ws://" + window.location.host + "/api/echo/");
+            socket.onopen = function () {
+            };
+            socket.onmessage = function (e) {
+                $('#messagecontainer').children("div:last-child").prepend('<div>' + e.data + '</div>');
+            };
+
+            if (socket.readyState === WebSocket.OPEN) socket.onopen;
+
+            window.s = socket;
+        });
+        $('#send_message').click(function () {
+            window.s.send($('#host').val());
+            window.s.send($('#username').val());
+            window.s.send($('#password').val());
+            window.s.send($('#shell').val());
+
+        });
+
+        $('#close_websocket').click(function () {
+            if (window.s) {
+                window.s.close();
+            }
+        });
+
+        $('#clear_screen').click(function () {
+            $('#messagecontainer').empty();
+            $('#messagecontainer').prepend('<div></div>');
+        });
+
+    });
+    //]]></script>
+</head>
+<body style="background-color: #39b7ac">
+<span style="color: #2cffbd">
+    服务器IP：<input type="text" id="host" value="" placeholder="service ip" style="width: 8%"/>
+</span>
+<span style="color: #2cffbd">
+    用户名：<input type="text" id="username" value="" placeholder="username" style="width: 8%"/>
+</span>
+<span style="color: #2cffbd">
+    密码：<input type="text" id="password" value="" placeholder="password" style="width: 8%"/>
+</span>
+<span style="color: #2cffbd">
+    shell：<input type="text" id="shell" value="" placeholder="tail -f /opt/logs/script.log" style="width: 25%;"/>
+</span>
+<button type="button" id="connect_websocket">connect websocket</button>
+<button type="button" id="send_message">send shell</button>
+<button type="button" id="close_websocket">stop websocket</button>
+<button type="button" id="clear_screen">clear screen</button>
+<h4>Received Messages:</h4>
+<div id="messagecontainer">
+    <div></div>
+
+</div>
+</body>
+</html>
