@@ -448,6 +448,45 @@ def config_list(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
+def interface_list(request, id):
+    """
+    接口列表
+    :param request:
+    :param id: str or int：当前页
+    :return:
+    """
+    if request.session.get('login_status'):
+        acount = request.session["now_account"]
+        filter_query = set_filter_session(request)
+
+        if request.method == 'GET' or request.method == 'POST':
+            if request.GET.get('interface_url') is None:
+                test_list = get_pager_info(
+                    TestCaseInfo, filter_query, '/api/interface_list/', id)
+                manage_info = {
+                    'account': acount,
+                    'test': test_list[1],
+                    'page_list': test_list[0],
+                    'info': filter_query,
+                    'env': EnvInfo.objects.all().order_by('-create_time')
+                }
+                return render_to_response('interface_list.html', manage_info)
+            else:
+                filter_query['interface_url'] = request.GET.get('interface_url')
+                test_list = get_pager_info(
+                    TestCaseInfo, filter_query, '/api/test_list/', id)
+                manage_info = {
+                    'account': acount,
+                    'test': test_list[1],
+                    'page_list': test_list[0],
+                    'info': filter_query,
+                    'env': EnvInfo.objects.all().order_by('-create_time')
+                }
+                return render_to_response('test_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
 def edit_case(request, id=None):
     """
     编辑用例

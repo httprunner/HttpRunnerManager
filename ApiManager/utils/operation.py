@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -363,3 +364,11 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     }
 
     TestReports.objects.create(**test_reports)
+
+
+def testcase_temporary_path(data):
+    case_opt = TestCaseInfo.objects
+    data = data
+    id = data.get('id')
+    interface_url = eval(data.get('request')).get('test').get('request').get('url')
+    case_opt.update_interface_by_id(id, interface_url)
