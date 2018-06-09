@@ -11,7 +11,7 @@ from djcelery.models import PeriodicTask
 
 from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
-    add_register_data
+    add_register_data, testcase_temporary_path
 from ApiManager.utils.task_opt import create_task
 
 logger = logging.getLogger('HttpRunnerManager')
@@ -570,4 +570,9 @@ def get_total_values():
         total['percent'].append(total_percent)
 
     return total
+
+
+def testcase_path(data):
+
+    return testcase_temporary_path(data)
 

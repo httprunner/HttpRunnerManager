@@ -112,6 +112,11 @@ class TestCaseInfoManager(models.Manager):
         obj.interface_url = kwargs.get('test').get('request').get('url')
         obj.save()
 
+    def update_interface_by_id(self, id, interface_url):
+        obj = self.get(id=id)
+        obj.interface_url = interface_url
+        obj.save()
+
     def insert_config(self, belong_module, **kwargs):
         config_info = kwargs.get('config').pop('config_info')
         self.create(name=kwargs.get('config').get('name'), belong_project=config_info.pop('project'),
@@ -128,6 +133,7 @@ class TestCaseInfoManager(models.Manager):
         obj.include = case_info.pop('include')
         obj.request = kwargs
         obj.save()
+
     def get_case_name(self, name, module_name, belong_project):
         return self.filter(belong_module__module_name=module_name).filter(name__exact=name).filter(
             belong_project__exact=belong_project).count()

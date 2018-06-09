@@ -1,5 +1,6 @@
 from django.utils.safestring import mark_safe
 from ApiManager.models import ModuleInfo, TestCaseInfo
+from ApiManager.utils.common import testcase_path
 
 
 class PageInfo(object):
@@ -142,6 +143,13 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             else:
                 obj = obj.order_by('-date_changed')
         else:
+            #  新增字段的补丁逻辑，用户补全历史数据
+            pre_data = obj.values('id', 'request', 'interface_url').filter(interface_url__isnull=True).filter(type=1)
+            if pre_data.count() == 0:
+                pass
+            else:
+                for case in pre_data:
+                    testcase_path(case)
             if user is not '':
                 obj = obj.raw("""SELECT *, COUNT(`TestCaseInfo`.`interface_url`) AS `num` 
                                          FROM `TestCaseInfo` 
