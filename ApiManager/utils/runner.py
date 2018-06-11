@@ -1,34 +1,59 @@
+import os
+
 from django.core.exceptions import ObjectDoesNotExist
 
-from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo
+from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo, DebugTalk
+from ApiManager.utils.testcase import _dump_python_file, _dump_yaml_file
 
 
-def run_by_single(index, base_url):
+def run_by_single(index, base_url, path):
     """
     加载单个case用例信息
     :param index: int or str：用例索引
     :param base_url: str：环境地址
     :return: dict
     """
-    testcase_dict = {
-        'name': 'testset description',
+    config = {
         'config': {
             'name': 'base_url config',
             'request': {
-                'base_url': base_url,
+                'base_url': base_url
             }
-        },
-        'api': {},
-        'testcases': []
+        }
     }
+    testcase_list = []
+
+    testcase_list.append(config)
 
     try:
         obj = TestCaseInfo.objects.get(id=index)
     except ObjectDoesNotExist:
-        return testcase_dict
+        return testcase_list
 
     include = eval(obj.include)
-    request = eval(obj.request).pop('test')
+    request = eval(obj.request)
+    name = obj.name
+
+    project = obj.belong_project
+    module = obj.belong_module.module_name
+
+    testcase_dir_path = os.path.join(path, project)
+
+    if not os.path.exists(testcase_dir_path):
+        os.makedirs(testcase_dir_path)
+
+        try:
+            debugtalk = DebugTalk.objects.get(belong_project__project_name=project).debugtalk
+        except ObjectDoesNotExist:
+            debugtalk = ''
+
+        _dump_python_file(os.path.join(testcase_dir_path, '__init__.py'), '')
+        _dump_python_file(os.path.join(testcase_dir_path, 'debugtalk.py'), debugtalk)
+
+    testcase_dir_path = os.path.join(testcase_dir_path, module)
+
+    if not os.path.exists(testcase_dir_path):
+        os.mkdir(testcase_dir_path)
 
     for test_info in include:
         try:
@@ -36,20 +61,21 @@ def run_by_single(index, base_url):
                 config_id = test_info.pop('config')[0]
                 config_request = eval(TestCaseInfo.objects.get(id=config_id).request)
                 config_request.get('config').get('request').setdefault('base_url', base_url)
-                testcase_dict['config'] = config_request.pop('config')
+                testcase_list[0] = config_request
             else:
                 id = test_info[0]
                 pre_request = eval(TestCaseInfo.objects.get(id=id).request)
-                testcase_dict['testcases'].append(pre_request.pop('test'))
+                testcase_list.append(pre_request)
+
         except ObjectDoesNotExist:
-            return testcase_dict
+            return testcase_list
 
-    testcase_dict['testcases'].append(request)
+    testcase_list.append(request)
 
-    return testcase_dict
+    _dump_yaml_file(os.path.join(testcase_dir_path, name + '.yml'), testcase_list)
 
 
-def run_by_batch(test_list, base_url, type=None, mode=False):
+def run_by_batch(test_list, base_url, path, type=None, mode=False):
     """
     批量组装用例数据
     :param test_list:
@@ -58,59 +84,53 @@ def run_by_batch(test_list, base_url, type=None, mode=False):
     :param mode: boolean：True 异步 False: 同步
     :return: list
     """
-    testcase_lists = []
 
     if mode:
         for index in range(len(test_list) - 2):
             form_test = test_list[index].split('=')
             value = form_test[1]
             if type == 'project':
-                testcase_lists.extend(run_by_project(value, base_url))
+                run_by_project(value, base_url, path)
             elif type == 'module':
-                testcase_lists.extend(run_by_module(value, base_url))
+                run_by_module(value, base_url, path)
 
     else:
         if type == 'project':
             for value in test_list.values():
-                testcase_lists.extend(run_by_project(value, base_url))
+                run_by_project(value, base_url, path)
         elif type == 'module':
             for value in test_list.values():
-                testcase_lists.extend(run_by_module(value, base_url))
+                run_by_module(value, base_url, path)
         else:
 
             for index in range(len(test_list) - 1):
                 form_test = test_list[index].split('=')
                 index = form_test[1]
-                testcase_lists.append(run_by_single(index, base_url))
-    return testcase_lists
+                run_by_single(index, base_url, path)
 
 
-def run_by_module(id, base_url):
+def run_by_module(id, base_url, path):
     """
     组装模块用例
     :param id: int or str：模块索引
     :param base_url: str：环境地址
     :return: list
     """
-    testcase_lists = []
     obj = ModuleInfo.objects.get(id=id)
     test_index_list = TestCaseInfo.objects.filter(belong_module=obj, type=1).values_list('id')
     for index in test_index_list:
-        testcase_lists.append(run_by_single(index[0], base_url))
-    return testcase_lists
+        run_by_single(index[0], base_url, path)
 
 
-def run_by_project(id, base_url):
+def run_by_project(id, base_url, path):
     """
     组装项目用例
     :param id: int or str：项目索引
     :param base_url: 环境地址
     :return: list
     """
-    testcase_lists = []
     obj = ProjectInfo.objects.get(id=id)
     module_index_list = ModuleInfo.objects.filter(belong_project=obj).values_list('id')
     for index in module_index_list:
         module_id = index[0]
-        testcase_lists.extend(run_by_module(module_id, base_url))
-    return testcase_lists
+        run_by_module(module_id, base_url, path)

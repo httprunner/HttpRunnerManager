@@ -120,7 +120,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     elif url == '/api/periodictask/':
         obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled','date_changed') \
             if name is not '' else obj.all().values('id', 'name','kwargs','enabled','date_changed', 'description')
-    elif url != '/api/env_list/':
+    elif url != '/api/env_list/' and url != '/api/debugtalk_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
         if belong_project and belong_module is not '':
             obj = obj.filter(belong_project__contains=belong_project).filter(

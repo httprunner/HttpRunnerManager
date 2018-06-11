@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
@@ -21,12 +21,13 @@ from ApiManager.utils.operation import env_data_logic, del_module_data, del_proj
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_single, run_by_batch, run_by_module, run_by_project
 from ApiManager.utils.task_opt import delete_task, change_task_status
+from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner
 
 logger = logging.getLogger('HttpRunnerManager')
 
-
 # Create your views here.
+separator = '\\' if platform.system() == 'Windows' else '/'
 
 
 def login(request):
@@ -225,6 +226,10 @@ def run_test(request):
             "failfast": False,
         }
         runner = HttpRunner(**kwargs)
+
+        testcase_dir_path = os.path.join(os.getcwd(), "suite")
+        testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
+
         if request.is_ajax():
             try:
                 kwargs = json.loads(request.body.decode('utf-8'))
@@ -234,27 +239,27 @@ def run_test(request):
             id = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
-            testcases_dict = run_by_module(id, base_url) if type == 'module' \
-                else run_by_project(id, base_url)
+            run_by_module(id, base_url, testcase_dir_path) if type == 'module' \
+                else run_by_project(id, base_url, testcase_dir_path)
             report_name = kwargs.get('report_name', None)
-            if not testcases_dict:
-                return HttpResponse('没有用例哦')
-            main_hrun.delay(testcases_dict, report_name)
+            main_hrun.delay(testcase_dir_path, report_name)
+
+            shutil.rmtree(testcase_dir_path)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             id = request.POST.get('id')
             base_url = request.POST.get('env_name')
             type = request.POST.get('type', None)
             if type:
-                testcases_dict = run_by_module(id, base_url) if type == 'module' \
-                    else run_by_project(id, base_url)
+                run_by_module(id, base_url, testcase_dir_path) if type == 'module' \
+                    else run_by_project(id, base_url, testcase_dir_path)
             else:
-                testcases_dict = run_by_single(id, base_url)
-            if testcases_dict:
-                runner.run(testcases_dict)
-                return render_to_response('report_template.html', runner.summary)
-            else:
-                return HttpResponseRedirect('/api/index/')
+                run_by_single(id, base_url, testcase_dir_path)
+
+            runner.run(testcase_dir_path)
+
+            shutil.rmtree(testcase_dir_path)
+            return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -270,6 +275,10 @@ def run_batch_test(request):
             "failfast": False,
         }
         runner = HttpRunner(**kwargs)
+
+        testcase_dir_path = os.path.join(os.getcwd(), "suite")
+        testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
+
         if request.is_ajax():
             try:
                 kwargs = json.loads(request.body.decode('utf-8'))
@@ -280,24 +289,24 @@ def run_batch_test(request):
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
             report_name = kwargs.get('report_name', None)
-            testcases_dict = run_by_batch(test_list, base_url, type=type)
-            if not testcases_dict:
-                return HttpResponse('没有用例哦')
-            main_hrun.delay(testcases_dict, report_name)
+            run_by_batch(test_list, base_url, testcase_dir_path, type=type)
+            main_hrun.delay(testcase_dir_path, report_name)
+
+            shutil.rmtree(testcase_dir_path)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             type = request.POST.get('type', None)
             base_url = request.POST.get('env_name')
             test_list = request.body.decode('utf-8').split('&')
             if type:
-                testcases_lists = run_by_batch(test_list, base_url, type=type, mode=True)
+                run_by_batch(test_list, base_url, testcase_dir_path, type=type, mode=True)
             else:
-                testcases_lists = run_by_batch(test_list, base_url)
-            if testcases_lists:
-                runner.run(testcases_lists)
-                return render_to_response('report_template.html', runner.summary)
-            else:  # 没有用例默认重定向到首页
-                return HttpResponseRedirect('/api/index/')
+                run_by_batch(test_list, base_url, testcase_dir_path)
+
+            runner.run(testcase_dir_path)
+
+            shutil.rmtree(testcase_dir_path)
+            return render_to_response('report_template.html', runner.summary)
     else:
         return HttpResponseRedirect("/api/login/")
 
@@ -670,7 +679,6 @@ def add_task(request):
 def upload_file(request):
     if request.session.get('login_status'):
         account = request.session["now_account"]
-        separator = '\\' if platform.system() == 'Windows' else '/'
         if request.method == 'POST':
             try:
                 project_name = request.POST.get('project')
@@ -727,32 +735,70 @@ def get_project_info(request):
 
 
 def download_report(request, id):
+    if request.session.get('login_status'):
+        if request.method == 'GET':
+            report_dir_path = os.path.join(os.getcwd(), "reports")
+            if os.path.exists(report_dir_path):
+                shutil.rmtree(report_dir_path)
+
+            runner = HttpRunner()
+            runner.summary = eval(TestReports.objects.get(id=id).reports)
+            runner.gen_html_report()
+
+            html_report_name = runner.summary.get('time')['start_at'] + '.html'
+            report_dir_path = os.path.join(report_dir_path, html_report_name)
+
+            def file_iterator(file_name, chunk_size=512):
+                with open(file_name, encoding='utf-8') as f:
+                    while True:
+                        c = f.read(chunk_size)
+                        if c:
+                            yield c
+                        else:
+                            break
+
+            the_file_name = report_dir_path
+            response = StreamingHttpResponse(file_iterator(the_file_name))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
+            return response
+    else:
+        return HttpResponseRedirect("/api/login/")
+
+
+def debugtalk(request, id=None):
     if request.method == 'GET':
-        report_dir_path = os.path.join(os.getcwd(), "reports")
-        if os.path.exists(report_dir_path):
-            shutil.rmtree(report_dir_path)
+        debugtalk = DebugTalk.objects.values('id', 'debugtalk').get(id=id)
+        return render_to_response('debugtalk.html', debugtalk)
+    else:
+        id = request.POST.get('id')
+        debugtalk = request.POST.get('debugtalk')
+        code = debugtalk.replace('new_line', '\r\n')
+        obj = DebugTalk.objects.get(id=id)
+        obj.debugtalk = code
+        obj.save()
+        return HttpResponseRedirect('/api/debugtalk_list/1/')
 
-        runner = HttpRunner()
-        runner.summary = eval(TestReports.objects.get(id=id).reports)
-        runner.gen_html_report()
 
-        html_report_name = runner.summary.get('time')['start_at'] + '.html'
-        report_dir_path = os.path.join(report_dir_path, html_report_name)
-
-        def file_iterator(file_name, chunk_size=512):
-            with open(file_name, encoding='utf-8') as f:
-                while True:
-                    c = f.read(chunk_size)
-                    if c:
-                        yield c
-                    else:
-                        break
-
-        the_file_name = report_dir_path
-        response = StreamingHttpResponse(file_iterator(the_file_name))
-        response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
-        return response
+def debugtalk_list(request, id):
+    """
+       debugtalk.py列表
+       :param request:
+       :param id: str or int：当前页
+       :return:
+       """
+    if request.session.get('login_status'):
+        account = request.session["now_account"]
+        debugtalk = get_pager_info(
+            DebugTalk, None, '/api/debugtalk_list/', id)
+        manage_info = {
+            'account': account,
+            'debugtalk': debugtalk[1],
+            'page_list': debugtalk[0],
+        }
+        return render_to_response('debugtalk_list.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
 
 
 @accept_websocket
@@ -762,7 +808,10 @@ def echo(request):
     else:
         servers = []
         for message in request.websocket:
-            servers.append(message.decode('utf-8'))
+            try:
+                servers.append(message.decode('utf-8'))
+            except AttributeError:
+                pass
             if len(servers) == 4:
                 break
         client = paramiko.SSHClient()

@@ -1,10 +1,10 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 
+import os
 import shutil
 import time
 
-import os
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -12,6 +12,7 @@ from ApiManager.models import ProjectInfo
 from ApiManager.utils.emails import send_email_reports
 from ApiManager.utils.operation import add_test_reports
 from ApiManager.utils.runner import run_by_project, run_by_module
+from ApiManager.utils.testcase import get_time_stamp
 from httprunner import HttpRunner, logger
 
 
@@ -48,10 +49,16 @@ def project_hrun(name, base_url, project, receiver):
     }
     runner = HttpRunner(**kwargs)
     id = ProjectInfo.objects.get(project_name=project).id
-    testcases_dict = run_by_project(id, base_url)
+
+    testcase_dir_path = os.path.join(os.getcwd(), "suite")
+    testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
+
+    run_by_project(id, base_url, testcase_dir_path)
 
     run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
-    runner.run(testcases_dict)
+    runner.run(testcase_dir_path)
+
+    shutil.rmtree(testcase_dir_path)
     add_test_reports(run_time, report_name=name, **runner.summary)
 
     if receiver != '':
@@ -74,15 +81,20 @@ def module_hrun(name, base_url, module, receiver):
         "failfast": False,
     }
     runner = HttpRunner(**kwargs)
-    testcase_lists = []
     module = list(module)
+
+    testcase_dir_path = os.path.join(os.getcwd(), "suite")
+    testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
+
     try:
         for value in module:
-            testcase_lists.extend(run_by_module(value[0], base_url))
+            run_by_module(value[0], base_url, testcase_dir_path)
     except ObjectDoesNotExist:
         return '找不到模块信息'
     run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
-    runner.run(testcase_lists)
+    runner.run(testcase_dir_path)
+
+    shutil.rmtree(testcase_dir_path)
     add_test_reports(run_time, report_name=name, **runner.summary)
 
     if receiver != '':

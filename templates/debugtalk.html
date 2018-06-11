@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>debugtalk.py</title>
+    <meta charset="utf-8">
+    {% load staticfiles %}
+    <!--导入js库-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{% static 'assets/js/commons.js' %}"></script>
+    <style>
+        #login_click {
+            margin-top: 32px;
+            height: 40px;
+        }
+
+        #login_click a, #login_click button {
+
+            text-decoration: none;
+            background: #2f435e;
+            color: #f2f2f2;
+
+            padding: 10px 30px 10px 30px;
+            font-size: 16px;
+            font-family: 微软雅黑, 宋体, Arial, Helvetica, Verdana, sans-serif;
+            font-weight: bold;
+            border-radius: 3px;
+
+            -webkit-transition: all linear 0.30s;
+            -moz-transition: all linear 0.30s;
+            transition: all linear 0.30s;
+
+        }
+
+        #login_click a:hover, #login_click button:hover {
+            background: #385f9e;
+        }
+    </style>
+</head>
+
+<body>
+<!--代码输入框（注意请务必设置高度，否则无法显示）-->
+<pre id="code" class="ace_editor" style="margin-top: 0px; margin-bottom: 0px">
+    <textarea>{{ debugtalk }}</textarea>
+</pre>
+
+<div id="login_click" style="margin-top: 0px">
+    <button id="push">点击提交</button>
+    <a href="/api/index/">返回首页</a>
+</div>
+
+
+<script>
+    //初始化对象
+    editor = ace.edit("code");
+    init_acs('python', 'monokai', editor);
+    $(function () {
+        var height = (window.screen.height - 180) + 'px';
+        $('#code').css('min-height', height);
+    });
+
+    function post(url, params) {
+        var temp = document.createElement("form");
+        temp.action = url;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in params) {
+            var opt = document.createElement("input");
+            opt.name = x;
+            opt.value = params[x];
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+
+
+    $('#push').click(function () {
+        content = editor.session.getValue();
+        str = '';
+        content.trim().split('\n').forEach(function (v, i) {
+            str = str + v +'new_line';
+        });
+        post('/api/debugtalk/', {'debugtalk': str, 'id': {{ id }}});
+    });
+
+</script>
+
+</body>
+</html>
