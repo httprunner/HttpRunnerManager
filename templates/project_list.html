@@ -119,6 +119,15 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择配置:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="config_name" name="config_name">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-sm-3" for="report_name"
                            style="font-weight: inherit; font-size: small ">报告名称：</label>
                     <div class="col-sm-8">
@@ -305,46 +314,79 @@
                     return;
                 }
             }
-            $('#select_env').modal({
-                relatedTarget: this,
-                onConfirm: function () {
-                    var data = {
-                        "id": $("#project_list").serializeJSON(),
-                        "env_name": $('#env_name').val(),
-                        "type": type,
-                        'report_name': $('#report_name').val()
-                    };
-                    if (mode !== 'batch') {
-                        data["id"] = mode;
-                    }
-                    if ($('#mode').val() === 'true') {
-                        if (mode === 'batch') {
-                            var json2map = JSON.stringify(data['id']);
-                            var obj = JSON.parse(json2map);
-                            obj['env_name'] = data['env_name'];
-                            obj['type'] = data['type'];
-                            post('/api/run_batch_test/', obj);
-                        } else {
-                            post('/api/run_test/', data);
-                        }
-                    } else {
-                        $.ajax({
-                            type: 'post',
-                            url: url,
-                            data: JSON.stringify(data),
-                            contentType: "application/json",
-                            success: function (data) {
-                                myAlert(data);
-                            },
-                            error: function () {
-                                myAlert('Sorry，服务器可能开小差啦, 请重试!');
+            var data = {
+                "mode": 'auto_load',
+            };
+            $.ajax({
+                type: 'post',
+                url: '/api/load_config/',
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    show_config(data);
+                    $('#select_env').modal({
+                        relatedTarget: this,
+
+                        onConfirm: function () {
+                            var data = {
+                                "id": $("#project_list").serializeJSON(),
+                                "env_name": $('#env_name').val(),
+                                "type": type,
+                                'report_name': $('#report_name').val(),
+                                "config": $('#config_name').val()
+                            };
+                            if (mode !== 'batch') {
+                                data["id"] = mode;
                             }
-                        });
-                    }
+                            if ($('#mode').val() === 'true') {
+                                if (mode === 'batch') {
+                                    var json2map = JSON.stringify(data['id']);
+                                    var obj = JSON.parse(json2map);
+                                    obj['env_name'] = data['env_name'];
+                                    obj['type'] = data['type'];
+                                    obj['config'] = data['config'];
+                                    post('/api/run_batch_test/', obj);
+                                } else {
+                                    post('/api/run_test/', data);
+                                }
+                            } else {
+                                $.ajax({
+                                    type: 'post',
+                                    url: url,
+                                    data: JSON.stringify(data),
+                                    contentType: "application/json",
+                                    success: function (data) {
+                                        myAlert(data);
+                                    },
+                                    error: function () {
+                                        myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                                    }
+                                });
+                            }
+                        },
+                        onCancel: function () {
+                        }
+                    });
                 },
-                onCancel: function () {
+                error: function () {
+                    myAlert('Sorry，服务器可能开小差啦, 请重试!');
                 }
             });
+
+        }
+
+        function show_config(config_info) {
+            config_info = config_info.split('replaceFlag');
+            var a = $('#config_name');
+            a.empty();
+            for (var i = 0; i < config_info.length; i++) {
+                if (config_info[i] !== "") {
+                    var value = config_info[i].split('^=');
+                    a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
+                }
+            }
+            a.prepend("<option value='' selected>自带配置</option>");
+
         }
 
         $('#select_all').click(function () {

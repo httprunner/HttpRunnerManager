@@ -37,7 +37,7 @@ def main_hrun(testset_path, report_name):
 
 
 @shared_task
-def project_hrun(name, base_url, project, receiver):
+def project_hrun(name, base_url, project, receiver, config=None):
     """
     异步运行整个项目
     :param env_name: str: 环境地址
@@ -54,7 +54,7 @@ def project_hrun(name, base_url, project, receiver):
     testcase_dir_path = os.path.join(os.getcwd(), "suite")
     testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
 
-    run_by_project(id, base_url, testcase_dir_path)
+    run_by_project(id, base_url, testcase_dir_path, config)
 
     run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
     runner.run(testcase_dir_path)
@@ -69,7 +69,7 @@ def project_hrun(name, base_url, project, receiver):
 
 
 @shared_task
-def module_hrun(name, base_url, module, receiver):
+def module_hrun(name, base_url, module, receiver, config=None):
     """
     异步运行模块
     :param env_name: str: 环境地址
@@ -89,7 +89,7 @@ def module_hrun(name, base_url, module, receiver):
 
     try:
         for value in module:
-            run_by_module(value[0], base_url, testcase_dir_path)
+            run_by_module(value[0], base_url, testcase_dir_path, config)
     except ObjectDoesNotExist:
         return '找不到模块信息'
     run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
