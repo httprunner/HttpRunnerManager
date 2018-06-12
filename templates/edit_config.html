@@ -259,19 +259,18 @@
                         </button>
                         <button class="btn btn-info" value="添 加" onclick="add_row('header')">add headers</button>
                         <button class="btn btn-danger" value="删 除" onclick="del_row('header')">del headers</button>
-                        <button id="btn-json-viewer" class="btn btn-info">convert to json</button>
                         <form id="config_request_data">
                             {% if 'json' in request.request.keys %}
-                                <span id="json-text" style="font-size:10px;">
-                                <div style="width:45%; float:left; margin-left: 0px; margin-top: 20px; height: 200px">
-                                    <textarea class="form-control" id="json-input" style="width: 100%"
-                                              rows="10">{{ request.request.json }}</textarea>
-                                </div>
+                                <span style="font-size:10px;" id="json-text">
+                                   <div style="margin-left: 0px; margin-top: 5px; height: 200px">
+                                       <pre id="code" class="ace_editor"
+                                            style="margin-top: 0px; margin-bottom: 0px; min-height: 200px;">
+                                           <textarea style="left: 0px">{{ request.request.json|json_dumps }}</textarea>
+                                       </pre>
+                                   </div>
+                                </span>
 
-                                <div style="width:50%; height:200px;overflow:auto;margin-top: 20px; margin-left: 5%; float:left">
-                                    <p id="json-renderer" style="width: 100%; padding-left: 20px"></p>
-                                </div>
-                            </span>
+                                </span>
                             {% else %}
                                 <table class="table table-hover table-condensed table-bordered table-striped" id="data">
                                     <caption>request:</caption>
@@ -407,6 +406,12 @@
     </div>
 
     <script>
+        try {
+            editor = ace.edit("code");
+            init_acs('json', 'github', editor);
+        } catch (err) {
+            editor = null;
+        }
         $("#tab-test").on("click", "li", function () {
             $(this).addClass("am-active").siblings("li").removeClass("am-active");
             var target = $(this).children("a").attr("data-target");
@@ -418,18 +423,15 @@
             if ($('#config_data_type').val() === 'json') {
                 $('#add_data').attr('disabled', true);
                 $('#del_data').attr('disabled', true);
-                $('#btn-json-viewer').removeAttr("disabled");
                 $('#data').remove();
-                var json_text = "<span style=\"font-size:10px;\" id=\"json-text\"><body>\n" +
-                    "                                <div style=\"width:45%; float:left; margin-left: 0px; margin-top: 20px; height: 200px\" >\n" +
-                    "                                    <textarea class=\"form-control\" id=\"json-input\" rows=\"10\" style=\"width: 100%\">{\"key\":\"value\"}\n" +
-                    "                                      </textarea></div>\n" +
-                    "\n" +
-                    "                                <div style=\"width:50%; height:200px;overflow:auto;margin-top: 20px; margin-left: 5%; float:left\">\n" +
-                    "                                    <p id=\"json-renderer\" style=\"width: 100%; padding-left: 20px\"></p>\n" +
-                    "                                </div>\n" +
-                    "                            </body></span>";
+                var json_text = "<span style=\"font-size:10px;\" id=\"json-text\">\n" +
+                    "                                <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">" +
+                    "<pre id=\"code\" class=\"ace_editor\" style=\"margin-top: 0px; margin-bottom: 0px; min-height: 200px;\">\n" +
+                    "    <textarea>{\"key\":\"value\"}</textarea>\n" +
+                    "</pre></div></span>";
                 $('#config_request_data').append(json_text);
+                editor = ace.edit("code");
+                init_acs('json', 'github', editor);
 
             } else {
                 var table = '<table class="table table-hover table-condensed table-bordered table-striped" id="data">\n' +
@@ -451,29 +453,11 @@
 
                 $('#add_data').removeAttr("disabled");
                 $('#del_data').removeAttr("disabled");
-                $('#btn-json-viewer').attr('disabled', true);
                 $('#data').remove();
                 $('#json-text').remove();
                 $('#config_request_data').append(table);
             }
-        })
-        $(function () {
-            $('#btn-json-viewer').click(function () {
-                try {
-                    var input = eval('(' + $('#json-input').val() + ')');
-                }
-                catch (error) {
-                    myAlert("Json 格式有误,请重新输入")
-                }
-                var options = {
-                    collapsed: false,
-                    withQuotes: false
-                };
-                $('#json-renderer').jsonViewer(input, options);
-            });
-            $('#btn-json-viewer').click();
         });
-
         $(function () {
             $('#add_data').text('add ' + $('#config_data_type').val());
             $('#del_data').text('del ' + $('#config_data_type').val());

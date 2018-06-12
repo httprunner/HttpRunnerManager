@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Debugtalk{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class="admin-biaogelist">
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-flag on"> 项目管理</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： debugtalk.py > <a href="#">debugtalk.py</a></dl>
+        </div>
+
+
+        <form class="am-form am-g" >
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
+                    <th class="table-title">序号</th>
+                    <th class="table-type">所属项目</th>
+                    <th class="table-type">DebugTalk</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th class="table-date am-hide-sm-only">更新时间</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for foo in debugtalk %}
+                    <tr>
+                        <td><input type="checkbox" name="debugtalk_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td style="color: cadetblue">{{ foo.belong_project.project_name }}</td>
+                        <td><a href="/api/debugtalk/{{ foo.id }}/">debugtalk.py</a></td>
+                        <td class="am-hide-sm-only">{{ foo.create_time }}</td>
+                        <td class="am-hide-sm-only">{{ foo.update_time }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+
+
+            <hr/>
+
+        </form>
+    </div>
+
+{% endblock %}

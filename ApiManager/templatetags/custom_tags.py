@@ -1,3 +1,5 @@
+import json
+
 from django import template
 
 register = template.Library()
@@ -21,3 +23,8 @@ def convert_eval(value):
     :return: the value which had been eval
     """
     return eval(value)
+
+
+@register.filter(name='json_dumps')
+def json_dumps(value):
+    return json.dumps(value, indent=4, separators=(',', ': '))

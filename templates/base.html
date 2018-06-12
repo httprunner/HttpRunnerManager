@@ -23,14 +23,18 @@
     <link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.7.2/css/amazeui.min.css"/>
     <link rel="stylesheet" href="{% static 'assets/css/admin.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/common.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/jquery.json-viewer.css' %}">
 
     <script src="http://cdn.amazeui.org/amazeui/2.7.2/js/amazeui.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript"
+            charset="utf-8"></script>
     <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
     <script src="{% static 'assets/js/app.js' %}"></script>
     <script src="{% static 'assets/js/commons.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.json-viewer.js' %}"></script>
+
 
 </head>
 <body class="modal-open">
@@ -94,6 +98,7 @@
             <ul>
                 <li><a href="/api/project_list/1/">项 目 列 表</a></li>
                 <li><a href="/api/add_project/">新 增 项 目</a></li>
+                <li><a href="/api/debugtalk_list/1/">debugtalk.py</a></li>
             </ul>
             <h3 class="am-icon-cart-plus"><em></em> <a href="#"> 模块管理</a></h3>
             <ul>
@@ -116,8 +121,8 @@
             <ul>
                 <li><a href="/api/env_list/1/">运 行 环 境</a></li>
                 <li><a href="/api/periodictask/1/">定 时 任 务</a></li>
-                <li><a href="http://127.0.0.1:5555/dashboard">任 务 监 控</a></li>
-                <li><a href="/api/echo/">撸 一 把 么</a></li>
+                <li><a href="http://192.168.91.45:5555/dashboard">任 务 监 控</a></li>
+                <li><a href="/api/echo/">实验室</a></li>
             </ul>
         </div>
         <!-- sideMenu End -->

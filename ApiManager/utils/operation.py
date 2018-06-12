@@ -1,10 +1,9 @@
-import json
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -37,7 +36,7 @@ def add_register_data(**kwargs):
 
 def add_project_data(type, **kwargs):
     """
-    项目信息落地
+    项目信息落地 新建时必须默认添加debugtalk.py
     :param type: true: 新增， false: 更新
     :param kwargs: dict
     :return: ok or tips
@@ -48,6 +47,8 @@ def add_project_data(type, **kwargs):
         if project_opt.get_pro_name(project_name) < 1:
             try:
                 project_opt.insert_project(**kwargs)
+                belong_project = project_opt.get(project_name=project_name)
+                DebugTalk.objects.create(belong_project=belong_project)
             except DataError:
                 return '项目信息过长'
             except Exception:
@@ -282,6 +283,7 @@ def del_project_data(id):
         for obj in belong_modules:
             TestCaseInfo.objects.filter(belong_module__module_name=obj).delete()
         ModuleInfo.objects.filter(belong_project__project_name=project_name).delete()
+        DebugTalk.objects.filter(belong_project__project_name=project_name).delete()
         ProjectInfo.objects.get(id=id).delete()
     except ObjectDoesNotExist:
         return '删除异常，请重试'
@@ -366,9 +368,5 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     TestReports.objects.create(**test_reports)
 
 
-def testcase_temporary_path(data):
-    case_opt = TestCaseInfo.objects
-    data = data
-    id = data.get('id')
-    interface_url = eval(data.get('request')).get('test').get('request').get('url')
-    case_opt.update_interface_by_id(id, interface_url)
+def update_debugtalk():
+    pass

@@ -106,3 +106,11 @@ class EnvInfo(BaseTable):
     base_url = models.CharField(max_length=40)
     simple_desc = models.CharField(max_length=50)
     objects = EnvInfoManager()
+
+
+class DebugTalk(BaseTable):
+    class Meta:
+        verbose_name = '驱动py文件'
+        db_table = 'DebugTalk'
+    belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
+    debugtalk = models.TextField()

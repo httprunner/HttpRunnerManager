@@ -147,7 +147,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder'
 )
 
-SESSION_COOKIE_AGE = 30 * 60
+SESSION_COOKIE_AGE = 300 * 60
 
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
@@ -164,8 +164,8 @@ CELERYD_CONCURRENCY = 1 if DEBUG else 10 # celery worker的并发数 也是命�
 CELERYD_MAX_TASKS_PER_CHILD = 100  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
 
 
-EMAIL_SEND_USERNAME = 'username@163.com'  # 定时任务报告发送邮箱，支持163,qq,sina,企业qq邮箱等，注意需要开通smtp服务
-EMAIL_SEND_PASSWORD = 'password'     # 邮箱密码
+EMAIL_SEND_USERNAME = 'quanwang.yin@hstong.com'  # 定时任务报告发送邮箱，支持163,qq,sina,企业qq邮箱等，注意需要开通smtp服务
+EMAIL_SEND_PASSWORD = 'TANGxinbing135!'     # 邮箱密码
 
 LOGGING = {
     'version': 1,
