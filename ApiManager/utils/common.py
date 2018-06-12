@@ -167,6 +167,22 @@ def load_cases(type=1, **kwargs):
     return string[:len(string) - 11]
 
 
+def load_configs():
+    """
+    加载指定项目下的配置信息
+    :return:
+    """
+    config_info = TestCaseInfo.objects.filter(type=2).values_list(
+        'id',
+        'name').order_by(
+        '-create_time')
+    config_info = list(config_info)
+    string = ''
+    for value in config_info:
+        string = string + str(value[0]) + '^=' + value[1] + 'replaceFlag'
+    return string[:len(string) - 11]
+
+
 def module_info_logic(type=True, **kwargs):
     """
     模块信息逻辑处理

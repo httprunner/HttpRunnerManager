@@ -65,6 +65,16 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择配置:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="config_name" name="config_name">
+
+                        </select>
+                    </div>
+                </div>
             </form>
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
@@ -86,7 +96,7 @@
                         onclick="location='/api/add_config/'">新增配置
                 </button>
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
-                        onclick="my_submit()">运行
+                        onclick="my_submit('/api/load_config/')">运行
                 </button>
             </dl>
         </div>
@@ -182,7 +192,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
                                             data-am-popover="{content: '运行', trigger: 'hover focus'}"
-                                            onclick="run_test('{{ foo.id }}')">
+                                            onclick="run_test('{{ foo.id }}', '/api/load_config/')">
                                         <span class="am-icon-bug"></span>
                                     </button>
                                     <button type="button"
@@ -234,23 +244,39 @@
             $('#pre_case' + id).collapse('close');
         }
 
-        function my_submit() {
+        function my_submit(url) {
             if ($("input:checked").size() == 0) {
                 myAlert("请至少选择一条用例运行！");
             } else {
-                $('#select_env').modal({
-                        relatedTarget: this,
-                        onConfirm: function () {
-                            var data = $("#test_list").serializeJSON();
-                            var json2map = JSON.stringify(data);
-                            var obj = JSON.parse(json2map);
-                            obj['env_name'] = $('#env_name').val();
-                            post('/api/run_batch_test/', obj)
-                        },
-                        onCancel: function () {
-                        }
+                var data = {
+                    "mode": 'auto_load',
+                };
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success: function (data) {
+                        show_config(data);
+                        $('#select_env').modal({
+                                relatedTarget: this,
+                                onConfirm: function () {
+                                    var data = $("#test_list").serializeJSON();
+                                    var json2map = JSON.stringify(data);
+                                    var obj = JSON.parse(json2map);
+                                    obj['env_name'] = $('#env_name').val();
+                                    obj['config'] = $('#config_name').val();
+                                    post('/api/run_batch_test/', obj)
+                                },
+                                onCancel: function () {
+                                }
+                            }
+                        );
+                    },
+                    error: function () {
+                        myAlert('Sorry，服务器可能开小差啦, 请重试!');
                     }
-                );
+                });
             }
         }
 
@@ -277,16 +303,32 @@
             });
         }
 
-        function run_test(index) {
-            $('#select_env').modal({
-                relatedTarget: this,
-                onConfirm: function () {
-                    post('/api/run_test/', {
-                        'id': index,
-                        'env_name': $('#env_name').val()
-                    })
+        function run_test(index, url) {
+            var data = {
+                "mode": 'auto_load',
+            };
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    show_config(data);
+                    $('#select_env').modal({
+                        relatedTarget: this,
+                        onConfirm: function () {
+                            post('/api/run_test/', {
+                                'id': index,
+                                'env_name': $('#env_name').val(),
+                                'config': $('#config_name').val()
+                            })
+                        },
+                        onCancel: function () {
+                        }
+                    });
                 },
-                onCancel: function () {
+                error: function () {
+                    myAlert('Sorry，服务器可能开小差啦, 请重试!');
                 }
             });
         }
@@ -295,5 +337,19 @@
             var isChecked = $(this).prop("checked");
             $("input[name^='testcase']").prop("checked", isChecked);
         })
+
+        function show_config(config_info) {
+            config_info = config_info.split('replaceFlag');
+            var a = $('#config_name');
+            a.empty();
+            for (var i = 0; i < config_info.length; i++) {
+                if (config_info[i] !== "") {
+                    var value = config_info[i].split('^=');
+                    a.prepend("<option value='" + value[0] + "' >" + value[1] + "</option>")
+                }
+            }
+            a.prepend("<option value='' selected>自带配置</option>");
+
+        }
     </script>
 {% endblock %}

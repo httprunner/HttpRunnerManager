@@ -34,6 +34,18 @@
 
                     <div class="form-group">
                         <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">可选配置</div>
+                            <select name="config" class="form-control">
+                                <option value="">自带配置</option>
+                                {% for info in  config %}
+                                    <option value="{{ info.id }}">{{ info.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
                             <div class="input-group-addon" style="color: #0a628f">选择项目</div>
                             <select name="project" class="form-control"
                                     onclick="auto_load('#add_task', '/api/add_task/', '#belong_module_id', 'module')">

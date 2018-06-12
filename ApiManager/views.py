@@ -14,7 +14,7 @@ from dwebsocket import accept_websocket
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
-    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
+    set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_configs, load_modules, upload_file_logic, \
     init_filter_session, get_total_values
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data
@@ -239,21 +239,23 @@ def run_test(request):
             id = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
-            run_by_module(id, base_url, testcase_dir_path) if type == 'module' \
-                else run_by_project(id, base_url, testcase_dir_path)
+            config = request.POST.get('config') if request.POST.get('config') != "" else None
+            run_by_module(id, base_url, testcase_dir_path, config) if type == 'module' \
+                else run_by_project(id, base_url, testcase_dir_path, config)
             report_name = kwargs.get('report_name', None)
             main_hrun.delay(testcase_dir_path, report_name)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             id = request.POST.get('id')
             base_url = request.POST.get('env_name')
+            config = request.POST.get('config') if request.POST.get('config') != "" else None
             type = request.POST.get('type', None)
             if type:
-                run_by_module(id, base_url, testcase_dir_path) if type == 'module' \
-                    else run_by_project(id, base_url, testcase_dir_path)
+                run_by_module(id, base_url, testcase_dir_path, config) if type == 'module' \
+                    else run_by_project(id, base_url, testcase_dir_path, config)
             else:
-                run_by_single(id, base_url, testcase_dir_path)
-
+                run_by_single(id, base_url, testcase_dir_path, config)
+				
             runner.run(testcase_dir_path)
 
             shutil.rmtree(testcase_dir_path)
@@ -286,18 +288,20 @@ def run_batch_test(request):
             test_list = kwargs.pop('id')
             base_url = kwargs.pop('env_name')
             type = kwargs.pop('type')
+            config = kwargs.get('config') if kwargs.get('config') != "" else None
             report_name = kwargs.get('report_name', None)
-            run_by_batch(test_list, base_url, testcase_dir_path, type=type)
+            run_by_batch(test_list, base_url, testcase_dir_path, config, type=type)
             main_hrun.delay(testcase_dir_path, report_name)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             type = request.POST.get('type', None)
             base_url = request.POST.get('env_name')
+            config = request.POST.get('config') if request.POST.get('config') != "" else None
             test_list = request.body.decode('utf-8').split('&')
             if type:
-                run_by_batch(test_list, base_url, testcase_dir_path, type=type, mode=True)
+                run_by_batch(test_list, base_url, testcase_dir_path, config, type=type, mode=True)
             else:
-                run_by_batch(test_list, base_url, testcase_dir_path)
+                run_by_batch(test_list, base_url, testcase_dir_path, config)
 
             runner.run(testcase_dir_path)
 
@@ -645,6 +649,23 @@ def periodictask(request, id):
         return HttpResponseRedirect("/api/login/")
 
 
+def load_config(request):
+    """
+    接收ajax请求，返回指定项目下的配置
+    :param request:
+    :return:
+    """
+    if request.session.get('login_status'):
+        if request.is_ajax():
+            try:
+                kwargs = json.loads(request.body.decode('utf-8'))
+            except ValueError:
+                logging.error('指定项目信息解析异常: {kwargs}'.format(kwargs=kwargs))
+                return '配置信息加载异常'
+            msg = load_configs()
+            return HttpResponse(msg)
+
+
 def add_task(request):
     """
     添加任务
@@ -665,7 +686,8 @@ def add_task(request):
             info = {
                 'account': acount,
                 'env': EnvInfo.objects.all().order_by('-create_time'),
-                'project': ProjectInfo.objects.all().order_by('-create_time')
+                'project': ProjectInfo.objects.all().order_by('-create_time'),
+                'config': TestCaseInfo.objects.filter(type__exact=2).order_by('create_time')
             }
             return render_to_response('add_task.html', info)
     else:
