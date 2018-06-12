@@ -243,8 +243,6 @@ def run_test(request):
                 else run_by_project(id, base_url, testcase_dir_path)
             report_name = kwargs.get('report_name', None)
             main_hrun.delay(testcase_dir_path, report_name)
-
-            shutil.rmtree(testcase_dir_path)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             id = request.POST.get('id')
@@ -291,8 +289,6 @@ def run_batch_test(request):
             report_name = kwargs.get('report_name', None)
             run_by_batch(test_list, base_url, testcase_dir_path, type=type)
             main_hrun.delay(testcase_dir_path, report_name)
-
-            shutil.rmtree(testcase_dir_path)
             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
         else:
             type = request.POST.get('type', None)
@@ -800,6 +796,18 @@ def debugtalk_list(request, id):
     else:
         return HttpResponseRedirect("/api/login/")
 
+
+def add_suite(request):
+    if request.session.get('login_status'):
+        account = request.session["now_account"]
+        if request.method == 'GET':
+            manage_info = {
+                'account': account,
+                'project': ProjectInfo.objects.all().values('project_name').order_by('-create_time')
+            }
+            return render_to_response('add_suite.html', manage_info)
+    else:
+        return HttpResponseRedirect("/api/login/")
 
 @accept_websocket
 def echo(request):

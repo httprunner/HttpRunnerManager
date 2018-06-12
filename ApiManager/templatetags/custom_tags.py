@@ -27,4 +27,4 @@ def convert_eval(value):
 
 @register.filter(name='json_dumps')
 def json_dumps(value):
-    return json.dumps(value, indent=4, separators=(',', ': '))
+    return json.dumps(value, indent=4, separators=(',', ': '), ensure_ascii=False)
