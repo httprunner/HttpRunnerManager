@@ -31,6 +31,7 @@ def main_hrun(testset_path, report_name):
     runner = HttpRunner(**kwargs)
     run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
     runner.run(testset_path)
+    shutil.rmtree(testset_path)
     add_test_reports(run_time, report_name=report_name, **runner.summary)
     return runner.summary
 
