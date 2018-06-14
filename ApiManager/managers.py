@@ -87,7 +87,6 @@ class ModuleInfoManager(models.Manager):
                 return self.get(id=module_name)
 
 
-
 '''用例信息表操作'''
 
 
@@ -96,7 +95,10 @@ class TestCaseInfoManager(models.Manager):
         case_info = kwargs.get('test').pop('case_info')
         self.create(name=kwargs.get('test').get('name'), belong_project=case_info.pop('project'),
                     belong_module=belong_module,
-                    author=case_info.pop('author'), include=case_info.pop('include'), request=kwargs)
+                    author=case_info.pop('author'),
+                    include=case_info.pop('include'),
+                    request=kwargs,
+                    interface_url=kwargs.get('test').get('request').get('url'))
 
     def update_case(self, belong_module, **kwargs):
         case_info = kwargs.get('test').pop('case_info')
@@ -107,6 +109,12 @@ class TestCaseInfoManager(models.Manager):
         obj.author = case_info.pop('author')
         obj.include = case_info.pop('include')
         obj.request = kwargs
+        obj.interface_url = kwargs.get('test').get('request').get('url')
+        obj.save()
+
+    def update_interface_by_id(self, id, interface_url):
+        obj = self.get(id=id)
+        obj.interface_url = interface_url
         obj.save()
 
     def insert_config(self, belong_module, **kwargs):

@@ -2,7 +2,7 @@ from django.utils.safestring import mark_safe
 
 from ApiManager.models import ModuleInfo, TestCaseInfo
 
-
+from ApiManager.utils.common import testcase_path
 
 class PageInfo(object):
     """
@@ -28,7 +28,6 @@ class PageInfo(object):
             return result[0]
         else:
             return result[0] + 1
-
 
 
 def customer_pager(base_url, current_page, total_page):
@@ -104,6 +103,9 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         belong_module = filter_query.get('belong_module')
         name = filter_query.get('name')
         user = filter_query.get('user')
+        interface_url = filter_query.get('interface_url')
+        if interface_url is None:
+            interface_url = ''
 
     obj = Model.objects
 
@@ -118,25 +120,59 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
     elif url == '/api/periodictask/':
-        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled','date_changed') \
-            if name is not '' else obj.all().values('id', 'name','kwargs','enabled','date_changed', 'description')
+        obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled', 'date_changed') \
+            if name is not '' else obj.all().values('id', 'name', 'kwargs', 'enabled', 'date_changed', 'description')
     elif url != '/api/env_list/' and url != '/api/debugtalk_list/':
-        obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
-        if belong_project and belong_module is not '':
-            obj = obj.filter(belong_project__contains=belong_project).filter(
-                belong_module__module_name__contains=belong_module)
-        else:
-            if belong_project is not '':
-                obj = obj.filter(belong_project__contains=belong_project)
-            elif belong_module is not '':
-                obj = obj.filter(belong_module__module_name__contains=belong_module)
+        if url == '/api/test_list/' or url == '/api/config_list/':
+            obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
+            if belong_project and belong_module is not '':
+                obj = obj.filter(belong_project__contains=belong_project).filter(
+                    belong_module__module_name__contains=belong_module)
             else:
-                obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
-    if url != '/api/periodictask/':
-        obj = obj.order_by('-update_time')
+                if belong_project is not '':
+                    obj = obj.filter(belong_project__contains=belong_project)
+                elif belong_module is not '':
+                    obj = obj.filter(belong_module__module_name__contains=belong_module)
+                else:
+                    obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
+
+        elif url == '/api/interface_list/':
+            #  新增字段的补丁逻辑，用户补全历史数据
+            pre_data = obj.values('id', 'request', 'interface_url').filter(interface_url__isnull=True).filter(type=1)
+            if pre_data.count() == 0:
+                pass
+            else:
+                for case in pre_data:
+                    testcase_path(case)
+            if user is not '':
+                obj = obj.raw("""SELECT *, COUNT(`TestCaseInfo`.`interface_url`) AS `num` 
+                                         FROM `TestCaseInfo` 
+                                         WHERE author= %s 
+                                         AND `TestCaseInfo`.`interface_url` IS NOT NULL 
+                                         AND `TestCaseInfo`.`interface_url` <> 'null' 
+                                         AND `TestCaseInfo`.`interface_url` <> '' 
+                                         GROUP BY `TestCaseInfo`.`interface_url` 
+                                         ORDER BY belong_module_id desc""", [user])
+            else:
+                obj = obj.raw("""SELECT*,COUNT( `TestCaseInfo`.`interface_url` ) AS `num` 
+                                    FROM
+                                        `TestCaseInfo` 
+                                    WHERE
+                                        `TestCaseInfo`.`interface_url` IS NOT NULL 
+                                        AND `TestCaseInfo`.`interface_url` <> 'null' 
+                                        AND `TestCaseInfo`.`interface_url` <> '' 
+                                    GROUP BY
+                                        `TestCaseInfo`.`interface_url` 
+                                    ORDER BY
+                                        belong_module_id DESC""")
+
     else:
-        obj = obj.order_by('-date_changed')
-    total = obj.count()
+        if url != '/api/periodictask/':
+            obj = obj.order_by('-update_time')
+        else:
+            obj = obj.order_by('-date_changed')
+
+    total = len(list(obj))
 
     page_info = PageInfo(id, total, per_items=per_items)
     info = obj[page_info.start:page_info.end]
