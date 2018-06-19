@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% block title %}suite列表{% endblock %}
+{% load staticfiles %}
+{% load custom_tags %}
+{% block content %}
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="select_env">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">运行环境:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="env_name" name="env_name">
+                            <option value="">自带环境</option>
+                            {% for foo in env %}
+                                <option value="{{ foo.base_url }}">{{ foo.env_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="report_name"
+                           style="font-weight: inherit; font-size: small ">报告名称：</label>
+                    <div class="col-sm-8">
+                        <input name="report_name" type="text" id="report_name" class="form-control"
+                               placeholder="默认时间戳命名" value="" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">执行方式:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="mode" name="mode">
+                            <option value="true">同步(执行完立即返回报告)</option>
+                            <option value="false">异步(后台执行，完毕后可查看报告)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            </form>
+
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="my-copy">
+        <div class="am-modal-dialog">
+            <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                <form class="form-horizontal" id="copy_list">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="index"
+                               style="font-weight: inherit; font-size: small " hidden>索引值:</label>
+                        <div class="col-sm-9">
+                            <input name="index" type="text" class="form-control" id="index"
+                                   placeholder="索引值" value="" hidden>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="name"
+                               style="font-weight: inherit; font-size: small ">Suite Name:</label>
+                        <div class="col-sm-9">
+                            <input name="name" type="text" class="form-control" id="name"
+                                   placeholder="给套件起个名吧" value="">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-invalid">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                大虾, 要不要鱿鱼虾？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="admin-biaogelist">
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-flag on"> Test Suite</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 模块管理 > <a href="#">suite</a></dl>
+            <dl>
+                <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
+                        onclick="location='/api/add_suite/'">Add Suite
+                </button>
+                   <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                        onclick="run_test('batch', '/api/run_batch_test/', 'suite')">运行
+                </button>
+            </dl>
+        </div>
+
+        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+            <form id="pro_filter" method="post" action="/api/suite_list/1/">
+                <ul>
+                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
+                                                        name="belong_project"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="所属项目"/></li>
+                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="套件名称"/></li>
+                    <li>
+                        <button class="am-btn am-radius am-btn-xs am-btn-success"
+                                style="margin-top: -1px;">搜索
+                        </button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+
+        <form class="am-form am-g" id='suite_list' name="suite_list">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
+                    <th class="table-title">序号</th>
+                    <th class="table-type">名称</th>
+                    <th class="table-type">所属项目</th>
+                    <th class="table-type">包含用例</th>
+                    <th class="table-date am-hide-sm-only">创建时间</th>
+                    <th class="table-date am-hide-sm-only">更新时间</th>
+                    <th width="163px" class="table-title">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in suite %}
+                    <tr>
+                        <td><input type="checkbox" name="suite_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div style="float: left">
+                                <a id="co{{ foo.id }}" class="am-icon-plus-square-o am-icon-fw"
+                                   style="display: block; cursor: pointer"
+                                   onclick="coolspo({{ foo.id }})"></a>
+                                <a id="cc{{ foo.id }}" class="am-icon-minus-square-o am-icon-fw"
+                                   style="display: none; cursor: pointer"
+                                   onclick="coolspc({{ foo.id }})"></a>
+                            </div>
+                            <div style="float: left">
+                                <a href="/api/edit_suite/{{ foo.id }}/"
+                                   data-am-collapse="{target: '#pre_case{{ foo.id }}'}">{{ foo.suite_name }}</a>
+                                <nav>
+                                    <ul id="pre_case{{ foo.id }}" class="am-nav am-collapse">
+                                        {% for path in foo.include|convert_eval %}
+                                            {% if path|data_type != 'list' %}
+                                                <li id="{{ path.0 }}">
+                                                    <a href="/api/edit_config/{{ path.config.0 }}/"
+                                                       id="{{ path.config.0 }}"
+                                                       style="color:cadetblue">{{ path.config.1 }}</a>
+                                                </li>
+                                            {% else %}
+                                                <li id="{{ path.0 }}">
+                                                    <a href="/api/edit_case/{{ path.0 }}/" id="{{ path.0 }}"
+                                                       style="color:rosybrown">{{ path.1 }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </td>
+                        <td>{{ foo.belong_project.project_name }}</td>
+                        {% for key, value in sum.items %}
+                            {% ifequal foo.id key %}
+                                <td>&nbsp;&nbsp;{{ value }} 条</td>
+                            {% endifequal %}
+                        {% endfor %}
+
+                        <td>{{ foo.create_time }}</td>
+                        <td>{{ foo.update_time }}</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"
+                                            data-am-popover="{content: '运行', trigger: 'hover focus'}"
+                                            onclick="run_test('{{ foo.id }}', '/api/run_test/', 'suite')">
+                                        <span class="am-icon-bug"></span>
+                                    </button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '复制', trigger: 'hover focus'}"
+                                            onclick="copy('#copy_list', '{{ foo.id }}')"><span
+                                            class="am-icon-copy"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '删除', trigger: 'hover focus'}"
+                                            onclick="invalid('{{ foo.id }}')"><span
+                                            class="am-icon-trash-o"></span></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="am-btn am-btn-default" onclick="location='/api/add_suite/'"><span
+                        class="am-icon-plus"></span> Add Suite
+                </button>
+            </div>
+
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+
+
+            <hr/>
+
+        </form>
+    </div>
+    <script type="text/javascript">
+        function coolspo(id) {
+            $('#co' + id).css('display', 'none');
+            $('#cc' + id).css('display', 'block');
+            $('#pre_case' + id).collapse('open');
+        }
+
+        function coolspc(id) {
+            $('#co' + id).css('display', 'block');
+            $('#cc' + id).css('display', 'none');
+            $('#pre_case' + id).collapse('close');
+        }
+
+
+        function invalid(name) {
+            $('#my-invalid').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    del_data_ajax(name, '/api/suite_list/1/')
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+        function copy(id, index) {
+            $('#index').val(index);
+            $('#my-copy').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    copy_data_ajax(id, '/api/suite_list/1/')
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+         $('#mode').change(function () {
+            if ($('#mode').val() == 'false') {
+                $('#report_name').removeAttr("readonly");
+            } else {
+                $('#report_name').attr('readonly', 'readonly');
+            }
+        });
+
+        function run_test(mode, url, type) {
+            if (mode === 'batch') {
+                if ($("input:checked").size() === 0) {
+                    myAlert("请至少选择一个套件运行！");
+                    return;
+                }
+            }
+            $('#select_env').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    var data = {
+                        "id": $("#suite_list").serializeJSON(),
+                        "env_name": $('#env_name').val(),
+                        "type": type,
+                        'report_name': $('#report_name').val()
+                    };
+                    if (mode !== 'batch') {
+                        data["id"] = mode;
+                    }
+                    if ($('#mode').val() === 'true') {
+                        if (mode === 'batch') {
+                            var json2map = JSON.stringify(data['id']);
+                            var obj = JSON.parse(json2map);
+                            obj['env_name'] = data['env_name'];
+                            obj['type'] = data['type'];
+                            post('/api/run_batch_test/', obj);
+                        } else {
+                            post('/api/run_test/', data);
+                        }
+                    } else {
+                        $.ajax({
+                            type: 'post',
+                            url: url,
+                            data: JSON.stringify(data),
+                            contentType: "application/json",
+                            success: function (data) {
+                                myAlert(data);
+                            },
+                            error: function () {
+                                myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                            }
+                        });
+                    }
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+        $('#select_all').click(function () {
+            var isChecked = $(this).prop("checked");
+            $("input[name^='suite']").prop("checked", isChecked);
+        })
+    </script>
+{% endblock %}
