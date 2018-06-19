@@ -3,7 +3,8 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
-from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk
+from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
+    TestSuite
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -201,6 +202,43 @@ def add_config_data(type, **kwargs):
     return 'ok'
 
 
+def add_suite_data(**kwargs):
+    belong_project = kwargs.pop('project')
+    suite_name = kwargs.get('suite_name')
+    kwargs['belong_project'] = ProjectInfo.objects.get(project_name=belong_project)
+
+    try:
+        if TestSuite.objects.filter(belong_project__project_name=belong_project, suite_name=suite_name).count() > 0:
+            return 'Suite已存在, 请重新命名'
+        TestSuite.objects.create(**kwargs)
+        logging.info('suite添加成功: {kwargs}'.format(kwargs=kwargs))
+    except Exception:
+        return 'suite添加异常，请重试'
+    return 'ok'
+
+
+def edit_suite_data(**kwargs):
+    id = kwargs.pop('id')
+    project_name = kwargs.pop('project')
+    suite_name = kwargs.get('suite_name')
+    include = kwargs.pop('include')
+    belong_project = ProjectInfo.objects.get(project_name=project_name)
+
+    suite_obj = TestSuite.objects.get(id=id)
+    try:
+        if suite_name != suite_obj.suite_name and \
+                        TestSuite.objects.filter(belong_project=belong_project, suite_name=suite_name).count() > 0:
+            return 'Suite已存在, 请重新命名'
+        suite_obj.suite_name = suite_name
+        suite_obj.belong_project = belong_project
+        suite_obj.include = include
+        suite_obj.save()
+        logging.info('suite更新成功: {kwargs}'.format(kwargs=kwargs))
+    except Exception:
+        return 'suite添加异常，请重试'
+    return 'ok'
+
+
 '''环境信息落地'''
 
 
@@ -273,18 +311,25 @@ def del_module_data(id):
 
 def del_project_data(id):
     """
-    根据项目索引删除项目数据，强制删除其下所有用例、配置、模块
+    根据项目索引删除项目数据，强制删除其下所有用例、配置、模块、Suite
     :param id: str or int: 项目索引
     :return: ok or tips
     """
     try:
         project_name = ProjectInfo.objects.get_pro_name('', type=False, id=id)
+
         belong_modules = ModuleInfo.objects.filter(belong_project__project_name=project_name).values_list('module_name')
         for obj in belong_modules:
             TestCaseInfo.objects.filter(belong_module__module_name=obj).delete()
+
+        TestSuite.objects.filter(belong_project__project_name=project_name).delete()
+
         ModuleInfo.objects.filter(belong_project__project_name=project_name).delete()
+
         DebugTalk.objects.filter(belong_project__project_name=project_name).delete()
+
         ProjectInfo.objects.get(id=id).delete()
+
     except ObjectDoesNotExist:
         return '删除异常，请重试'
     logging.info('{project_name} 项目已删除'.format(project_name=project_name))
@@ -302,6 +347,20 @@ def del_test_data(id):
     except ObjectDoesNotExist:
         return '删除异常，请重试'
     logging.info('用例/配置已删除')
+    return 'ok'
+
+
+def del_suite_data(id):
+    """
+    根据Suite索引删除数据
+    :param id: str or int: test or config index
+    :return: ok or tips
+    """
+    try:
+        TestSuite.objects.get(id=id).delete()
+    except ObjectDoesNotExist:
+        return '删除异常，请重试'
+    logging.info('Suite已删除')
     return 'ok'
 
 
@@ -345,6 +404,27 @@ def copy_test_data(id, name):
     return 'ok'
 
 
+def copy_suite_data(id, name):
+    """
+    复制suite信息，默认插入到当前项目、莫夸
+    :param id: str or int: 复制源
+    :param name: str：新用例名称
+    :return: ok or tips
+    """
+    try:
+        suite = TestSuite.objects.get(id=id)
+        belong_project = suite.belong_project
+    except ObjectDoesNotExist:
+        return '复制异常，请重试'
+    if TestSuite.objects.filter(suite_name=name, belong_project=belong_project).count() > 0:
+        return 'Suite名称重复了哦'
+    suite.id = None
+    suite.suite_name = name
+    suite.save()
+    logging.info('{name}suite添加成功'.format(name=name))
+    return 'ok'
+
+
 def add_test_reports(start_at, report_name=None, **kwargs):
     """
     定时任务或者异步执行报告信息落地
@@ -366,7 +446,3 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     }
 
     TestReports.objects.create(**test_reports)
-
-
-def update_debugtalk():
-    pass

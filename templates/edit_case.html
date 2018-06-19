@@ -360,7 +360,9 @@
                                    <div style="margin-left: 0px; margin-top: 5px; height: 200px">
                                        <pre id="code" class="ace_editor"
                                             style="margin-top: 0px; margin-bottom: 0px; min-height: 200px;">
-                                           <textarea style="left: 0px">{{ request.request.json|json_dumps }}</textarea>
+<textarea style="left: 0px">
+{{ request.request.json|json_dumps }}
+</textarea>
                                        </pre>
                                    </div>
                                 </span>
@@ -697,9 +699,11 @@
                 $('#del_data').attr('disabled', true);
                 $('#data').remove();
                 var json_text = "<span style=\"font-size:10px;\" id=\"json-text\">\n" +
-                    "                                <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">" +
+                    " <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">"+
                     "<pre id=\"code\" class=\"ace_editor\" style=\"margin-top: 0px; margin-bottom: 0px; min-height: 200px;\">\n" +
-                    "    <textarea>{\"key\":\"value\"}</textarea>\n" +
+                    "<textarea>\n" +
+                    "{\"key\":\"value\"}\n" +
+                    "</textarea>\n" +
                     "</pre></div></span>";
                 $('#form_request_data').append(json_text);
                 editor = ace.edit("code");
