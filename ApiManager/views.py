@@ -95,14 +95,14 @@ def index(request):
         project_length = ProjectInfo.objects.count()
         module_length = ModuleInfo.objects.count()
         test_length = TestCaseInfo.objects.filter(type__exact=1).count()
-        config_length = TestCaseInfo.objects.filter(type__exact=2).count()
+        suite_length = TestSuite.objects.count()
 
         total = get_total_values()
         manage_info = {
             'project_length': project_length,
             'module_length': module_length,
             'test_length': test_length,
-            'config_length': config_length,
+            'suite_length': suite_length,
             'account': request.session["now_account"],
             'total': total
         }
