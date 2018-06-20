@@ -67,26 +67,26 @@ function info_ajax(id, url) {
 function auto_load(id, url, target, type) {
     var data = $(id).serializeJSON();
     if (id === '#form_message') {
-            data = {
-                "test": {
-                    "name": data,
-                    "type": type
-                }
-            }
-    } else if (id === '#form_config') {
-            data = {
-                "config": {
-                    "name": data,
-                    "type": type
-                }
-            }
-        } else {
-            data = {
-                "task": {
-                    "name": data,
-                }
+        data = {
+            "test": {
+                "name": data,
+                "type": type
             }
         }
+    } else if (id === '#form_config') {
+        data = {
+            "config": {
+                "name": data,
+                "type": type
+            }
+        }
+    } else {
+        data = {
+            "task": {
+                "name": data,
+            }
+        }
+    }
     $.ajax({
         type: 'post',
         url: url,
@@ -349,7 +349,7 @@ function del_row(id) {
 
 function add_row(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
-    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var rowsNum = tabObj.rows.length;  //获取当前行数
     var style = 'width:100%; border: none';
     var cell_check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
     var cell_key = "<input type='text' name='test[][key]'  value='' style='" + style + "' />";
@@ -386,7 +386,7 @@ function add_row(id) {
 
 function add_params(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
-    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var rowsNum = tabObj.rows.length;  //获取当前行数
     var style = 'width:100%; border: none';
     var check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
     var placeholder = '单个:["value1", "value2],  多个:[["name1", "pwd1"],["name2","pwd2"]]';
@@ -422,5 +422,3 @@ function init_acs(language, theme, editor) {
 
 
 }
-
-
