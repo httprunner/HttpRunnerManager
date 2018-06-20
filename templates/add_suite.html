@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Add Suite{% endblock %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class=" admin-content">
+
+        <div class="admin-biaogelist">
+
+            <div style="margin-top: 20px">
+                <div style="float: left; width: 40%; height: auto">
+                    <form class="form-horizontal" id="form_message">
+
+                        <div class="form-group">
+                            <div class="input-group col-md-10 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">项目列表</div>
+                                <select id='belong_project' name="project" class="form-control"
+                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')
+                                        auto_load('#form_message', '/api/add_case/', '#config', 'config')">
+                                    <option value="请选择">请选择</option>
+                                    {% for foo in project %}
+                                        <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-10 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">模块列表</div>
+                                <select id="belong_module_id" name="module" class="form-control"
+                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-10 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">配置列表</div>
+                                <select id="config" name="config" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-10 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">用例列表</div>
+                                <select multiple="multiple" size="25" id="belong_case_id" name="include"
+                                        class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+
+                <button id="add_to_right" style="margin-left: 4%; display: inline-block; margin-bottom: -50%">>>
+                </button>
+                <div id="right" style="float: right; width: 50%; margin-right: 1%;">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">Suite</div>
+                                <input type="text" name="suite_name" value="" class="form-control" id="suite_name"
+                                       placeholder="Suite Name">
+                            </div>
+                        </div>
+                        <button id="create_suite" type="button" class="btn btn-primary">Save Suite</button>
+                    </form>
+                    <nav>
+                        <ol id="pre_config">
+                        </ol>
+
+                        <ol id="pre_case">
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        $(function () {
+            $("#pre_case").sortable();
+            $("#pre_case").disableSelection();
+        });
+
+        $('#config').on('change', function () {
+            if ($('#config').val() !== '请选择') {
+                var case_id = $('#config').val();
+                var case_name = $('#config option:selected').text();
+                var href = "<li id=" + case_id + " style='display: block'>" +
+                    "<a style='color: red; font-size: 25px' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">config：" + case_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                $('#pre_config li').each(function () {
+                    $(this).remove();
+                });
+                $("#pre_config").prepend(href);
+            }
+        });
+
+        $('#add_to_right').on('click', function () {
+            var include = $('#belong_case_id').val();
+            for (var key in include) {
+                var case_id = include[key];
+                var case_name = $('#belong_case_id option[value="' + include[key] + '"]').text();
+                if (case_name !== '请选择') {
+                    var href = "<li style='margin-left:15px' id=" + case_id + ">" +
+                        "<a style='font-size: 20px' href='/api/edit_case/" + case_id + "/' id = " + case_id + ">test：" + case_name + "" +
+                        "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                    $("#pre_case").append(href);
+                }
+
+            }
+
+        });
+
+        $('#create_suite').on('click', function () {
+            var test_length = $('#pre_case li').length;
+            if ($('#suite_name').val() === '') {
+                myAlert('大虾，Suite Name不能为空啊');
+                return
+            }
+            if (test_length === 0) {
+                myAlert('大虾，是不是忘记添加用例啦');
+                return
+            }
+            var include = [];
+            var i = 0;
+            if ($('#pre_config li').length > 0) {
+                const name = $("#pre_config li a").attr('id');
+                const value = $("#pre_config li a").text();
+                include[i++] = {
+                    'config': [name, value]
+                };
+            }
+            $("#pre_case li a").each(function () {
+                include[i++] = [$(this).attr('id'), $(this).text()];
+            });
+            const suite = {
+                'project': $("#belong_project option:selected").val(),
+                'include': include,
+                'suite_name': $('#suite_name').val(),
+            };
+            $.ajax({
+                type: 'post',
+                url: '/api/add_suite/',
+                data: JSON.stringify(suite),
+                contentType: "application/json",
+                success: function (data) {
+                    if (data === 'session invalid') {
+                        window.location.href = "/api/login/";
+                    } else {
+                        if (data.indexOf('/api/') != -1) {
+                            window.location.href = data;
+                        } else {
+                            myAlert(data);
+                        }
+                    }
+                },
+                error: function () {
+                    myAlert('Sorry，服务器可能开小差啦, 请重试!');
+                }
+            });
+
+        });
+
+        function remove_self(id) {
+            $(id).remove();
+        }
+    </script>
+
+
+{% endblock %}

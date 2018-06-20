@@ -1,13 +1,14 @@
 from django.utils.safestring import mark_safe
 
-from ApiManager.models import ModuleInfo, TestCaseInfo
-
+from ApiManager.models import ModuleInfo, TestCaseInfo, TestSuite
 from ApiManager.utils.common import testcase_path
+
 
 class PageInfo(object):
     """
     分页类
     """
+
     def __init__(self, current, total_item, per_items=5):
         self.__current = current
         self.__per_items = per_items
@@ -94,7 +95,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     :param filter_query: dict: 筛选条件
     :param url:
     :param id:
-    :param per_items: int: m默认展示10行
+    :param per_items: int: m默认展示12行
     :return:
     """
     id = int(id)
@@ -103,9 +104,10 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         belong_module = filter_query.get('belong_module')
         name = filter_query.get('name')
         user = filter_query.get('user')
-        interface_url = filter_query.get('interface_url')
+        interface_url = filter_query.get('interface_name')
         if interface_url is None:
             interface_url = ''
+        print(interface_url)
 
     obj = Model.objects
 
@@ -117,42 +119,55 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             obj = obj.filter(belong_project__project_name__contains=belong_project)
         else:
             obj = obj.filter(module_name__contains=name) if name is not '' else obj.filter(test_user__contains=user)
+
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
+
     elif url == '/api/periodictask/':
         obj = obj.filter(name__contains=name).values('id', 'name', 'kwargs', 'enabled', 'date_changed') \
             if name is not '' else obj.all().values('id', 'name', 'kwargs', 'enabled', 'date_changed', 'description')
+
+    elif url == '/api/suite_list/':
+        if belong_project is not '':
+            obj = obj.filter(belong_project__project_name__contains=belong_project)
+        elif name is not '':
+            obj = obj.filter(suite_name__contains=name)
+
     elif url != '/api/env_list/' and url != '/api/debugtalk_list/':
         if url == '/api/test_list/' or url == '/api/config_list/':
             obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
+
             if belong_project and belong_module is not '':
                 obj = obj.filter(belong_project__contains=belong_project).filter(
                     belong_module__module_name__contains=belong_module)
+
             else:
                 if belong_project is not '':
                     obj = obj.filter(belong_project__contains=belong_project)
                 elif belong_module is not '':
                     obj = obj.filter(belong_module__module_name__contains=belong_module)
+                elif interface_url is not '':
+                    obj = obj.filter(interface_url=interface_url)
                 else:
                     obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
-
         elif url == '/api/interface_list/':
-            #  新增字段的补丁逻辑，用户补全历史数据
+            #  新增字段的补丁逻辑，可以使用户无感知补全历史数据
             pre_data = obj.values('id', 'request', 'interface_url').filter(interface_url__isnull=True).filter(type=1)
             if pre_data.count() == 0:
                 pass
             else:
                 for case in pre_data:
                     testcase_path(case)
-            if user is not '':
+            if interface_url is not '':
+                # TODO 需要优化这块的逻辑，但是暂时没想好怎么优化
                 obj = obj.raw("""SELECT *, COUNT(`TestCaseInfo`.`interface_url`) AS `num` 
                                          FROM `TestCaseInfo` 
-                                         WHERE author= %s 
+                                         WHERE interface_url= %s 
                                          AND `TestCaseInfo`.`interface_url` IS NOT NULL 
                                          AND `TestCaseInfo`.`interface_url` <> 'null' 
                                          AND `TestCaseInfo`.`interface_url` <> '' 
                                          GROUP BY `TestCaseInfo`.`interface_url` 
-                                         ORDER BY belong_module_id desc""", [user])
+                                         ORDER BY belong_module_id desc""", [interface_url])
             else:
                 obj = obj.raw("""SELECT*,COUNT( `TestCaseInfo`.`interface_url` ) AS `num` 
                                     FROM
@@ -165,10 +180,10 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                                         `TestCaseInfo`.`interface_url` 
                                     ORDER BY
                                         belong_module_id DESC""")
-
     else:
         if url != '/api/periodictask/':
             obj = obj.order_by('-update_time')
+
         else:
             obj = obj.order_by('-date_changed')
 
@@ -184,20 +199,29 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             for model in info:
                 pro_name = model.project_name
                 module_count = str(ModuleInfo.objects.filter(belong_project__project_name__exact=pro_name).count())
+                suite_count = str(TestSuite.objects.filter(belong_project__project_name__exact=pro_name).count())
                 test_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=1).count())
                 config_count = str(TestCaseInfo.objects.filter(belong_project__exact=pro_name, type__exact=2).count())
-                sum.setdefault(model.id, module_count + '/ ' + test_count + '/ ' + config_count)
+                sum.setdefault(model.id, module_count + '/ ' + suite_count + '/' + test_count + '/ ' + config_count)
+
         elif url == '/api/module_list/':
             for model in info:
                 module_name = model.module_name
                 project_name = model.belong_project.project_name
-                test_count = str(
-                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=1,
-                                                belong_project=project_name).count())
-                config_count = str(
-                    TestCaseInfo.objects.filter(belong_module__module_name=module_name, type__exact=2,
-                                                belong_project=project_name).count())
+                test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
+                                type__exact=1, belong_project=project_name).count())
+                config_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
+                                type__exact=2,belong_project=project_name).count())
                 sum.setdefault(model.id, test_count + '/ ' + config_count)
+
+        elif url == '/api/suite_list/':
+            for model in info:
+                suite_name = model.suite_name
+                project_name = model.belong_project.project_name
+                test_count = str(len(eval(TestSuite.objects.get(suite_name=suite_name,
+                                belong_project__project_name=project_name).include)))
+                sum.setdefault(model.id, test_count)
+
         page_list = customer_pager(url, id, page_info.total_page)
 
     return page_list, info, sum

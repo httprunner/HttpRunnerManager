@@ -29,7 +29,7 @@ table#extract tr td, table#hooks tr td, table#params tr td {
 
 }
 
-#pre_case li {
+#pre_case li{
     position: relative;
 }
 
@@ -46,6 +46,28 @@ table#extract tr td, table#hooks tr td, table#params tr td {
     font-style: normal;
 }
 
-#pre_case li:hover i {
+#pre_case li:hover i{
+    opacity: 1;
+}
+
+
+#pre_config li{
+    position: relative;
+}
+
+#pre_config i {
+    -webkit-transition: opacity .2s;
+    transition: opacity .2s;
+    opacity: 0;
+    display: block;
+    cursor: pointer;
+    color: #c00;
+    top: 10px;
+    right: 40px;
+    position: absolute;
+    font-style: normal;
+}
+
+#pre_config li:hover i{
     opacity: 1;
 }

@@ -2,11 +2,11 @@ import os
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo, DebugTalk
+from ApiManager.models import TestCaseInfo, ModuleInfo, ProjectInfo, DebugTalk, TestSuite
 from ApiManager.utils.testcase import _dump_python_file, _dump_yaml_file
 
 
-def run_by_single(index, base_url, path):
+def run_by_single(index, base_url, path, type='test'):
     """
     加载单个case用例信息
     :param index: int or str：用例索引
@@ -26,16 +26,26 @@ def run_by_single(index, base_url, path):
     testcase_list.append(config)
 
     try:
-        obj = TestCaseInfo.objects.get(id=index)
+        if type == 'test':
+            obj = TestCaseInfo.objects.get(id=index)
+
+        else:
+            obj = TestSuite.objects.get(id=index)
+
     except ObjectDoesNotExist:
         return testcase_list
 
     include = eval(obj.include)
-    request = eval(obj.request)
-    name = obj.name
 
-    project = obj.belong_project
-    module = obj.belong_module.module_name
+    if type == 'test':
+        request = eval(obj.request)
+        name = obj.name
+        project = obj.belong_project
+        module = obj.belong_module.module_name
+    else:
+        name = obj.suite_name
+        project = obj.belong_project.project_name
+        module = name
 
     testcase_dir_path = os.path.join(path, project)
 
@@ -70,7 +80,8 @@ def run_by_single(index, base_url, path):
         except ObjectDoesNotExist:
             return testcase_list
 
-    testcase_list.append(request)
+    if type == 'test':
+        testcase_list.append(request)
 
     _dump_yaml_file(os.path.join(testcase_dir_path, name + '.yml'), testcase_list)
 
@@ -81,7 +92,7 @@ def run_by_batch(test_list, base_url, path, type=None, mode=False):
     :param test_list:
     :param base_url: str: 环境地址
     :param type: str：用例级别
-    :param mode: boolean：True 异步 False: 同步
+    :param mode: boolean：True 同步 False: 异步
     :return: list
     """
 
@@ -93,16 +104,22 @@ def run_by_batch(test_list, base_url, path, type=None, mode=False):
                 run_by_project(value, base_url, path)
             elif type == 'module':
                 run_by_module(value, base_url, path)
+            else:
+                run_by_single(value, base_url, path, type=type)
 
     else:
         if type == 'project':
             for value in test_list.values():
                 run_by_project(value, base_url, path)
+
         elif type == 'module':
             for value in test_list.values():
                 run_by_module(value, base_url, path)
-        else:
+        elif type == 'suite':
+            for value in test_list.values():
+                run_by_single(value, base_url, path, type=type)
 
+        else:
             for index in range(len(test_list) - 1):
                 form_test = test_list[index].split('=')
                 index = form_test[1]
@@ -134,3 +151,12 @@ def run_by_project(id, base_url, path):
     for index in module_index_list:
         module_id = index[0]
         run_by_module(module_id, base_url, path)
+
+
+def run_test_by_type(id, base_url, path, type):
+    if type == 'project':
+        run_by_project(id, base_url, path)
+    elif type == 'module':
+        run_by_module(id, base_url, path)
+    else:
+        run_by_single(id, base_url, path, type)

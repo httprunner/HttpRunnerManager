@@ -55,21 +55,21 @@
             </dl>
         </div>
 
-        <!--<div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">-->
-            <!--<form id="pro_filter" method="post" action="/api/interface_list/1/">-->
-                <!--<ul>-->
-                    <!--<li>-->
-                    <!--<li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"-->
-                                                        <!--class="am-form-field am-input-sm am-input-xm"-->
-                                                        <!--placeholder="创建者"/></li>-->
+        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+            <form id="pro_filter" method="post" action="/api/interface_list/1/">
+                <ul>
+                    <li>
+                    <li style="padding-top: 5px"><input value="" type="text" name="interface_name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="接口名称"/></li>
 
-                    <!--<button class="am-btn am-radius am-btn-xs am-btn-success"-->
-                            <!--style="margin-top: -1px;">搜索-->
-                    <!--</button>-->
-                    <!--</li>-->
-                <!--</ul>-->
-            <!--</form>-->
-        <!--</div>-->
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">搜索
+                    </button>
+                    </li>
+                </ul>
+            </form>
+        </div>
 
 
         <form class="am-form am-g" id='test_list' name="test_list">
@@ -92,7 +92,7 @@
                         <tr>
                         <td><input type="checkbox" name="config_{{ foo.id }}" value="{{ foo.id }}"/></td>
                         <td>{{ forloop.counter }}</td>
-                        <td><input type="hidden" name="interface_url" value="{{ foo.interface_url }}">{{ foo.interface_url }}</a>
+                        <td><input type="hidden" name="interface_name" value="{{ foo.interface_url }}">{{ foo.interface_url }}</a>
                         </td>
                         <td>{{ foo.belong_project }}</td>
                         <td>{{ foo.belong_module.module_name }}</td>
