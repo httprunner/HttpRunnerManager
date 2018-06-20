@@ -107,7 +107,6 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         interface_url = filter_query.get('interface_name')
         if interface_url is None:
             interface_url = ''
-        print(interface_url)
 
     obj = Model.objects
 
