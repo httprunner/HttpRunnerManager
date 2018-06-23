@@ -228,6 +228,8 @@ def case_info_logic(type=True, **kwargs):
         logging.info('用例原始信息: {kwargs}'.format(kwargs=kwargs))
         if test.get('name').get('case_name') is '':
             return '用例名称不可为空'
+        if test.get('name').get('level') == '请选择':
+            return '请选择用例级别'
         if test.get('name').get('author') is '':
             return '创建者不能为空'
         if test.get('request').get('url') is '':

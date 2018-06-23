@@ -75,6 +75,7 @@ class TestCaseInfo(BaseTable):
 
     type = models.IntegerField('test/config', default=1)
     name = models.CharField('用例/配置名称', max_length=50)
+    level = models.CharField('用例级别', max_length=20,default='P0')
     belong_project = models.CharField('所属项目', max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
     include = models.CharField('包含config/test', max_length=500, null=True)
