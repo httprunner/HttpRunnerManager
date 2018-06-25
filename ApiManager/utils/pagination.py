@@ -149,6 +149,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                     obj = obj.filter(interface_url=interface_url)
                 else:
                     obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
+                obj = obj.order_by('-update_time')
         elif url == '/api/interface_list/':
             #  新增字段的补丁逻辑，可以使用户无感知补全历史数据
             pre_data = obj.values('id', 'request', 'interface_url').filter(interface_url__isnull=True).filter(type=1)

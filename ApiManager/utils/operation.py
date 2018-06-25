@@ -147,7 +147,7 @@ def add_case_data(type, **kwargs):
     try:
         if type:
 
-            if case_opt.get_case_name(name, module,level, project) < 1:
+            if case_opt.get_case_name(name, module,project) < 1:
                 case_opt.insert_case(belong_module, **kwargs)
                 logger.info('{name}用例添加成功: {kwargs}'.format(name=name, kwargs=kwargs))
             else:
