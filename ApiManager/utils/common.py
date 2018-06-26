@@ -69,7 +69,7 @@ def key_value_list(keyword, **kwargs):
                 else:
                     type = 'str'
                 tips = '{keyword}: {val}格式错误,不是{type}类型'.format(keyword=keyword, val=val, type=type)
-                if key != '' and val != '':
+                if key != '':
                     if keyword == 'validate':
                         value['check'] = key
                         msg = type_change(type, val)
@@ -116,7 +116,7 @@ def key_value_dict(keyword, **kwargs):
             else:
                 type = 'str'
 
-            if key != '' and val != '':
+            if key != '':
                 if keyword == 'headers':
                     value[key] = val
                 elif keyword == 'data':
@@ -152,13 +152,9 @@ def load_cases(type=1, **kwargs):
     """
     belong_project = kwargs.get('name').get('project')
     module = kwargs.get('name').get('module')
-    if type == 1:
-        if module == '请选择':
-            return ''
-        case_info = TestCaseInfo.objects.filter(belong_project=belong_project, belong_module=module, type=type). \
-            values_list('id', 'name').order_by('-create_time')
-    elif type == 2:
-        case_info = TestCaseInfo.objects.filter(belong_project=belong_project, type=type). \
+    if module == '请选择':
+        return ''
+    case_info = TestCaseInfo.objects.filter(belong_project=belong_project, belong_module=module, type=type). \
             values_list('id', 'name').order_by('-create_time')
     case_info = list(case_info)
     string = ''
@@ -228,10 +224,6 @@ def case_info_logic(type=True, **kwargs):
         logging.info('用例原始信息: {kwargs}'.format(kwargs=kwargs))
         if test.get('name').get('case_name') is '':
             return '用例名称不可为空'
-        if test.get('name').get('author') is '':
-            return '创建者不能为空'
-        if test.get('request').get('url') is '':
-            return '接口地址不能为空'
         if test.get('name').get('module') == '请选择':
             return '请选择或者添加模块'
         if test.get('name').get('project') == '请选择':

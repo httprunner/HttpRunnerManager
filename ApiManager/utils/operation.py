@@ -138,10 +138,9 @@ def add_case_data(type, **kwargs):
     module = case_info.get('module')
     project = case_info.get('project')
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
-    config_id = case_info.get('config', '')
-    if config_id != '请选择' and config_id != '':
-        config_name = TestCaseInfo.objects.get_case_by_id(config_id, type=False)
-        case_info.get('include').insert(0, {'config': [config_id, config_name]})
+    config = case_info.get('config')
+    if config != '':
+        case_info.get('include')[0] = eval(config)
 
     try:
         if type:

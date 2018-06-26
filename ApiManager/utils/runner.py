@@ -80,7 +80,7 @@ def run_by_single(index, base_url, path, type='test'):
         except ObjectDoesNotExist:
             return testcase_list
 
-    if type == 'test':
+    if type == 'test' and request['test']['request']['url'] != '':
         testcase_list.append(request)
 
     _dump_yaml_file(os.path.join(testcase_dir_path, name + '.yml'), testcase_list)
