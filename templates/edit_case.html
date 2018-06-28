@@ -5,6 +5,83 @@
 
 {% block content %}
 
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="save_test">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <form class="form-horizontal" id="form_message">
+                <div class="form-group" style="display: none">
+                    <label class="control-label col-sm-3" for="test_index"
+                           style="font-weight: inherit; font-size: small ">用例索引:</label>
+                    <div class="col-sm-8">
+                        <input name="test_index" type="text" class="form-control" id="test_index"
+                               placeholder="模块名称" value="{{ info.id }}">
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none">
+                    <label class="control-label col-sm-3" for="author"
+                           style="font-weight: inherit; font-size: small ">编写人员:</label>
+                    <div class="col-sm-8">
+                        <input name="author" type="text" class="form-control" id="author"
+                               placeholder="模块名称" value="{{ info.author }}">
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none">
+                    <label class="control-label col-sm-3" for="config_pre"
+                           style="font-weight: inherit; font-size: small ">引用配置:</label>
+                    <div class="col-sm-8">
+                        <input name="config" type="text" class="form-control" id="config_pre"
+                               placeholder="引用配置" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="case_name"
+                           style="font-weight: inherit; font-size: small ">用例名称:</label>
+                    <div class="col-sm-8">
+                        <input name="case_name" type="text" class="form-control" id="case_name"
+                               placeholder="给用例起个名吧" value="{{ info.name }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择项目:</label>
+                    <div class="col-sm-8">
+                        <select name="project" class="form-control"
+                                onchange="auto_load('#form_message', '/api/edit_case/', '#module', 'module')">
+                            <option value="{{ info.belong_project }}"
+                                    selected>{{ info.belong_project }}</option>
+                            {% for obj in project %}
+                                {% ifnotequal info.belong_project obj.project_name %}
+                                    <option value='{{ obj.project_name }}'>{{ obj.project_name }}</option>
+                                {% endifnotequal %}
+                            {% endfor %}
+                            <option value="请选择">请选择</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择模块:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="module" name="module">
+                            <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
+                        </select>
+                    </div>
+
+                </div>
+            </form>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
 
     <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
@@ -23,31 +100,13 @@
 
             <div class="am-tabs-bd">
                 <div class="am-tab-panel" id="tab1">
-                    <form class="form-horizontal" id="form_message">
-                        <div class="form-group">
-                            <label for="test_index" class="col-md-2 control-label text-info" style="font-size: 14px;"
-                                   hidden>用例索引:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="test_index" placeholder="用例索引"
-                                       name="test_index"
-                                       value={{ info.id }} hidden>
-                            </div>
-                        </div>
+                    <form class="form-horizontal" id="belong_message">
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">用例名称</div>
-                                <input type="text" class="form-control" id="case_name" name="case_name"
-                                       placeholder="用例名称" value="{{ info.name }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">所属项目</div>
+                                <div class="input-group-addon" style="color: #0a628f">可选项目</div>
                                 <select name="project" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/edit_case/', '#belong_module_id', 'module')
-                                                  auto_load('#form_message', '/api/edit_case/', '#config', 'config')">
+                                        onchange="auto_load('#belong_message', '/api/edit_case/', '#belong_module_id', 'module')">
                                     <option value="{{ info.belong_project }}"
                                             selected>{{ info.belong_project }}</option>
                                     {% for obj in project %}
@@ -62,9 +121,10 @@
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                                <div class="input-group-addon" style="color: #0a628f">可选模块</div>
                                 <select id="belong_module_id" name="module" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
+                                        onchange="auto_load('#belong_message', '/api/add_case/', '#belong_case_id', 'case');
+                                        auto_load('#belong_message', '/api/edit_case/', '#config', 'config')">
                                     <option value="{{ info.belong_module.id }}">{{ info.belong_module.module_name }}</option>
                                 </select>
                             </div>
@@ -72,7 +132,7 @@
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">引用配置</div>
+                                <div class="input-group-addon" style="color: #0a628f">可选配置</div>
                                 <select id="config" name="config" class="form-control">
                                     {% if 'config' in include.0.keys %}
                                         <option value="{{ include.0.config.0 }}">{{ include.0.config.1 }}</option>
@@ -89,27 +149,28 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">编写人员</div>
-                                <input type="text" class="form-control" id="author" name="author"
-                                       placeholder="用例编写人员" value="{{ info.author }}">
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">前置条件</div>
+                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">用例列表</div>
 
                                 <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
                                    style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
                                    data-am-collapse="{target: '#pre_case'}">
-                                    依 赖 用 例 执 行 顺 序
+                                    用 例 执 行 顺 序
                                 </a>
                                 <nav>
                                     <ul id="pre_case" class="am-nav am-collapse">
                                         {% for foo in info.include|convert_eval %}
-                                            {% if foo|data_type == 'list' %}
+                                            {% if foo|data_type != 'list' %}
+                                                <li id="{{ foo.config.0 }}" name="pre_config">
+                                                    <a href="/api/edit_config/{{ foo.config.0 }}/"
+                                                       id="{{ foo.config.0 }}"
+                                                       style="color:cadetblue">{{ foo.config.1 }}</a>
+                                                    <i class="js-remove"
+                                                       onclick=remove_self('#{{ foo.config.0 }}')>✖</i></li>
+                                                </li>
+                                            {% else %}
                                                 <li id="{{ foo.0 }}">
                                                     <a href="/api/edit_case/{{ foo.0 }}/"
                                                        id="{{ foo.0 }}">{{ foo.1 }}</a>
@@ -677,7 +738,7 @@
 
         <div class="am-form-group am-cf">
             <div class="you" style="margin-left: 11%;">
-                <button type="button" class="am-btn am-btn-success am-radius" onclick="case_ajax('edit', editor)">点 击 修
+                <button type="button" id="save" class="am-btn am-btn-success am-radius">点 击 修
                     改
                 </button>&nbsp;
                 &raquo; &nbsp;
@@ -699,7 +760,7 @@
                 $('#del_data').attr('disabled', true);
                 $('#data').remove();
                 var json_text = "<span style=\"font-size:10px;\" id=\"json-text\">\n" +
-                    " <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">"+
+                    " <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">" +
                     "<pre id=\"code\" class=\"ace_editor\" style=\"margin-top: 0px; margin-bottom: 0px; min-height: 200px;\">\n" +
                     "<textarea>\n" +
                     "{\"key\":\"value\"}\n" +
@@ -767,11 +828,45 @@
             $(id).remove();
         }
 
+        $('#config').on('change', function () {
+            if ($('#config').val() !== '请选择') {
+                var case_id = $('#config').val();
+                var case_name = $('#config option:selected').text();
+                var href = "<li id=" + case_id + " name='pre_config'><a style='color: cadetblue' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                $("li[name='pre_config']").remove();
+                $("#pre_case").prepend(href);
+                $('#config_pre').val("{'config': ['" + case_id + "', '" + case_name + "']}");
+            }
+        });
+
         $(function () {
             $('#add_data').text('add ' + $('#DataType').val());
             $('#del_data').text('del ' + $('#DataType').val());
         });
 
+        $(function () {
+            if ($("li[name='pre_config']")) {
+                var case_id = $('#config').val();
+                var case_name = $('#config option:selected').text();
+                $('#config_pre').val("{'config': ['" + case_id + "', '" + case_name + "']}");
+            }
+
+        });
+
+        $('#save').on('click', function () {
+            if ($("li[name='pre_config']").length<=0) {
+                $('#config_pre').val("");
+            }
+            $('#save_test').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    case_ajax('edit', editor)
+                },
+                onCancel: function () {
+                }
+            });
+        })
 
     </script>
 {% endblock %}

@@ -66,7 +66,7 @@ function info_ajax(id, url) {
 
 function auto_load(id, url, target, type) {
     var data = $(id).serializeJSON();
-    if (id === '#form_message') {
+    if (id === '#form_message' || id ==='#belong_message') {
         data = {
             "test": {
                 "name": data,
@@ -83,7 +83,7 @@ function auto_load(id, url, target, type) {
     } else {
         data = {
             "task": {
-                "name": data,
+                "name": data
             }
         }
     }
@@ -249,6 +249,38 @@ function case_ajax(type, editor) {
     });
 }
 
+function webhook_ajax(pro_id) {
+    var obj = $(this);
+    const test = {
+        "webhook": {
+            "pro_id": pro_id,
+        }
+    };
+    $.ajax({
+        type: 'post',
+        url: '/api/webhook_list/1/',
+        data: JSON.stringify(test),
+        contentType: "application/json",
+        success: function (data) {
+            if (data === 'session invalid') {
+                window.location.href = "/api/login/";
+            } else {
+                if (data.indexOf('/api/') != -1) {
+                    window.location.href = data;
+                } else {
+                    $('#token_'+pro_id).text(data)
+                    // $(obj).parent().parent().before().html(data);
+
+                }
+            }
+        },
+        error: function () {
+            myAlert('Sorry，服务器可能开小差啦, 请重试!');
+        }
+    });
+}
+
+
 function config_ajax(type) {
     var dataType = $("#config_data_type").serializeJSON();
     var caseInfo = $("#form_config").serializeJSON();
@@ -346,10 +378,9 @@ function del_row(id) {
     }
 }
 
-
 function add_row(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
-    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var rowsNum = tabObj.rows.length;  //获取当前行数
     var style = 'width:100%; border: none';
     var cell_check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
     var cell_key = "<input type='text' name='test[][key]'  value='' style='" + style + "' />";
@@ -386,7 +417,7 @@ function add_row(id) {
 
 function add_params(id) {
     var tabObj = document.getElementById(id);//获取添加数据的表格
-    var rowsNum = tabObj.rows.length;  //获取当前行数
+    var rowsNum = tabObj.rows.length;  //获取当前行数
     var style = 'width:100%; border: none';
     var check = "<input type='checkbox' name='" + id + "' style='width:55px' />";
     var placeholder = '单个:["value1", "value2],  多个:[["name1", "pwd1"],["name2","pwd2"]]';
@@ -400,7 +431,6 @@ function add_params(id) {
     newTdObj1.innerHTML = key;
     newTdObj2.innerHTML = value;
 }
-
 
 function init_acs(language, theme, editor) {
     editor.setTheme("ace/theme/" + theme);
@@ -422,3 +452,5 @@ function init_acs(language, theme, editor) {
 
 
 }
+
+

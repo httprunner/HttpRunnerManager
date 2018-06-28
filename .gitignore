@@ -4,10 +4,14 @@
 ApiManager/__pycache__/
 ApiManager/logic/__pycache__/
 ApiManager/migrations/__pycache__/
+ApiManager/utils/__pycache__/*.pyc
+ApiManager/utils/__pycache__
 HttpRunnerManager/__pycache__/
 httprunner/__pycache__/
 pyunitreport/__pycache__/
 BeautifulReport/__pycache__/
 Test Report.html
 ApiManager/templatetags/*.pyc
-/logs/
+/logs/*.log
+
+

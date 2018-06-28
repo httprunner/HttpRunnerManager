@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}WebHook信息{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="my-copy">
+        <div class="am-modal-dialog">
+            <div style="font-size: medium;" class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                <form class="form-horizontal" id="copy_list">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="index"
+                               style="font-weight: inherit; font-size: small " hidden>索引值：</label>
+                        <div class="col-sm-9">
+                            <input name="index" type="text" class="form-control" id="index"
+                                   placeholder="索引值" value="" hidden>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="name"
+                               style="font-weight: inherit; font-size: small ">配置名称：</label>
+                        <div class="col-sm-9">
+                            <input name="name" type="text" class="form-control" id="name"
+                                   placeholder="给配置起个名吧" value="">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+            </div>
+        </div>
+    </div>
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-invalid">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <div class="am-modal-bd">
+                亲，请确认该配置是否被其他用例依赖后再谨慎删除哦
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="admin-biaogelist">
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-flag on"> WebHook列表</ul>
+            <dl class="am-icon-home" style="float: right;"> 当前位置： 用例管理 > <a href="#">WebHook列表展示</a></dl>
+
+            </dl>
+        </div>
+
+        <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+            <form id="pro_filter" method="post" action="/api/webhook/1/">
+                <ul>
+                    <li>
+                    <li style="padding-top: 5px"><input value="" type="text" name="interface_name"
+                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        placeholder="接口名称"/></li>
+
+                    <button class="am-btn am-radius am-btn-xs am-btn-success"
+                            style="margin-top: -1px;">搜索
+                    </button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+
+
+        <form class="am-form am-g" id='test_list' name="test_list">
+            <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+                <thead>
+                <tr class="am-success">
+                    <th class="table-check"><input type="checkbox" id="select_all"/></th>
+                    <th class="table-title">序号</th>
+                    <!--<th class="table-type">名称</th>-->
+                    <th class="table-type">所属项目</th>
+                    <!--<th class="table-date am-hide-sm-only">任务名称</th>-->
+                    <th class="table-type">Token</th>
+                    <th class="table-type">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in test %}
+                    <form id="interface_num" method="POST" action="/api/webhook_list/1/">
+                        <tr>
+                        <td><input type="checkbox" name="webhook_{{ foo.id }}" value="{{ foo.id }}"/></td>
+                        <td>{{ forloop.counter }}</td>
+                        <!--<td><input type="hidden" name="webhook_name" value="{{ foo.webhook_name }}">{{ foo.webhook_name }}</a>-->
+                        </td>
+                        <td>{{ foo.belong_project.project_name }}</td>
+                        <!--<td>{{ foo.job_name }}</td>-->
+                        <td class="am-hide-sm-only" id="token_{{ foo.id }}">{{ foo.token }}</td>
+                        <td>
+                            <ul>
+                                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                                        onclick="webhook_ajax('{{ foo.id }}', '/api/webhook_list/', 'project')">重置
+                                </button>
+                            </ul>
+                        </td>
+                        </tr>
+                    </form>
+
+                {% endfor %}
+                </tbody>
+            </table>
+            <ul class="am-pagination am-fr">
+                {{ page_list }}
+            </ul>
+
+
+            <hr/>
+
+        </form>
+    </div>
+    <script type="text/javascript">
+
+        function invalid(name) {
+            $('#my-invalid').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    del_data_ajax(name, '/api/config_list/1/')
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+        function copy(id, index) {
+            $('#index').val(index);
+            $('#my-copy').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    copy_data_ajax(id, '/api/config_list/1/')
+                },
+                onCancel: function () {
+                }
+            });
+        }
+
+        $('#select_all').click(function () {
+            var isChecked = $(this).prop("checked");
+            $("input[name^='config']").prop("checked", isChecked);
+        })
+    </script>
+{% endblock %}

@@ -75,6 +75,7 @@ class TestCaseInfo(BaseTable):
 
     type = models.IntegerField('test/config', default=1)
     name = models.CharField('用例/配置名称', max_length=50)
+    level = models.CharField('用例级别', max_length=20,default='P0')
     belong_project = models.CharField('所属项目', max_length=50)
     belong_module = models.ForeignKey(ModuleInfo, on_delete=models.CASCADE)
     include = models.CharField('包含config/test', max_length=500, null=True)
@@ -124,3 +125,14 @@ class TestSuite(BaseTable):
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
     suite_name = models.CharField(max_length=100)
     include = models.TextField()
+
+
+class WebHooKInfo(BaseTable):
+    class Meta:
+        verbose_name = 'WebHook信息'
+        db_table = 'WebHookInfo'
+
+    belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
+    webhook_name = models.CharField(max_length=100)
+    job_name = models.CharField(max_length=100)
+    token = models.CharField(max_length=100)

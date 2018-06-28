@@ -1,10 +1,11 @@
 import logging
+import uuid
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
-    TestSuite
+    TestSuite, WebHooKInfo
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -135,18 +136,18 @@ def add_case_data(type, **kwargs):
     case_info = kwargs.get('test').get('case_info')
     case_opt = TestCaseInfo.objects
     name = kwargs.get('test').get('name')
+    level = case_info.get('level')
     module = case_info.get('module')
     project = case_info.get('project')
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
-    config_id = case_info.get('config', '')
-    if config_id != '请选择' and config_id != '':
-        config_name = TestCaseInfo.objects.get_case_by_id(config_id, type=False)
-        case_info.get('include').insert(0, {'config': [config_id, config_name]})
+    config = case_info.get('config')
+    if config != '':
+        case_info.get('include')[0] = eval(config)
 
     try:
         if type:
 
-            if case_opt.get_case_name(name, module, project) < 1:
+            if case_opt.get_case_name(name, module,project) < 1:
                 case_opt.insert_case(belong_module, **kwargs)
                 logger.info('{name}用例添加成功: {kwargs}'.format(name=name, kwargs=kwargs))
             else:
@@ -154,7 +155,7 @@ def add_case_data(type, **kwargs):
         else:
             index = case_info.get('test_index')
             if name != case_opt.get_case_by_id(index, type=False) \
-                    and case_opt.get_case_name(name, module, project) > 0:
+                    and case_opt.get_case_name(name, module, level,project) > 0:
                 return '用例或配置已在该模块中存在，请重新命名'
             case_opt.update_case(belong_module, **kwargs)
             logger.info('{name}用例更新成功: {kwargs}'.format(name=name, kwargs=kwargs))
@@ -444,9 +445,7 @@ def add_test_reports(start_at, report_name=None, **kwargs):
         'start_at': start_at,
         'reports': kwargs
     }
-
     TestReports.objects.create(**test_reports)
-
 
 def testcase_temporary_path(data):
     """
@@ -458,3 +457,11 @@ def testcase_temporary_path(data):
     id = data.get('id')
     interface_url = eval(data.get('request')).get('test').get('request').get('url')
     case_opt.update_interface_by_id(id, interface_url)
+
+
+def generate_webhook_token(id):
+    webhook = WebHooKInfo.objects.filter(id=id)
+    if webhook.count() == 1:
+        token = str(uuid.uuid1())
+        webhook.update(token=token)
+        return {"status": 'success', "msg": [token]}

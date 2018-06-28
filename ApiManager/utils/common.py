@@ -9,7 +9,7 @@ import yaml
 from django.db.models import Sum
 from djcelery.models import PeriodicTask
 
-from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports
+from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports,WebHooKInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data, testcase_temporary_path
 from ApiManager.utils.task_opt import create_task
@@ -228,6 +228,8 @@ def case_info_logic(type=True, **kwargs):
         logging.info('用例原始信息: {kwargs}'.format(kwargs=kwargs))
         if test.get('name').get('case_name') is '':
             return '用例名称不可为空'
+        if test.get('name').get('level') == '请选择':
+            return '请选择用例级别'
         if test.get('name').get('author') is '':
             return '创建者不能为空'
         if test.get('request').get('url') is '':
@@ -576,3 +578,13 @@ def testcase_path(data):
 
     return testcase_temporary_path(data)
 
+
+def webhook_logic(token, pro):
+    """
+
+    :param data:
+    :return:
+    """
+    num = WebHooKInfo.objects.filter(belong_project=pro).filter(token=token).count()
+
+    return 'access_pass' if num == 1 else 'access_denied'
