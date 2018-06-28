@@ -393,6 +393,8 @@ def copy_test_data(id, name):
         return '复制异常，请重试'
     if TestCaseInfo.objects.filter(name=name, belong_module=belong_module).count() > 0:
         return '用例/配置名称重复了哦'
+    if name is '':
+        return '用例名称不可为空'
     test.id = None
     test.name = name
     request = eval(test.request)
@@ -420,6 +422,8 @@ def copy_suite_data(id, name):
         return '复制异常，请重试'
     if TestSuite.objects.filter(suite_name=name, belong_project=belong_project).count() > 0:
         return 'Suite名称重复了哦'
+    if name is '':
+        return '配置名称不能为空'
     suite.id = None
     suite.suite_name = name
     suite.save()
