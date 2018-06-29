@@ -49,7 +49,7 @@ def add_project_data(type, **kwargs):
             try:
                 project_opt.insert_project(**kwargs)
                 belong_project = project_opt.get(project_name=project_name)
-                DebugTalk.objects.create(belong_project=belong_project)
+                DebugTalk.objects.create(belong_project=belong_project, debugtalk='# debugtalk.py')
             except DataError:
                 return '项目信息过长'
             except Exception:
@@ -138,7 +138,7 @@ def add_case_data(type, **kwargs):
     module = case_info.get('module')
     project = case_info.get('project')
     belong_module = ModuleInfo.objects.get_module_name(module, type=False)
-    config = case_info.get('config')
+    config = case_info.get('config', '')
     if config != '':
         case_info.get('include')[0] = eval(config)
 
