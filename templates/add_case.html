@@ -79,70 +79,73 @@
         <div class="am-tabs am-margin">
             <ul class="am-tabs-nav am-nav am-nav-tabs" id="tab-test">
                 <li><a href="javascript:;" data-target="#tab1">messages</a></li>
-                <li><a href="javascript:;" data-target="#tab2">variables/parameters/hooks</a></li>
                 <li><a href="javascript:;" data-target="#tab3">request</a></li>
                 <li><a href="javascript:;" data-target="#tab4">extract/validate</a></li>
+                <li><a href="javascript:;" data-target="#tab2">variables/parameters/hooks</a></li>
             </ul>
 
             <div class="am-tabs-bd">
                 <div class="am-tab-panel" id="tab1">
-                    <form class="form-horizontal" id="belong_message">
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">所属项目</div>
-                                <select id='project' name="project" class="form-control"
-                                        onchange="auto_load('#belong_message', '/api/add_case/', '#belong_module_id', 'module')">
-                                    <option value="请选择">请选择</option>
-                                    {% for foo in project %}
-                                        <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
-                                    {% endfor %}
-                                </select>
+                    <div style="float: left; width: 40%;">
+                        <form class="form-horizontal" id="belong_message">
+                            <div class="form-group">
+                                <div class="input-group col-md-10 col-md-offset-1">
+                                    <div class="input-group-addon" style="color: #0a628f">所属项目</div>
+                                    <select id='project' name="project" class="form-control"
+                                            onchange="auto_load('#belong_message', '/api/add_case/', '#belong_module_id', 'module')">
+                                        <option value="请选择">请选择</option>
+                                        {% for foo in project %}
+                                            <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">可选模块</div>
-                                <select id="belong_module_id" name="module" class="form-control"
-                                        onchange="auto_load('#belong_message', '/api/add_case/', '#belong_case_id', 'case');
+                            <div class="form-group">
+                                <div class="input-group col-md-10 col-md-offset-1">
+                                    <div class="input-group-addon" style="color: #0a628f">可选模块</div>
+                                    <select id="belong_module_id" name="module" class="form-control"
+                                            onchange="auto_load('#belong_message', '/api/add_case/', '#belong_case_id', 'case');
                                         auto_load('#belong_message', '/api/add_case/', '#config', 'config')">
-                                </select>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">可选用例</div>
-                                <select id="belong_case_id" name="include" class="form-control">
-                                </select>
+                            <div class="form-group">
+                                <div class="input-group col-md-10 col-md-offset-1">
+                                    <div class="input-group-addon" style="color: #0a628f">可选用例</div>
+                                    <select id="belong_case_id" name="include" class="form-control">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">可选配置</div>
-                                <select id="config" name="config" class="form-control">
-                                </select>
+                            <div class="form-group">
+                                <div class="input-group col-md-10 col-md-offset-1">
+                                    <div class="input-group-addon" style="color: #0a628f">可选配置</div>
+                                    <select id="config" name="config" class="form-control">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        </form>
+                    </div>
+                    <div style="float: right; width: 50%;margin-right: 1%;">
+                         <div class="form-group">
+                                <div class="input-group col-md-10 ">
+                                    <div class="input-group-addon" id="close_collapse" style="color: #0a628f">用例列表</div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">用例列表</div>
+                                    <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
+                                       style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
+                                       data-am-collapse="{target: '#pre_case'}">
+                                        用 例 执 行 顺 序
+                                    </a>
+                                    <nav>
+                                        <ul id="pre_case" class="am-nav">
+                                        </ul>
+                                    </nav>
 
-                                <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
-                                   style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
-                                   data-am-collapse="{target: '#pre_case'}">
-                                    用 例 执 行 顺 序
-                                </a>
-                                <nav>
-                                    <ul id="pre_case" class="am-nav am-collapse">
-                                    </ul>
-                                </nav>
-
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="am-tab-panel" id="tab2">
@@ -384,19 +387,11 @@
             $("#pre_case").disableSelection();
         });
 
-        $('#pre_collapse').mouseover(function () {
-            $('#pre_case').collapse('open');
-        });
-
-        $('#close_collapse').mouseover(function () {
-            $('#pre_case').collapse('close');
-        });
-
         $('#config').on('change', function () {
             if ($('#config').val() !== '请选择') {
                 var case_id = $('#config').val();
                 var case_name = $('#config option:selected').text();
-                var href = "<li id=" + case_id + " name='pre_config'><a style='color: cadetblue' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
+                var href = "<li disbaled id=" + case_id + " name='pre_config'><a style='color: cadetblue' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
                     "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
                 $("li[name='pre_config']").remove();
                 $("#pre_case").prepend(href);
@@ -424,7 +419,6 @@
 
         $('#save').on('click', function () {
             if ($("li[name='pre_config']").length <= 0) {
-                console.log(111)
                 $('#config_pre').val("");
             }
             $('#save_test').modal({
