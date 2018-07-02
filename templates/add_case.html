@@ -2,7 +2,72 @@
 {% block title %}新增用例{% endblock %}
 {% load staticfiles %}
 
+
+
 {% block content %}
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="save_test">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">HttpRunnerManager</div>
+            <form class="form-horizontal" id="form_message">
+                <div class="form-group" style="display: none">
+                    <div class="input-group col-md-4 col-md-offset-1">
+                        <div class="input-group-addon" style="color: #0a628f;">编写人员</div>
+                        <input type="text" class="form-control" id="author" name="author"
+                               placeholder="" value="{{ account }}">
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none">
+                    <div class="input-group col-md-4 col-md-offset-1">
+                        <div class="input-group-addon" style="color: #0a628f;">引用配置</div>
+                        <input type="text" class="form-control" id="config_pre" name="config"
+                               placeholder="" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3" for="case_name"
+                           style="font-weight: inherit; font-size: small ">用例名称:</label>
+                    <div class="col-sm-8">
+                        <input name="case_name" type="text" class="form-control" id="case_name"
+                               placeholder="给用例起个名吧" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择项目:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="project" name="project"
+                                onchange="auto_load('#form_message', '/api/add_case/', '#module', 'module')">
+                            <option value="请选择">请选择</option>
+                            {% for foo in project %}
+                                <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3"
+                           style="font-weight: inherit; font-size: small ">选择模块:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="module" name="module">
+                        </select>
+                    </div>
+
+                </div>
+
+
+            </form>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
 
     <div class="admin-biaogelist" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
@@ -41,13 +106,11 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select id='project' name="project" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')
-                                        auto_load('#form_message', '/api/add_case/', '#config', 'config')">
+                                        onchange="auto_load('#belong_message', '/api/add_case/', '#belong_module_id', 'module')">
                                     <option value="请选择">请选择</option>
                                     {% for foo in project %}
                                         <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
@@ -58,17 +121,10 @@
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">所属模块</div>
+                                <div class="input-group-addon" style="color: #0a628f">可选模块</div>
                                 <select id="belong_module_id" name="module" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">引用配置</div>
-                                <select id="config" name="config" class="form-control">
+                                        onchange="auto_load('#belong_message', '/api/add_case/', '#belong_case_id', 'case');
+                                        auto_load('#belong_message', '/api/add_case/', '#config', 'config')">
                                 </select>
                             </div>
                         </div>
@@ -83,20 +139,20 @@
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">编写人员</div>
-                                <input type="text" class="form-control" id="author" name="author"
-                                       placeholder="用例编写人员" value="{{ account }}">
+                                <div class="input-group-addon" style="color: #0a628f">可选配置</div>
+                                <select id="config" name="config" class="form-control">
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
-                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">前置条件</div>
+                                <div class="input-group-addon" id="close_collapse" style="color: #0a628f">用例列表</div>
 
                                 <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
                                    style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
                                    data-am-collapse="{target: '#pre_case'}">
-                                    依 赖 用 例 执 行 顺 序
+                                    用 例 执 行 顺 序
                                 </a>
                                 <nav>
                                     <ul id="pre_case" class="am-nav am-collapse">
@@ -105,7 +161,6 @@
 
                             </div>
                         </div>
-
                     </form>
                 </div>
 
@@ -282,7 +337,7 @@
 
         <div class="am-form-group am-cf">
             <div class="you" style="margin-left: 11%;">
-                <button type="button" class="am-btn am-btn-success am-radius" onclick="case_ajax('add', editor)">点 击 提 交
+                <button id="save" type="button" class="am-btn am-btn-success am-radius">点 击 提 交
                 </button>&nbsp;
                 &raquo; &nbsp;
                 <a type="submit" href="/api/add_config/" class="am-btn am-btn-secondary am-radius">新 增 配 置</a>
@@ -299,7 +354,7 @@
                 $('#del_data').attr('disabled', true);
                 $('#data').remove();
                 var json_text = "<span style=\"font-size:10px;\" id=\"json-text\">\n" +
-                    " <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">"+
+                    " <div style=\"margin-left: 0px; margin-top: 5px; height: 200px\">" +
                     "<pre id=\"code\" class=\"ace_editor\" style=\"margin-top: 0px; margin-bottom: 0px; min-height: 200px;\">\n" +
                     "<textarea>\n" +
                     "{\"key\":\"value\"}\n" +
@@ -356,10 +411,26 @@
             $('#pre_case').collapse('close');
         });
 
+        $('#config').on('change', function () {
+            if ($('#config').val() !== '请选择') {
+                var case_id = $('#config').val();
+                var case_name = $('#config option:selected').text();
+                var href = "<li id=" + case_id + " name='pre_config'><a style='color: cadetblue' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
+                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
+                $("li[name='pre_config']").remove();
+                $("#pre_case").prepend(href);
+                $('#config_pre').val("{'config': ['" + case_id + "', '" + case_name + "']}");
+            }
+        });
+
+        $("li[name='pre_config'] a i").on('click', function () {
+            $('#config_pre').val("");
+        });
+
         $('#belong_case_id').on('change', function () {
             if ($('#belong_case_id').val() !== '请选择') {
-                case_id = $('#belong_case_id').val();
-                case_name = $('#belong_case_id option:selected').text();
+                var case_id = $('#belong_case_id').val();
+                var case_name = $('#belong_case_id option:selected').text();
                 var href = "<li id=" + case_id + "><a href='/api/edit_case/" + case_id + "/' id = " + case_id + ">" + case_name + "" +
                     "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
                 $("#pre_case").append(href);
@@ -369,6 +440,21 @@
         function remove_self(id) {
             $(id).remove();
         }
+
+        $('#save').on('click', function () {
+            if ($("li[name='pre_config']").length <= 0) {
+                console.log(111)
+                $('#config_pre').val("");
+            }
+            $('#save_test').modal({
+                relatedTarget: this,
+                onConfirm: function () {
+                    case_ajax('add', editor)
+                },
+                onCancel: function () {
+                }
+            });
+        })
 
     </script>
 

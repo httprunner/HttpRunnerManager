@@ -9,7 +9,7 @@ import yaml
 from django.db.models import Sum
 from djcelery.models import PeriodicTask
 
-from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports
+from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports,WebHooKInfo
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data, testcase_temporary_path
 from ApiManager.utils.task_opt import create_task
@@ -578,3 +578,13 @@ def testcase_path(data):
 
     return testcase_temporary_path(data)
 
+
+def webhook_logic(token, pro):
+    """
+
+    :param data:
+    :return:
+    """
+    num = WebHooKInfo.objects.filter(belong_project=pro).filter(token=token).count()
+
+    return 'access_pass' if num == 1 else 'access_denied'

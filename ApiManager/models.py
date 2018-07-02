@@ -125,3 +125,14 @@ class TestSuite(BaseTable):
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
     suite_name = models.CharField(max_length=100)
     include = models.TextField()
+
+
+class WebHooKInfo(BaseTable):
+    class Meta:
+        verbose_name = 'WebHook信息'
+        db_table = 'WebHookInfo'
+
+    belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
+    webhook_name = models.CharField(max_length=100)
+    job_name = models.CharField(max_length=100)
+    token = models.CharField(max_length=100)

@@ -180,6 +180,8 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                                         `TestCaseInfo`.`interface_url` 
                                     ORDER BY
                                         belong_module_id DESC""")
+        elif url == '/api/webhook_list/':
+            obj = obj.order_by('-update_time')
     else:
         if url != '/api/periodictask/':
             obj = obj.order_by('-update_time')
@@ -211,7 +213,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                 test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
                                 type__exact=1, belong_project=project_name).count())
                 config_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
-                                type__exact=2,belong_project=project_name).count())
+                                type__exact=2, belong_project=project_name).count())
                 sum.setdefault(model.id, test_count + '/ ' + config_count)
 
         elif url == '/api/suite_list/':
