@@ -64,25 +64,41 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/config_list/1/">
                 <ul>
-                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
-                                                        name="belong_project"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="所属项目"/></li>
-                    <li style="padding-top: 5px"><input value="{{ info.belong_module }}" type="text"
-                                                        name="belong_module"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="所属模块"/></li>
+                    <li style="padding-top: 5px">
+                        <select name="project" class="am-input-zm am-input-xm"
+                                onchange="auto_load('#pro_filter', '/api/add_case/', '#module', 'module')">
+                            <option value="{{ info.belong_project }}"
+                                    selected>{{ info.belong_project }}</option>
+                            {% for foo in project %}
+                                {% ifnotequal info.belong_project foo.project_name %}
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endifnotequal %}
+                            {% endfor %}
+                            {% if info.belong_project != 'All' %}
+                                <option value="All">All</option>
+                            {% endif %}
+                        </select>
+
+                    </li>
+
+                    <li style="padding-top: 5px">
+                        <select name="module" class=" am-input-zm am-input-xm" id="module">
+                            <option selected value="{{ info.belong_module }}">{{ info.belong_module }}</option>
+                        </select>
+                    </li>
+
                     <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="配置名称"/></li>
+                                                        class=" am-input-zm am-input-xm"
+                                                        placeholder="用例名称"/></li>
                     <li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="创建者"/></li>
-
-                    <button class="am-btn am-radius am-btn-xs am-btn-success"
-                            style="margin-top: -1px;">搜索
-                    </button>
+                                                        class="am-input-sm am-input-xm"
+                                                        placeholder="创建者"/>
+                    </li>
+                    <li>
+                        <button style="padding-top: 5px; margin-top: 9px"
+                                class="am-btn am-radius am-btn-xs am-btn-success">搜索
+                        </button>
                     </li>
                 </ul>
             </form>

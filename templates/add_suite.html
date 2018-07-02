@@ -15,8 +15,7 @@
                             <div class="input-group col-md-10 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">项目列表</div>
                                 <select id='belong_project' name="project" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')
-                                        auto_load('#form_message', '/api/add_case/', '#config', 'config')">
+                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')">
                                     <option value="请选择">请选择</option>
                                     {% for foo in project %}
                                         <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
@@ -34,13 +33,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <div class="input-group col-md-10 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">配置列表</div>
-                                <select id="config" name="config" class="form-control">
-                                </select>
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <div class="input-group col-md-10 col-md-offset-1">
@@ -69,9 +61,6 @@
                         <button id="create_suite" type="button" class="btn btn-primary">Save Suite</button>
                     </form>
                     <nav>
-                        <ol id="pre_config">
-                        </ol>
-
                         <ol id="pre_case">
                         </ol>
                     </nav>
@@ -86,20 +75,6 @@
         $(function () {
             $("#pre_case").sortable();
             $("#pre_case").disableSelection();
-        });
-
-        $('#config').on('change', function () {
-            if ($('#config').val() !== '请选择') {
-                var case_id = $('#config').val();
-                var case_name = $('#config option:selected').text();
-                var href = "<li id=" + case_id + " style='display: block'>" +
-                    "<a style='color: red; font-size: 25px' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">config：" + case_name + "" +
-                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
-                $('#pre_config li').each(function () {
-                    $(this).remove();
-                });
-                $("#pre_config").prepend(href);
-            }
         });
 
         $('#add_to_right').on('click', function () {
@@ -130,20 +105,13 @@
             }
             var include = [];
             var i = 0;
-            if ($('#pre_config li').length > 0) {
-                const name = $("#pre_config li a").attr('id');
-                const value = $("#pre_config li a").text();
-                include[i++] = {
-                    'config': [name, value]
-                };
-            }
             $("#pre_case li a").each(function () {
                 include[i++] = [$(this).attr('id'), $(this).text()];
             });
             const suite = {
                 'project': $("#belong_project option:selected").val(),
                 'include': include,
-                'suite_name': $('#suite_name').val(),
+                'suite_name': $('#suite_name').val()
             };
             $.ajax({
                 type: 'post',

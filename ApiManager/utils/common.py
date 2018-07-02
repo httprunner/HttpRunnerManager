@@ -426,18 +426,21 @@ def set_filter_session(request):
         request.session['user'] = request.POST.get('user')
     if 'name' in request.POST.keys():
         request.session['name'] = request.POST.get('name')
-    if 'belong_project' in request.POST.keys():
-        request.session['belong_project'] = request.POST.get('belong_project')
-    if 'belong_module' in request.POST.keys():
-        request.session['belong_module'] = request.POST.get('belong_module')
+    if 'project' in request.POST.keys():
+        request.session['project'] = request.POST.get('project')
+    if 'module' in request.POST.keys():
+        try:
+            request.session['module'] = ModuleInfo.objects.get(id=request.POST.get('module')).module_name
+        except Exception:
+            request.session['module'] = request.POST.get('module')
     if 'report_name' in request.POST.keys():
         request.session['report_name'] = request.POST.get('report_name')
 
     filter_query = {
         'user': request.session['user'],
         'name': request.session['name'],
-        'belong_project': request.session['belong_project'],
-        'belong_module': request.session['belong_module'],
+        'belong_project': request.session['project'],
+        'belong_module': request.session['module'],
         'report_name': request.session['report_name']
     }
 
@@ -453,14 +456,14 @@ def init_filter_session(request, type=True):
     if type:
         request.session['user'] = ''
         request.session['name'] = ''
-        request.session['belong_project'] = ''
-        request.session['belong_module'] = ''
+        request.session['project'] = 'All'
+        request.session['module'] = '请选择'
         request.session['report_name'] = ''
     else:
         del request.session['user']
         del request.session['name']
-        del request.session['belong_project']
-        del request.session['belong_module']
+        del request.session['project']
+        del request.session['module']
         del request.session['report_name']
 
 

@@ -66,7 +66,7 @@ function info_ajax(id, url) {
 
 function auto_load(id, url, target, type) {
     var data = $(id).serializeJSON();
-    if (id === '#form_message' || id ==='#belong_message') {
+    if (id === '#form_message' || id ==='#belong_message' || id === '#pro_filter') {
         data = {
             "test": {
                 "name": data,

@@ -317,7 +317,8 @@ def project_list(request, id):
                 'page_list': pro_list[0],
                 'info': filter_query,
                 'sum': pro_list[2],
-                'env': EnvInfo.objects.all().order_by('-create_time')
+                'env': EnvInfo.objects.all().order_by('-create_time'),
+                'project_all': ProjectInfo.objects.all().order_by('-update_time')
             }
             return render_to_response('project_list.html', manage_info)
     else:
@@ -350,7 +351,8 @@ def module_list(request, id):
                 'page_list': module_list[0],
                 'info': filter_query,
                 'sum': module_list[2],
-                'env': EnvInfo.objects.all().order_by('-create_time')
+                'env': EnvInfo.objects.all().order_by('-create_time'),
+                'project': ProjectInfo.objects.all().order_by('-update_time')
             }
             return render_to_response('module_list.html', manage_info)
     else:
@@ -384,7 +386,8 @@ def test_list(request, id):
                 'test': test_list[1],
                 'page_list': test_list[0],
                 'info': filter_query,
-                'env': EnvInfo.objects.all().order_by('-create_time')
+                'env': EnvInfo.objects.all().order_by('-create_time'),
+                'project': ProjectInfo.objects.all().order_by('-update_time')
             }
             return render_to_response('test_list.html', manage_info)
     else:
@@ -416,7 +419,8 @@ def config_list(request, id):
                 'account': account,
                 'test': test_list[1],
                 'page_list': test_list[0],
-                'info': filter_query
+                'info': filter_query,
+                'project': ProjectInfo.objects.all().order_by('-update_time')
             }
             return render_to_response('config_list.html', manage_info)
     else:

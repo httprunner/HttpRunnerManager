@@ -107,13 +107,18 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     obj = Model.objects
 
     if url == '/api/project_list/':
-        obj = obj.filter(project_name__contains=name) if name is not '' else obj.filter(responsible_name__contains=user)
+
+        obj = obj.filter(project_name__contains=belong_project) if belong_project != 'All' \
+            else obj.filter(responsible_name__contains=user)
 
     elif url == '/api/module_list/':
-        if belong_project is not '':
+
+        if belong_project != 'All':
             obj = obj.filter(belong_project__project_name__contains=belong_project)
+
         else:
-            obj = obj.filter(module_name__contains=name) if name is not '' else obj.filter(test_user__contains=user)
+            obj = obj.filter(module_name__contains=belong_module) if belong_module != 'All' \
+                else obj.filter(test_user__contains=user)
 
     elif url == '/api/report_list/':
         obj = obj.filter(report_name__contains=filter_query.get('report_name'))
@@ -131,14 +136,16 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     elif url != '/api/env_list/' and url != '/api/debugtalk_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
 
-        if belong_project and belong_module is not '':
+        if belong_project and belong_module != 'All':
             obj = obj.filter(belong_project__contains=belong_project).filter(
                 belong_module__module_name__contains=belong_module)
+            if name is not '':
+                obj = obj.filter(name__contains=name)
 
         else:
-            if belong_project is not '':
+            if belong_project != 'All':
                 obj = obj.filter(belong_project__contains=belong_project)
-            elif belong_module is not '':
+            elif belong_module != 'All':
                 obj = obj.filter(belong_module__module_name__contains=belong_module)
             else:
                 obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)
@@ -171,9 +178,9 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                 module_name = model.module_name
                 project_name = model.belong_project.project_name
                 test_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
-                                type__exact=1, belong_project=project_name).count())
+                                                             type__exact=1, belong_project=project_name).count())
                 config_count = str(TestCaseInfo.objects.filter(belong_module__module_name=module_name,
-                                type__exact=2,belong_project=project_name).count())
+                                                               type__exact=2, belong_project=project_name).count())
                 sum.setdefault(model.id, test_count + '/ ' + config_count)
 
         elif url == '/api/suite_list/':
@@ -181,7 +188,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
                 suite_name = model.suite_name
                 project_name = model.belong_project.project_name
                 test_count = str(len(eval(TestSuite.objects.get(suite_name=suite_name,
-                                belong_project__project_name=project_name).include)))
+                                                                belong_project__project_name=project_name).include)))
                 sum.setdefault(model.id, test_count)
 
         page_list = customer_pager(url, id, page_info.total_page)

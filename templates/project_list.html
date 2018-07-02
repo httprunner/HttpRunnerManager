@@ -165,17 +165,31 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/project_list/1/">
                 <ul>
-                    <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="项目名称"/></li>
-                    <li>
+                    <li style="padding-top: 5px">
+                        <select name="project" class="am-input-zm am-input-xm">
+                            <option value="{{ info.belong_project }}"
+                                    selected>{{ info.belong_project }}</option>
+
+                            {% for foo in project_all %}
+                                {% ifnotequal info.belong_project foo.project_name %}
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endifnotequal %}
+
+                            {% endfor %}
+
+                            {% if info.belong_project != 'All' %}
+                                <option value="All">All</option>
+                            {% endif %}
+                        </select>
+                    </li>
                     <li style="padding-top: 5px"><input value="{{ info.user }}" type="text" name="user"
-                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        class="am-input-sm am-input-xm"
                                                         placeholder="负责人"/></li>
 
-                    <button class="am-btn am-radius am-btn-xs am-btn-success"
-                            style="margin-top: -1px;">查询
-                    </button>
+                    <li>
+                        <button style="padding-top: 5px; margin-top: 9px"
+                                class="am-btn am-radius am-btn-xs am-btn-success">搜索
+                        </button>
                     </li>
                 </ul>
             </form>
