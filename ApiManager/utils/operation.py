@@ -464,3 +464,12 @@ def testcase_temporary_path(data):
     id = data.get('id')
     interface_url = eval(data.get('request')).get('test').get('request').get('url')
     case_opt.update_interface_by_id(id, interface_url)
+
+    
+def generate_webhook_token(id):
+    webhook = WebHooKInfo.objects.filter(id=id)
+    if webhook.count() == 1:
+        token = str(uuid.uuid1())
+        webhook.update(token=token)
+        return {"status": 'success', "msg": [token]}
+
