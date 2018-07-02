@@ -44,6 +44,21 @@
 
                         <div class="form-group">
                             <div class="input-group col-md-4 col-md-offset-1">
+                                <div class="input-group-addon" style="color: #0a628f">用例级别</div>
+                                <select name="level" class="form-control"
+                                        onchange="auto_load('#form_message', '/api/edit_case/', '#level', 'level')">
+                                    <option value="{{ info.level }}"
+                                selected>{{ info.level }}</option>
+                                    <option>P0</option>
+                                    <option>P1</option>
+                                    <option>P2</option>
+                                    <option>P3</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-4 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">所属项目</div>
                                 <select name="project" class="form-control"
                                         onchange="auto_load('#form_message', '/api/edit_case/', '#belong_module_id', 'module')
