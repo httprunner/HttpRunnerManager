@@ -190,7 +190,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '复制', trigger: 'hover focus'}"
-                                            onclick="copy('#copy_list', '{{ foo.id }}')"><span
+                                            onclick="copy('#copy_list', '{{ foo.id }}', '{{ foo.name }}')"><span
                                             class="am-icon-copy"></span></button>
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
@@ -267,7 +267,8 @@
             });
         }
 
-        function copy(id, index) {
+        function copy(id, index, name) {
+            $('#name').val(name);
             $('#index').val(index);
             $('#my-copy').modal({
                 relatedTarget: this,
@@ -278,6 +279,8 @@
                 }
             });
         }
+
+
 
         function run_test(index) {
             $('#select_env').modal({
