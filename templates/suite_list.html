@@ -103,7 +103,7 @@
                 <button type="button" class="am-btn am-btn-primary am-round am-btn-xs am-icon-plus"
                         onclick="location='/api/add_suite/'">Add Suite
                 </button>
-                   <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
+                <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="run_test('batch', '/api/run_batch_test/', 'suite')">运行
                 </button>
             </dl>
@@ -112,16 +112,29 @@
         <div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
             <form id="pro_filter" method="post" action="/api/suite_list/1/">
                 <ul>
-                    <li style="padding-top: 5px"><input value="{{ info.belong_project }}" type="text"
-                                                        name="belong_project"
-                                                        class="am-form-field am-input-sm am-input-xm"
-                                                        placeholder="所属项目"/></li>
+                    <li style="padding-top: 5px">
+                        <select name="project" class="am-input-zm am-input-xm">
+                            <option value="{{ info.belong_project }}"
+                                    selected>{{ info.belong_project }}</option>
+
+                            {% for foo in project %}
+                                {% ifnotequal info.belong_project foo.project_name %}
+                                    <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
+                                {% endifnotequal %}
+
+                            {% endfor %}
+
+                            {% if info.belong_project != 'All' %}
+                                <option value="All">All</option>
+                            {% endif %}
+                        </select>
+                    </li>
                     <li style="padding-top: 5px"><input value="{{ info.name }}" type="text" name="name"
-                                                        class="am-form-field am-input-sm am-input-xm"
+                                                        class=" am-input-sm am-input-xm"
                                                         placeholder="套件名称"/></li>
                     <li>
                         <button class="am-btn am-radius am-btn-xs am-btn-success"
-                                style="margin-top: -1px;">搜索
+                                style="padding-top: 5px; margin-top: 9px">搜索
                         </button>
                     </li>
                 </ul>
@@ -268,7 +281,7 @@
             });
         }
 
-         $('#mode').change(function () {
+        $('#mode').change(function () {
             if ($('#mode').val() == 'false') {
                 $('#report_name').removeAttr("readonly");
             } else {

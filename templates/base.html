@@ -104,15 +104,26 @@
             <ul>
                 <li><a href="/api/module_list/1/">模 块 列 表</a></li>
                 <li><a href="/api/add_module/">新 增 模 块</a></li>
-                <li><a href="/api/suite_list/1/">Test Suite</a></li>
             </ul>
             <h3 class="am-icon-bug"><em></em> <a href="#">用例管理</a></h3>
             <ul>
-                <li><a href="/api/test_list/1/">用 例 列 表</a></li>
-                <li><a href="/api/config_list/1/">配 置 列 表</a></li>
-                <li><a href="/api/add_config/">新 增 配 置</a></li>
                 <li><a href="/api/add_case/">新 增 用 例</a></li>
+                <li><a href="/api/test_list/1/">用 例 列 表</a></li>
             </ul>
+
+            <h3 class="am-icon-bug"><em></em> <a href="#">配置管理</a></h3>
+            <ul>
+                <li><a href="/api/add_config/">新 增 配 置</a></li>
+                <li><a href="/api/config_list/1/">配 置 列 表</a></li>
+            </ul>
+
+            <h3 class="am-icon-bug"><em></em> <a href="#">测试计划</a></h3>
+            <ul>
+                <li><a href="/api/suite_list/1/">测 试 套 件</a></li>
+                <li><a href="/api/periodictask/1/">定 时 任 务</a></li>
+            </ul>
+
+
             <h3 class="am-icon-reorder"><em></em> <a href="#">报告管理</a></h3>
             <ul>
                 <li><a href="/api/report_list/1/">查看报告</a></li>
@@ -120,7 +131,6 @@
             <h3 class="am-icon-gears"><em></em> <a href="#">系统设置</a></h3>
             <ul>
                 <li><a href="/api/env_list/1/">运 行 环 境</a></li>
-                <li><a href="/api/periodictask/1/">定 时 任 务</a></li>
                 <li><a href="http://192.168.91.45:5555/dashboard">任 务 监 控</a></li>
                 <li><a href="/api/echo/">实验室</a></li>
             </ul>
@@ -166,7 +176,7 @@
                         href="/api/add_case/" class="am-close am-close-spin">~</a>
                 </button>
             </li>
-             <li>
+            <li>
                 <button type="button" class="am-btn am-btn-default am-radius am-btn-xs"
                         onclick="location='/api/add_suite/'">新增Suite<a
                         href="/api/add_suite/" class="am-close am-close-spin">~</a>

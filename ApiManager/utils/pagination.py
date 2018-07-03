@@ -128,7 +128,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
             if name is not '' else obj.all().values('id', 'name', 'kwargs', 'enabled', 'date_changed', 'description')
 
     elif url == '/api/suite_list/':
-        if belong_project is not '':
+        if belong_project != 'All':
             obj = obj.filter(belong_project__project_name__contains=belong_project)
         elif name is not '':
             obj = obj.filter(suite_name__contains=name)
