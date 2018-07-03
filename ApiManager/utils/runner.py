@@ -26,26 +26,15 @@ def run_by_single(index, base_url, path, type='test'):
     testcase_list.append(config)
 
     try:
-        if type == 'test':
-            obj = TestCaseInfo.objects.get(id=index)
-
-        else:
-            obj = TestSuite.objects.get(id=index)
-
+       obj = TestCaseInfo.objects.get(id=index)
     except ObjectDoesNotExist:
         return testcase_list
 
     include = eval(obj.include)
-
-    if type == 'test':
-        request = eval(obj.request)
-        name = obj.name
-        project = obj.belong_project
-        module = obj.belong_module.module_name
-    else:
-        name = obj.suite_name
-        project = obj.belong_project.project_name
-        module = name
+    request = eval(obj.request)
+    name = obj.name
+    project = obj.belong_project
+    module = obj.belong_module.module_name
 
     testcase_dir_path = os.path.join(path, project)
 
@@ -80,7 +69,7 @@ def run_by_single(index, base_url, path, type='test'):
         except ObjectDoesNotExist:
             return testcase_list
 
-    if type == 'test' and request['test']['request']['url'] != '':
+    if request['test']['request']['url'] != '':
         testcase_list.append(request)
 
     _dump_yaml_file(os.path.join(testcase_dir_path, name + '.yml'), testcase_list)

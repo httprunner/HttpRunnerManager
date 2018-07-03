@@ -119,8 +119,8 @@ if DEBUG:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'HttpRunner',  # 新建数据库名
             'USER': 'root',  # 数据库登录名
-            'PASSWORD': 'lcc123456',  # 数据库登录密码
-            'HOST': '127.0.0.1',  # 数据库所在服务器ip地址
+            'PASSWORD': 'Hst888888',  # 数据库登录密码
+            'HOST': '192.168.91.45',  # 数据库所在服务器ip地址
             'PORT': '3306',  # 监听端口 默认3306即可
         }
     }
@@ -152,7 +152,7 @@ SESSION_COOKIE_AGE = 300 * 60
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
-BROKER_URL = 'amqp://guest:guest@127.0.0.1:5672//' if DEBUG else 'amqp://dev:zwc123@192.168.91.45:5672//'
+BROKER_URL = 'amqp://dev:zwc123@42.51.222.237:5672//' if DEBUG else 'amqp://dev:zwc123@192.168.91.45:5672//'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERY_ACCEPT_CONTENT = ['application/json']

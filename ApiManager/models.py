@@ -114,7 +114,7 @@ class DebugTalk(BaseTable):
         db_table = 'DebugTalk'
 
     belong_project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE)
-    debugtalk = models.TextField(null=True)
+    debugtalk = models.TextField(null=True, default='#debugtalk.py')
 
 
 class TestSuite(BaseTable):
