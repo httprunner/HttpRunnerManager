@@ -136,7 +136,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
     elif url != '/api/env_list/' and url != '/api/debugtalk_list/':
         obj = obj.filter(type__exact=1) if url == '/api/test_list/' else obj.filter(type__exact=2)
 
-        if belong_project and belong_module != 'All':
+        if belong_project != 'All' and belong_module != '请选择':
             obj = obj.filter(belong_project__contains=belong_project).filter(
                 belong_module__module_name__contains=belong_module)
             if name is not '':
@@ -145,7 +145,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         else:
             if belong_project != 'All':
                 obj = obj.filter(belong_project__contains=belong_project)
-            elif belong_module != 'All':
+            elif belong_module != '请选择':
                 obj = obj.filter(belong_module__module_name__contains=belong_module)
             else:
                 obj = obj.filter(name__contains=name) if name is not '' else obj.filter(author__contains=user)

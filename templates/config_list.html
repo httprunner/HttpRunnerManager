@@ -83,7 +83,6 @@
 
                     <li style="padding-top: 5px">
                         <select name="module" class=" am-input-zm am-input-xm" id="module">
-                            <option selected value="{{ info.belong_module }}">{{ info.belong_module }}</option>
                         </select>
                     </li>
 
@@ -198,6 +197,10 @@
         $('#select_all').click(function () {
             var isChecked = $(this).prop("checked");
             $("input[name^='config']").prop("checked", isChecked);
-        })
+        });
+
+        $().ready(function () {
+            auto_load('#pro_filter', '/api/add_case/', '#module', 'module');
+        });
     </script>
 {% endblock %}

@@ -105,7 +105,7 @@
                                 {% endifnotequal %}
 
                             {% endfor %}
-                         {% if info.belong_project != 'All' %}
+                            {% if info.belong_project != 'All' %}
                                 <option value="All">All</option>
                             {% endif %}
                         </select>
@@ -113,7 +113,6 @@
 
                     <li style="padding-top: 5px">
                         <select name="module" class=" am-input-zm am-input-xm" id="module">
-                            <option selected value="{{ info.belong_module }}">{{ info.belong_module }}</option>
                         </select>
                     </li>
 
@@ -238,6 +237,7 @@
         </form>
     </div>
     <script type="text/javascript">
+
         function coolspo(id) {
             $('#co' + id).css('display', 'none');
             $('#cc' + id).css('display', 'block');
@@ -310,6 +310,11 @@
         $('#select_all').click(function () {
             var isChecked = $(this).prop("checked");
             $("input[name^='testcase']").prop("checked", isChecked);
-        })
+        });
+
+        $().ready(function () {
+            auto_load('#pro_filter', '/api/add_case/', '#module', 'module');
+        });
+
     </script>
 {% endblock %}
