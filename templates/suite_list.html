@@ -176,18 +176,10 @@
                                 <nav>
                                     <ul id="pre_case{{ foo.id }}" class="am-nav am-collapse">
                                         {% for path in foo.include|convert_eval %}
-                                            {% if path|data_type != 'list' %}
-                                                <li id="{{ path.0 }}">
-                                                    <a href="/api/edit_config/{{ path.config.0 }}/"
-                                                       id="{{ path.config.0 }}"
-                                                       style="color:cadetblue">{{ path.config.1 }}</a>
-                                                </li>
-                                            {% else %}
-                                                <li id="{{ path.0 }}">
-                                                    <a href="/api/edit_case/{{ path.0 }}/" id="{{ path.0 }}"
-                                                       style="color:rosybrown">{{ path.1 }}</a>
-                                                </li>
-                                            {% endif %}
+                                            <li id="{{ path.0 }}">
+                                                <a href="/api/edit_case/{{ path.0 }}/" id="{{ path.0 }}"
+                                                   style="color:rosybrown">{{ path.1 }}</a>
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 </nav>

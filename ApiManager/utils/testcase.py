@@ -14,7 +14,7 @@ def get_time_stamp():
     return time_stamp
 
 
-def _dump_yaml_file(yaml_file, data):
+def dump_yaml_file(yaml_file, data):
     """ load yaml file and check file content format
     """
     with io.open(yaml_file, 'w', encoding='utf-8') as stream:
@@ -28,6 +28,6 @@ def _dump_json_file(json_file, data):
         json.dump(data, stream, indent=4, separators=(',', ': '), ensure_ascii=False)
 
 
-def _dump_python_file(python_file, data):
+def dump_python_file(python_file, data):
     with io.open(python_file, 'w', encoding='utf-8') as stream:
         stream.write(data)

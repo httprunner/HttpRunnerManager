@@ -16,8 +16,7 @@
                             <div class="input-group col-md-10 col-md-offset-1">
                                 <div class="input-group-addon" style="color: #0a628f">项目列表</div>
                                 <select id='belong_project' name="project" class="form-control"
-                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')
-                                        auto_load('#form_message', '/api/add_case/', '#config', 'config')">
+                                        onchange="auto_load('#form_message', '/api/add_case/', '#belong_module_id', 'module')">
                                     <option value="{{ info.belong_project.project_name }}">{{ info.belong_project.project_name }}</option>
                                     {% for foo in project %}
                                         {% if info.belong_project.project_name != foo.project_name %}
@@ -34,14 +33,6 @@
                                 <div class="input-group-addon" style="color: #0a628f">模块列表</div>
                                 <select id="belong_module_id" name="module" class="form-control"
                                         onchange="auto_load('#form_message', '/api/add_case/', '#belong_case_id', 'case')">
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group col-md-10 col-md-offset-1">
-                                <div class="input-group-addon" style="color: #0a628f">配置列表</div>
-                                <select id="config" name="config" class="form-control">
                                 </select>
                             </div>
                         </div>
@@ -74,28 +65,12 @@
                         <button id="create_suite" type="button" class="btn btn-primary">Save Suite</button>
                     </form>
                     <nav>
-                        <ol id="pre_config">
-                            {% for path in info.include|convert_eval %}
-                                {% if path|data_type != 'list' %}
-                                    <li id="config_{{ path.config.0 }}" style="display: block">
-                                        <a style="color: red; font-size: 25px"
-                                           href="/api/edit_config/{{ path.config.0 }}/"
-                                           id="{{ path.config.0 }}">{{ path.config.1 }}</a>
-                                        <i class="js-remove"
-                                           onclick="remove_self('#config_{{ path.config.0 }}')">✖</i>
-                                    </li>
-
-                                {% endif %}
-                            {% endfor %}
-                        </ol>
                         <ol id="pre_case">
                             {% for path in info.include|convert_eval %}
-                                {% if path|data_type == 'list' %}
-                                    <li style="margin-left:15px" id="test_{{ path.0 }}">
-                                        <a style="font-size: 20px" href="/api/edit_case/{{ path.0 }}/"
-                                           id="{{ path.0 }}">{{ path.1 }}</a><i
-                                            class="js-remove" onclick="remove_self('#test_{{ path.0 }}')">✖</i></li>
-                                {% endif %}
+                                <li style="margin-left:15px" id="test_{{ path.0 }}">
+                                    <a style="font-size: 20px" href="/api/edit_case/{{ path.0 }}/"
+                                       id="{{ path.0 }}">{{ path.1 }}</a><i
+                                        class="js-remove" onclick="remove_self('#test_{{ path.0 }}')">✖</i></li>
                             {% endfor %}
                         </ol>
                     </nav>
@@ -112,19 +87,6 @@
             $("#pre_case").disableSelection();
         });
 
-        $('#config').on('change', function () {
-            if ($('#config').val() !== '请选择') {
-                var case_id = $('#config').val();
-                var case_name = $('#config option:selected').text();
-                var href = "<li id=" + case_id + " style='display: block'>" +
-                    "<a style='color: red; font-size: 25px' href='/api/edit_config/" + case_id + "/' id = " + case_id + ">config：" + case_name + "" +
-                    "</a><i class=\"js-remove\" onclick=remove_self('#" + case_id + "')>✖</i></li>";
-                $('#pre_config li').each(function () {
-                    $(this).remove();
-                });
-                $("#pre_config").prepend(href);
-            }
-        });
 
         $('#add_to_right').on('click', function () {
             var include = $('#belong_case_id').val();
@@ -154,13 +116,6 @@
             }
             var include = [];
             var i = 0;
-            if ($('#pre_config li').length > 0) {
-                const name = $("#pre_config li a").attr('id');
-                const value = $("#pre_config li a").text();
-                include[i++] = {
-                    'config': [name, value]
-                };
-            }
             $("#pre_case li a").each(function () {
                 include[i++] = [$(this).attr('id'), $(this).text()];
             });
