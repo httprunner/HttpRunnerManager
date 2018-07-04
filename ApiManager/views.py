@@ -301,49 +301,6 @@ def run_batch_test(request, Webhook=None):
         main_hrun.delay(testcase_dir_path, report_name)
         return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
 
-# def run_batch_test(request):
-#     """
-#     批量运行用例
-#     :param request:
-#     :return:
-#     """
-#     if request.session.get('login_status'):
-#         kwargs = {
-#             "failfast": False,
-#         }
-#         runner = HttpRunner(**kwargs)
-#
-#         testcase_dir_path = os.path.join(os.getcwd(), "suite")
-#         testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
-#
-#         if request.is_ajax():
-#             try:
-#                 kwargs = json.loads(request.body.decode('utf-8'))
-#             except ValueError:
-#                 logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
-#                 return HttpResponse('信息解析异常，请重试')
-#             test_list = kwargs.pop('id')
-#             base_url = kwargs.pop('env_name')
-#             type = kwargs.pop('type')
-#             report_name = kwargs.get('report_name', None)
-#             run_by_batch(test_list, base_url, testcase_dir_path, type=type)
-#             main_hrun.delay(testcase_dir_path, report_name)
-#             return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
-#         else:
-#             type = request.POST.get('type', None)
-#             base_url = request.POST.get('env_name')
-#             test_list = request.body.decode('utf-8').split('&')
-#             if type:
-#                 run_by_batch(test_list, base_url, testcase_dir_path, type=type, mode=True)
-#             else:
-#                 run_by_batch(test_list, base_url, testcase_dir_path)
-#
-#             runner.run(testcase_dir_path)
-#
-#             shutil.rmtree(testcase_dir_path)
-#             return render_to_response('report_template.html', runner.summary)
-#     else:
-#         return HttpResponseRedirect("/api/login/")
 
 def project_list(request, id):
     """
