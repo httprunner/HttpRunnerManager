@@ -83,7 +83,8 @@ function auto_load(id, url, target, type) {
     } else {
         data = {
             "task": {
-                "name": data
+                "name": data,
+                "type": type
             }
         }
     }

@@ -9,7 +9,7 @@ import yaml
 from django.db.models import Sum
 from djcelery.models import PeriodicTask
 
-from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports
+from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports, TestSuite
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data
 from ApiManager.utils.task_opt import create_task
@@ -137,6 +137,21 @@ def load_modules(**kwargs):
     belong_project = kwargs.get('name').get('project')
     module_info = ModuleInfo.objects.filter(belong_project__project_name=belong_project) \
         .values_list('id', 'module_name').order_by('-create_time')
+    module_info = list(module_info)
+    string = ''
+    for value in module_info:
+        string = string + str(value[0]) + '^=' + value[1] + 'replaceFlag'
+    return string[:len(string) - 11]
+
+def load_testsuites(**kwargs):
+    """
+    加载对应项目的模块信息，用户前端ajax请求返回
+    :param kwargs:  dict：项目相关信息
+    :return: str: module_info
+    """
+    belong_project = kwargs.get('name').get('project')
+    module_info = TestSuite.objects.filter(belong_project__project_name=belong_project) \
+        .values_list('id', 'suite_name').order_by('-create_time')
     module_info = list(module_info)
     string = ''
     for value in module_info:
@@ -381,7 +396,10 @@ def task_logic(**kwargs):
     :return:
     """
     if 'task' in kwargs.keys():
-        return load_modules(**kwargs.pop('task'))
+        if kwargs.get('task').get('type') == 'module':
+            return load_modules(**kwargs.pop('task'))
+        else:
+            return load_testsuites(**kwargs.pop('task'))
     if kwargs.get('name') is '':
         return '任务名称不可为空'
     elif kwargs.get('project') is '':
@@ -411,7 +429,12 @@ def task_logic(**kwargs):
 
     if 'module' in kwargs.keys():
         kwargs.pop('project')
-        return create_task(name, 'ApiManager.tasks.module_hrun', kwargs, crontab, desc)
+
+        if kwargs.pop('mode') == '1':
+            return create_task(name, 'ApiManager.tasks.module_hrun', kwargs, crontab, desc)
+        else:
+            kwargs['suite'] = kwargs.pop('module')
+            return create_task(name, 'ApiManager.tasks.suite_hrun', kwargs, crontab, desc)
     else:
         return create_task(name, 'ApiManager.tasks.project_hrun', kwargs, crontab, desc)
 

@@ -11,7 +11,20 @@
                 <dl class="am-icon-home" style="float: right;"> 当前位置： 定时任务 > <a href="#">新增任务</a></dl>
             </div>
             <div class="fbneirong">
+
+
                 <form class="form-horizontal" id="add_task">
+
+                    <div class="form-group">
+                        <div class="input-group col-md-4 col-md-offset-1">
+                            <div class="input-group-addon" style="color: #0a628f">任务类型</div>
+                            <select name="mode" class="form-control" id="mode">
+                                <option value="1">Project or Module</option>
+                                <option value="2">Test Suite</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="input-group col-md-4 col-md-offset-1">
                             <div class="input-group-addon" style="color: #0a628f">任务名称</div>
@@ -34,9 +47,8 @@
 
                     <div class="form-group">
                         <div class="input-group col-md-4 col-md-offset-1">
-                            <div class="input-group-addon" style="color: #0a628f">选择项目</div>
-                            <select name="project" class="form-control"
-                                    onclick="auto_load('#add_task', '/api/add_task/', '#belong_module_id', 'module')">
+                            <div class="input-group-addon" style="color: #0a628f">可选项目</div>
+                            <select id="project" name="project" class="form-control">
                                 <option value="">请选择</option>
                                 {% for foo in  project %}
                                     <option value="{{ foo.project_name }}">{{ foo.project_name }}</option>
@@ -57,7 +69,7 @@
                         <div class="input-group col-md-4 col-md-offset-1">
                             <div class="input-group-addon" style="color: #0a628f">定时配置</div>
                             <input type="text" class="form-control" id="crontab_time" name="crontab_time"
-                                   placeholder="请输入正确的crontab表达式 例如： 11 * * * *" value="">
+                                   placeholder="crontab表达式 例如： 11 * * * *" value="">
                         </div>
                     </div>
 
@@ -71,12 +83,12 @@
 
                     <div class="form-group">
                         <div class="input-group col-md-4 col-md-offset-1">
-                            <div class="input-group-addon" id="close_collapse" style="color: #0a628f">模块列表</div>
+                            <div class="input-group-addon" id="close_collapse" style="color: #0a628f">任务列表</div>
 
                             <a class="am-btn am-btn-primary am-radius am-btn-block" href="#" id="pre_collapse"
                                style="font-size: 16px; background-color: #fff; color: #555; text-align: left"
                                data-am-collapse="{target: '#pre_case'}">
-                                模 块 队 列
+                                任 务 执 行 顺 序
                             </a>
                             <nav>
                                 <ul id="pre_case" class="am-nav am-collapse">
@@ -109,6 +121,24 @@
 
         $('#close_collapse').mouseover(function () {
             $('#pre_case').collapse('close');
+        });
+
+         $("select[name='mode']").on('change', function () {
+             $('#pre_case li').remove();
+             $("select[name='module'] option").remove();
+            if($('#mode').val() === '1') {
+                $("#add_task > div:nth-child(5) > div:nth-child(1) > div:nth-child(1)").text("可选模块");
+            }else{
+                $("#add_task > div:nth-child(5) > div:nth-child(1) > div:nth-child(1)").text("可选Suite");
+            }
+        });
+
+        $("select[name='project']").on('change', function () {
+            if($('#mode').val() === '1') {
+                auto_load('#add_task', '/api/add_task/', '#belong_module_id', 'module');
+            }else{
+                auto_load('#add_task', '/api/add_task/', '#belong_module_id', 'suite');
+            }
         });
 
         $('#belong_module_id').on('change', function () {

@@ -624,6 +624,7 @@ def add_task(request):
         return HttpResponseRedirect("/api/login/")
 
 
+
 def upload_file(request):
     if request.session.get('login_status'):
         account = request.session["now_account"]
@@ -835,24 +836,3 @@ def echo(request):
             for i, line in enumerate(stdout):
                 request.websocket.send(bytes(line, encoding='utf8'))
             client.close()
-
-
-def test_login_valid(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        if username == 'lcc' and password == 'lcc':
-            return JsonResponse({"status": True, "code": "0001"})
-        else:
-            return JsonResponse({"status": False, "code": "0009"})
-
-
-def test_login_json(request):
-    if request.method == 'POST':
-        info = json.loads(request.body.decode('utf-8'))
-        username = info.get("username")
-        password = info.get("password")
-        if username == 'lcc' and password == 'lcc':
-            return JsonResponse({"status": True, "code": "0001"})
-        else:
-            return JsonResponse({"status": False, "code": "0009"})
