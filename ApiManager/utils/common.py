@@ -426,11 +426,12 @@ def task_logic(**kwargs):
         return '任务名称重复，请重新命名'
     desc = " ".join(str(i) for i in crontab_time)
     name = kwargs.get('name')
+    mode = kwargs.pop('mode')
 
     if 'module' in kwargs.keys():
         kwargs.pop('project')
 
-        if kwargs.pop('mode') == '1':
+        if mode == '1':
             return create_task(name, 'ApiManager.tasks.module_hrun', kwargs, crontab, desc)
         else:
             kwargs['suite'] = kwargs.pop('module')
