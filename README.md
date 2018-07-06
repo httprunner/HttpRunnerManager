@@ -102,7 +102,6 @@ Key Features
 ![注册页面](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/register_01.jpg)<br>
 ![登录页面](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/login_01.jpg)<br>
 
-<br>
 2、登陆后默认跳转到首页，左侧为菜单栏，上排有快捷操作按钮，当前只简单的做了项目，模块，用例，配置的统计
 ![首页](https://github.com/HttpRunner/HttpRunnerManager/blob/master/images/index_01.jpg)<br>
 <br>
