@@ -1,132 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-    <!-- /.website title -->
-    <title>登 录</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     {% load staticfiles %}
-    <!-- CSS Files -->
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-    <!-- Colors -->
-    <link href="{% static "/assets/css/css-index.css" %}" rel="stylesheet" media="screen">
-    <link href="https://cdn.bootcss.com/bootstrap-validator/0.5.3/css/bootstrapValidator.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="{% static 'assets/iconfont/style.css' %}" type="text/css" rel="stylesheet">
 
     <style>
-        .has-error .checkbox, .has-error .checkbox-inline, .has-error .control-label, .has-error .help-block, .has-error .radio, .has-error .radio-inline, .has-error.checkbox label, .has-error.checkbox-inline label, .has-error.radio label, .has-error.radio-inline label {
-            color: limegreen;
+        body {
+            color: #fff;
+            font-family: "微软雅黑";
+            font-size: 14px;
+        }
+
+        .wrap1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: auto
+        }
+
+        /*把整个屏幕真正撑开--而且能自己实现居中*/
+        .main_content {
+            background: url({% static "assets/img/main_bg.png" %}) repeat;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            float: none;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .login_btn {
+            display: block;
+            background: #3872f6;
+            color: #fff;
+            font-size: 15px;
+            width: 100%;
+            line-height: 50px;
+            border-radius: 3px;
+            border: none;
+        }
+
+        .login_input {
+            width: 100%;
+            border: 1px solid #3872f6;
+            border-radius: 3px;
+            line-height: 40px;
+            padding: 2px 5px 2px 30px;
+            background: none;
+        }
+
+        .icon_font {
+            position: absolute;
+            bottom: 15px;
+            left: 10px;
+            font-size: 18px;
+            color: #3872f6;
+        }
+
+        .font16 {
+            font-size: 16px;
+        }
+
+        .mg-t20 {
+            margin-top: 20px;
+        }
+
+        @media (min-width: 200px) {
+            .pd-xs-20 {
+                padding: 20px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .pd-sm-50 {
+                padding: 50px;
+            }
+        }
+
+        #grad {
+            background: -webkit-linear-gradient(#4990c1, #52a3d2, #6186a3); /* Safari 5.1 - 6.0 */
+            background: -o-linear-gradient(#4990c1, #52a3d2, #6186a3); /* Opera 11.1 - 12.0 */
+            background: -moz-linear-gradient(#4990c1, #52a3d2, #6186a3); /* Firefox 3.6 - 15 */
+            background: linear-gradient(#4990c1, #52a3d2, #6186a3); /* 标准的语法 */
         }
     </style>
+
 </head>
 
-<body data-spy="scroll" data-target="#navbar-scroll">
+<body style="background:url({% static "assets/img/bg.jpg" %}) no-repeat;">
 
-<!-- /.preloader -->
-<div id="preloader" style="background: #fff url({% static "assets/img/loading.GIF" %}) no-repeat center center;"></div>
-<div id="top"></div>
-
-<!-- /.parallax full screen background image -->
-<div class="fullscreen landing parallax" style="background-image:url({% static "assets/img/bg.jpg" %});"
-     data-img-width="2000" data-img-height="1333" data-diff="100">
-
-    <div class="overlay">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-7">
-
-                    <!-- /.logo -->
-                    <div class="logo wow fadeInDown"><a href=""><img src="{% static "assets/img/logo.png" %}"
-                                                                     alt="logo"></a></div>
-
-                    <!-- /.main title -->
-                    <h1 class="wow fadeInLeft">
-                        HTTP Runner Manager, Landing Page
-                    </h1>
-
-                    <!-- /.header paragraph -->
-                    <div class="landing-text wow fadeInUp">
-                        <p>Take full reuse of Python's existing powerful libraries: HttpRunner, Celery and Django. And
-                            achieve the goal of API automation test, production environment monitoring, and API
-                            performance test, with a concise and elegant manner.
-
-                        </p>
-                    </div>
-
-                    <!-- /.header button -->
-                    <div class="head-btn wow fadeInLeft">
-                        <a href="https://github.com/HttpRunner/HttpRunnerManager" class="btn-default">Download</a>
-                    </div>
-
-
-                </div>
-
-                <!-- /.signup form -->
-                <div class="col-md-5">
-
-                    <div class="signup-header wow fadeInUp">
-                        <h3 class="form-title text-center">GET STARTED</h3>
-                        <form class="form-header" action="/api/login/" role="form" method="POST" id="login_form">
-                            <div class="form-group">
-                                <input class="form-control input-lg" name="account" id="account" type="text"
-                                       placeholder="Your Account">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control input-lg" name="password" id="password" type="password"
-                                       placeholder="Password">
-                            </div>
-                            <div class="form-group last">
-                                <input type="submit" id="login_submit" class="btn btn-warning btn-block btn-lg"
-                                       value="Login">
-                            </div>
-                            <p style="font-size: medium" class="privacy text-center">Do not have account? Please <a
-                                    href="/api/register/" style="color: darkblue">Register</a>.</p>
-                        </form>
-                    </div>
-
-                </div>
+<div class="container wrap1" style="height:450px;">
+    <h2 class="mg-b20 text-center">Welcome to HttpRunnerMananger</h2>
+    <div class="col-sm-8 col-md-5 center-auto pd-sm-50 pd-xs-20 main_content">
+        <p class="text-center font16">用户登录</p>
+        <form action="/api/login/" role="form" method="POST" id="login_form">
+            <div class="form-group mg-t20">
+                <i class="icon-user icon_font"></i>
+                <input type="text" class="login_input" name="account" id="account" placeholder="请输入用户名"/>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="form-group mg-t20">
+                <i class="icon-lock icon_font"></i>
+                <input type="password" class="login_input" name="password" id="password" placeholder="请输入密码"/>
+            </div>
+            <div class="checkbox mg-b25">
+                <label>
+                    <input type="checkbox"/>记住我的登录信息
+                </label>
+            </div>
+            <button class="login_btn" id="login_submit" value="Login" type="submit">登 录</button>
+        </form>
 
-<!-- /.javascript files -->
-<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="{% static "assets/js/custom.js" %}"></script>
-<script src="{% static "assets/js/jquery.sticky.js" %}"></script>
-<script src="{% static "assets/js/wow.min.js" %}"></script>
-<script src="{% static "assets/js/owl.carousel.min.js" %}"></script>
-<script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
-
-<script type="text/javascript">
-    $(function () {
-        $('form').bootstrapValidator({
-            message: 'This value is not valid',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                account: {
-                    message: '用户名验证失败',
-                    validators: {
-                        notEmpty: {
-                            message: '用户名不能为空'
-                        }
-                    }
-                },
-                password: {
-                    validators: {
-                        notEmpty: {
-                            message: '密码不能为空'
-                        }
-                    }
-                }
-            }
-        });
-    });
-</script>
+    </div><!--row end-->
+</div><!--container end-->
 
 </body>
 </html>

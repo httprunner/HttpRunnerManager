@@ -1,0 +1,84 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?u4m6fy');
+  src:  url('fonts/icomoon.eot?u4m6fy#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?u4m6fy') format('truetype'),
+    url('fonts/icomoon.woff?u4m6fy') format('woff'),
+    url('fonts/icomoon.svg?u4m6fy#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-logg:before {
+  content: "\e915";
+}
+.icon-manager:before {
+  content: "\e916";
+}
+.icon-user:before {
+  content: "\e917";
+}
+.icon-data:before {
+  content: "\e918";
+}
+.icon-sysmanager:before {
+  content: "\e919";
+}
+.icon-list:before {
+  content: "\e91a";
+}
+.icon-passagewaymanager:before {
+  content: "\e91b";
+}
+.icon-base:before {
+  content: "\e91c";
+}
+.icon-agentlist:before {
+  content: "\e91d";
+}
+.icon-configure:before {
+  content: "\e91e";
+}
+.icon-flow:before {
+  content: "\e91f";
+}
+.icon-orderlist:before {
+  content: "\e920";
+}
+.icon-ydlist:before {
+  content: "\e921";
+}
+.icon-agentpay:before {
+  content: "\e922";
+}
+.icon-agentsum:before {
+  content: "\e923";
+}
+.icon-passagewaysum:before {
+  content: "\e924";
+}
+.icon-custom:before {
+  content: "\e925";
+}
+.icon-address:before {
+  content: "\e926";
+}
+.icon-lock:before {
+  content: "\e927";
+}
+
