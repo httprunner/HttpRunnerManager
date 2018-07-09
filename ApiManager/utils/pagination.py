@@ -116,7 +116,7 @@ def get_pager_info(Model, filter_query, url, id, per_items=12):
         if belong_project != 'All':
             obj = obj.filter(belong_project__project_name__contains=belong_project)
 
-        else:
+        elif belong_module != '请选择':
             obj = obj.filter(module_name__contains=belong_module) if belong_module != 'All' \
                 else obj.filter(test_user__contains=user)
 
