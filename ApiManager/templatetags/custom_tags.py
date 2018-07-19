@@ -2,6 +2,8 @@ import json
 
 from django import template
 
+from ApiManager.utils.common import update_include
+
 register = template.Library()
 
 
@@ -22,7 +24,7 @@ def convert_eval(value):
     :param value:
     :return: the value which had been eval
     """
-    return eval(value)
+    return update_include(eval(value))
 
 
 @register.filter(name='json_dumps')
