@@ -143,6 +143,7 @@ def load_modules(**kwargs):
         string = string + str(value[0]) + '^=' + value[1] + 'replaceFlag'
     return string[:len(string) - 11]
 
+
 def load_testsuites(**kwargs):
     """
     加载对应项目的模块信息，用户前端ajax请求返回
@@ -170,7 +171,7 @@ def load_cases(type=1, **kwargs):
     if module == '请选择':
         return ''
     case_info = TestCaseInfo.objects.filter(belong_project=belong_project, belong_module=module, type=type). \
-            values_list('id', 'name').order_by('-create_time')
+        values_list('id', 'name').order_by('-create_time')
     case_info = list(case_info)
     string = ''
     for value in case_info:
@@ -590,3 +591,17 @@ def get_total_values():
 
     return total
 
+
+def update_include(include):
+    for i in range(0, len(include)):
+        if isinstance(include[i], dict):
+            id = include[i]['config'][0]
+            name = TestCaseInfo.objects.get(id=id).name
+            include[i] = {
+                'config': [id, name]
+            }
+        else:
+            id = include[i][0]
+            name = TestCaseInfo.objects.get(id=id).name
+            include[i] = [id, name]
+    return include
