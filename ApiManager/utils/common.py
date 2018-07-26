@@ -625,4 +625,22 @@ def timestamp_to_datetime(summary):
             except Exception:
                 pass
 
+            record.get('meta_data', {}).get('response', {}).pop('content')
+            record.get('meta_data', {}).get('response', {}).pop('content_type')
+            record.get('meta_data', {}).get('response', {}).pop('url')
+            record.get('meta_data', {}).get('response', {}).pop('ok')
+            record.get('meta_data', {}).get('response', {}).pop('encoding')
+
+            try:
+                body = record['meta_data']['request']['body']
+            except KeyError:
+                pass
+            else:
+                if isinstance(body, bytes):
+                    record['meta_data']['request'].pop('body')
+            try:
+               record['meta_data']['request'].pop('files')
+            except KeyError:
+                pass
+
     return summary
