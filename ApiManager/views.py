@@ -16,7 +16,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session, get_total_values
+    init_filter_session, get_total_values, timestamp_to_datetime
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data
 from ApiManager.utils.pagination import get_pager_info
@@ -242,7 +242,7 @@ def run_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        return render_to_response('report_template.html', runner.summary)
+        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
 
 
 @login_check
@@ -286,7 +286,7 @@ def run_batch_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        return render_to_response('report_template.html', runner.summary)
+        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
 
 
 @login_check

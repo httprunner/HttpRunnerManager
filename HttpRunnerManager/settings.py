@@ -152,7 +152,7 @@ SESSION_COOKIE_AGE = 300 * 60
 djcelery.setup_loader()
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'Asia/Shanghai'
-BROKER_URL = 'amqp://dev:zwc123@42.51.222.237:5672//' if DEBUG else 'amqp://dev:zwc123@192.168.91.45:5672//'
+BROKER_URL = 'amqp://dev:zwc123@192.168.91.45:5672//' if DEBUG else 'amqp://dev:zwc123@192.168.91.45:5672//'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERY_ACCEPT_CONTENT = ['application/json']

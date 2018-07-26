@@ -424,7 +424,7 @@ def copy_suite_data(id, name):
     return 'ok'
 
 
-def add_test_reports(start_at, report_name=None, **kwargs):
+def add_test_reports(report_name=None, **kwargs):
     """
     定时任务或者异步执行报告信息落地
     :param start_at: time: 开始时间
@@ -432,15 +432,15 @@ def add_test_reports(start_at, report_name=None, **kwargs):
     :param kwargs: dict: 报告结果值
     :return:
     """
-    kwargs.get('time')['start_at'] = start_at
-    report_name = report_name if report_name else start_at
+
+    report_name = report_name if report_name else kwargs.get('time')['start_at']
     kwargs['html_report_name'] = report_name
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
         'successes': kwargs.get('stat').get('successes'),
         'testsRun': kwargs.get('stat').get('testsRun'),
-        'start_at': start_at,
+        'start_at': kwargs.get('time')['start_at'],
         'reports': kwargs
     }
 

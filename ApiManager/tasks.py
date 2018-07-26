@@ -9,6 +9,7 @@ from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
 from ApiManager.models import ProjectInfo
+from ApiManager.utils.common import timestamp_to_datetime
 from ApiManager.utils.emails import send_email_reports
 from ApiManager.utils.operation import add_test_reports
 from ApiManager.utils.runner import run_by_project, run_by_module, run_by_suite
@@ -29,11 +30,10 @@ def main_hrun(testset_path, report_name):
         "failfast": False,
     }
     runner = HttpRunner(**kwargs)
-    run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
     runner.run(testset_path)
     shutil.rmtree(testset_path)
-    add_test_reports(run_time, report_name=report_name, **runner.summary)
-    return runner.summary
+    add_test_reports(report_name=report_name, **runner.summary)
+    return timestamp_to_datetime(runner.summary)
 
 
 @shared_task
@@ -56,16 +56,15 @@ def project_hrun(name, base_url, project, receiver):
 
     run_by_project(id, base_url, testcase_dir_path)
 
-    run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
-    add_test_reports(run_time, report_name=name, **runner.summary)
+    add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return runner.summary
+    return timestamp_to_datetime(runner.summary)
 
 
 @shared_task
@@ -92,16 +91,16 @@ def module_hrun(name, base_url, module, receiver):
             run_by_module(value[0], base_url, testcase_dir_path)
     except ObjectDoesNotExist:
         return '找不到模块信息'
-    run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
+
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
-    add_test_reports(run_time, report_name=name, **runner.summary)
+    add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return runner.summary
+    return timestamp_to_datetime(runner.summary)
 
 
 @shared_task
@@ -129,16 +128,16 @@ def suite_hrun(name, base_url, suite, receiver):
     except ObjectDoesNotExist:
         return '找不到Suite信息'
 
-    run_time = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime(time.time()))
+
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
-    add_test_reports(run_time, report_name=name, **runner.summary)
+    add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return runner.summary
+    return timestamp_to_datetime(runner.summary)
 
 
 def send_html_reports(receiver, runner):

@@ -605,3 +605,19 @@ def update_include(include):
             name = TestCaseInfo.objects.get(id=id).name
             include[i] = [id, name]
     return include
+
+
+def timestamp_to_datetime(summary):
+    summary['time']['start_at'] = datetime.datetime.fromtimestamp(summary['time']['start_at'])
+    for detail in summary['details']:
+        if 'time' in detail.keys() and 'start_at' in detail.get('time', {}).keys():
+            detail['time']['start_at'] = datetime.datetime.fromtimestamp(detail['time']['start_at'])
+        for record in detail['records']:
+            if 'meta_data' in record.keys() and 'request' in record.get('meta_data',{}).keys() and 'start_timestamp' in record.get('meta_data', {}).get('request', {}).keys():
+                try:
+                    record['meta_data']['request']['start_timestamp'] = datetime.datetime.fromtimestamp(
+                        record['meta_data']['request']['start_timestamp'])
+                except TypeError:
+                    continue
+
+    return summary

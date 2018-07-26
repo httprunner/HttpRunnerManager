@@ -15,7 +15,7 @@ def run_by_single(index, base_url, path):
     """
     config = {
         'config': {
-            'name': 'base_url config',
+            'name': '',
             'request': {
                 'base_url': base_url
             }
@@ -35,6 +35,8 @@ def run_by_single(index, base_url, path):
     name = obj.name
     project = obj.belong_project
     module = obj.belong_module.module_name
+
+    config['config']['name'] = name
 
     testcase_dir_path = os.path.join(path, project)
 
@@ -60,6 +62,7 @@ def run_by_single(index, base_url, path):
                 config_id = test_info.pop('config')[0]
                 config_request = eval(TestCaseInfo.objects.get(id=config_id).request)
                 config_request.get('config').get('request').setdefault('base_url', base_url)
+                config_request['config']['name'] = name
                 testcase_list[0] = config_request
             else:
                 id = test_info[0]
