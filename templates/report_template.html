@@ -38,7 +38,7 @@
 
 <nav>
     <div class="nav-wrapper">
-        <a href="#!" class="brand-logo blue darken-3">API</a>
+        <a href="#!" class="brand-logo blue darken-3">Extent</a>
 
         <!-- slideout menu -->
         <ul id='slide-out' class='side-nav fixed hide-on-med-and-down'>
@@ -61,7 +61,7 @@
         <ul id='nav-mobile' class='right hide-on-med-and-down nav-right'>
             <li>
                 <a href='#!'>
-                    <span class='label suite-start-time blue darken-3'>{{ time.start_at|date:"Y-m-d H:i:s"  }}</span>
+                    <span class='label suite-start-time blue darken-3'>{{ time.start_at }}</span>
                 </a>
             </li>
             <li>
@@ -213,7 +213,7 @@
                 <ul id='test-collection' class='test-collection'>
 
                     {% for test_suite_summary in details %}
-                        {% if test_suite_summary.success == true %}
+                        {% if test_suite_summary.success == True %}
                             <li class='test displayed active has-leaf pass' status='pass' bdd='true'
                                 test-id='{{ test_suite_summary.name }}_{{ forloop.counter }}'>
                                 {% else %}
@@ -223,7 +223,7 @@
                         <div class='test-heading'>
                             <span class='test-name'>{{ test_suite_summary.name }}</span>
                             <span class='test-time'>{{ test_suite_summary.base_url }}</span>
-                            {% if test_suite_summary.success == true %}
+                            {% if test_suite_summary.success == True %}
                                 <span class='test-status right pass'>pass</span>
                             {% else %}
                                 <span class='test-status right fail'>fail</span>
@@ -233,7 +233,7 @@
                         </div>
                         <div class='test-content hide'>
                             <div class='test-time-info'>
-                                <span class='label start-time'>{{ test_suite_summary.time.start_at|date:"Y-m-d H:i:s" }}</span>
+                                <span class='label start-time'>{{ test_suite_summary.time.start_at }}</span>
                                 <span class='label end-time'>{{ test_suite_summary.time.duration|floatformat:3  }} seconds</span>
                             </div>
                             <div class='test-desc'>Pass: {{ test_suite_summary.stat.successes }} ;
@@ -260,7 +260,7 @@
                                     {% endif %}
                                 <div class='collapsible-header'>
                                     <div class='node-name'>{{ record.name }}</div>
-                                    <span class='node-time'>{{ record.start_timestamp|date:"Y-m-d H:i:s" }}</span>
+                                    <span class='node-time'>{{ record.start_timestamp }}</span>
                                     <span class='node-duration'>{{ record.meta_data.response.response_time_ms }} ms</span>
                                     {% if  record.status == 'success' %}
                                         <span class='test-status right pass'>pass</span>
@@ -494,10 +494,10 @@
                                     <tbody>
                                     {% for test_suite_summary in details %}
                                         <tr style="border: 1px solid #49cc90; background-color: rgba(73, 204, 144, .1)">
-                                            <td>{{ test_suite_summary.time.start_at|date:"Y-m-d H:i:s" }}</td>
+                                            <td>{{ test_suite_summary.time.start_at }}</td>
                                             <td class='linked'
                                                 test-id='{{ test_suite_summary.name }}_{{ forloop.counter }}'>{{ test_suite_summary.name }}</td>
-                                            {% if test_suite_summary.success == true %}
+                                            {% if test_suite_summary.success == True %}
                                                 <td><span class='test-status pass'>pass</span></td>
                                             {% else %}
                                                 <td><span class='test-status fail'>fail</span></td>
@@ -506,7 +506,7 @@
                                         </tr>
                                         {% for record in test_suite_summary.records %}
                                             <tr>
-                                                <td>{{ record.meta_data.request.start_timestamp|date:"Y-m-d H:i:s" }}</td>
+                                                <td>{{ record.meta_data.request.start_timestamp }}</td>
                                                 <td class='linked'
                                                     test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
                                                 {% if record.status == 'success' %}
@@ -556,7 +556,7 @@
                                         <tbody>
                                         {% for record in test_suite_summary.records %}
                                             <tr>
-                                                <td>{{ record.meta_data.request.start_timestamp|date:"Y-m-d H:i:s" }}</td>
+                                                <td>{{ record.meta_data.request.start_timestamp }}</td>
                                                 <td class='linked'
                                                     test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
                                                 {% if record.status == 'success' %}
@@ -610,7 +610,7 @@
                 <div class='col s2'>
                     <div class='card-panel r'>
                         Start
-                        <div class='panel-lead'>{{ time.start_at|date:"Y-m-d H:i:s" }}</div>
+                        <div class='panel-lead'>{{ time.start_at }}</div>
                     </div>
                 </div>
                 <div class='col s2'>
@@ -661,7 +661,7 @@
 <script>
     var test_suite_success = 0;
     {%for test_suite_summary in details %}
-        {% if test_suite_summary.success == true %}
+        {% if test_suite_summary.success == True %}
             test_suite_success = test_suite_success + 1;
         {% endif %}
 

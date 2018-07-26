@@ -3,7 +3,6 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import shutil
-import time
 
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
@@ -32,8 +31,9 @@ def main_hrun(testset_path, report_name):
     runner = HttpRunner(**kwargs)
     runner.run(testset_path)
     shutil.rmtree(testset_path)
+    runner.summary = timestamp_to_datetime(runner.summary)
     add_test_reports(report_name=report_name, **runner.summary)
-    return timestamp_to_datetime(runner.summary)
+    return runner.summary
 
 
 @shared_task
@@ -59,12 +59,14 @@ def project_hrun(name, base_url, project, receiver):
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
+    runner.summary = timestamp_to_datetime(runner.summary)
+
     add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return timestamp_to_datetime(runner.summary)
+    return runner.summary
 
 
 @shared_task
@@ -95,12 +97,13 @@ def module_hrun(name, base_url, module, receiver):
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
+    runner.summary = timestamp_to_datetime(runner.summary)
     add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return timestamp_to_datetime(runner.summary)
+    return runner.summary
 
 
 @shared_task
@@ -132,12 +135,13 @@ def suite_hrun(name, base_url, suite, receiver):
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
+    runner.summary = timestamp_to_datetime(runner.summary)
     add_test_reports(report_name=name, **runner.summary)
 
     if receiver != '':
         send_html_reports(receiver, runner)
 
-    return timestamp_to_datetime(runner.summary)
+    return runner.summary
 
 
 def send_html_reports(receiver, runner):
@@ -146,7 +150,7 @@ def send_html_reports(receiver, runner):
     if os.path.exists(report_dir_path):
         shutil.rmtree(report_dir_path)
 
-    html_report_name = runner.summary.get('time')['start_at'] + '.html'
+    html_report_name = runner.summary.get('time')['start_at'].replace(":", "-") + '.html'
     report_dir_path = os.path.join(report_dir_path, html_report_name)
 
     runner.gen_html_report()

@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -432,16 +433,15 @@ def add_test_reports(report_name=None, **kwargs):
     :param kwargs: dict: 报告结果值
     :return:
     """
-
-    report_name = report_name if report_name else kwargs.get('time')['start_at']
+    report_name = report_name if report_name else kwargs['time']['start_at']
     kwargs['html_report_name'] = report_name
     test_reports = {
         'report_name': report_name,
         'status': kwargs.get('success'),
         'successes': kwargs.get('stat').get('successes'),
         'testsRun': kwargs.get('stat').get('testsRun'),
-        'start_at': kwargs.get('time')['start_at'],
-        'reports': kwargs
+        'start_at': kwargs['time']['start_at'],
+        'reports': json.dumps(kwargs)
     }
 
     TestReports.objects.create(**test_reports)

@@ -549,8 +549,7 @@ def view_report(request, id):
     :param id: str or int：报告名称索引
     :return:
     """
-
-    reports = eval(TestReports.objects.get(id=id).reports)
+    reports = eval(json.dumps(TestReports.objects.get(id=id).reports))
     reports.get('time')['start_at'] = TestReports.objects.get(id=id).start_at
     return render_to_response('report_template.html', reports)
 
@@ -669,7 +668,7 @@ def download_report(request, id):
         runner.summary = eval(TestReports.objects.get(id=id).reports)
         runner.gen_html_report()
 
-        html_report_name = runner.summary.get('time')['start_at'] + '.html'
+        html_report_name = runner.summary['time']['start_at'].replace(":", "-") + '.html'
         report_dir_path = os.path.join(report_dir_path, html_report_name)
 
         def file_iterator(file_name, chunk_size=512):

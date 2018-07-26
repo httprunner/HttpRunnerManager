@@ -67,7 +67,7 @@ def render_html_report(summary, html_report_name=None, html_report_template=None
         html_report_template = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
             "templates",
-            "default_report_template.html"
+            "extent_report_template.html"
         )
         logger.log_debug("No html report template specified, use default.")
     else:
@@ -77,8 +77,8 @@ def render_html_report(summary, html_report_name=None, html_report_template=None
     logger.log_debug("render data: {}".format(summary))
 
     report_dir_path = os.path.join(os.getcwd(), "reports")
-    start_at_timestamp = int(summary["time"]["start_at"])
-    summary["time"]["start_datetime"] = datetime.fromtimestamp(start_at_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    start_at_timestamp = summary["time"]["start_at"].replace(":", "-")
+
     if html_report_name:
         summary["html_report_name"] = html_report_name
         report_dir_path = os.path.join(report_dir_path, html_report_name)

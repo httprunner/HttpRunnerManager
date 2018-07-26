@@ -213,7 +213,7 @@
                 <ul id='test-collection' class='test-collection'>
 
                     {% for test_suite_summary in details %}
-                        {% if test_suite_summary.success == true %}
+                        {% if test_suite_summary.success == True %}
                             <li class='test displayed active has-leaf pass' status='pass' bdd='true'
                                 test-id='{{ test_suite_summary.name }}_{{ loop.index }}'>
                                 {% else %}
@@ -223,7 +223,7 @@
                         <div class='test-heading'>
                             <span class='test-name'>{{ test_suite_summary.name }}</span>
                             <span class='test-time'>{{ test_suite_summary.base_url }}</span>
-                            {% if test_suite_summary.success == true %}
+                            {% if test_suite_summary.success == True %}
                                 <span class='test-status right pass'>pass</span>
                             {% else %}
                                 <span class='test-status right fail'>fail</span>
@@ -497,7 +497,7 @@
                                             <td>{{ test_suite_summary.time.start_at }}</td>
                                             <td class='linked'
                                                 test-id='{{ test_suite_summary.name }}_{{ loop.index }}'>{{ test_suite_summary.name }}</td>
-                                            {% if test_suite_summary.success == true %}
+                                            {% if test_suite_summary.success == True %}
                                                 <td><span class='test-status pass'>pass</span></td>
                                             {% else %}
                                                 <td><span class='test-status fail'>fail</span></td>
@@ -661,7 +661,7 @@
 <script>
     var test_suite_success = 0;
     {%for test_suite_summary in details %}
-        {% if test_suite_summary.success == true %}
+        {% if test_suite_summary.success == True %}
             test_suite_success = test_suite_success + 1;
         {% endif %}
 
