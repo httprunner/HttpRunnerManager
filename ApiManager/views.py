@@ -242,7 +242,8 @@ def run_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
+        summary = timestamp_to_datetime(runner.summary)
+        return render_to_response('report_template.html', summary)
 
 
 @login_check
@@ -286,7 +287,8 @@ def run_batch_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
+        summary = timestamp_to_datetime(runner.summary)
+        return render_to_response('report_template.html', summary)
 
 
 @login_check
@@ -549,8 +551,7 @@ def view_report(request, id):
     :param id: str or int：报告名称索引
     :return:
     """
-    reports = eval(json.dumps(TestReports.objects.get(id=id).reports))
-    reports.get('time')['start_at'] = TestReports.objects.get(id=id).start_at
+    reports = json.loads(TestReports.objects.get(id=id).reports)
     return render_to_response('report_template.html', reports)
 
 
@@ -665,7 +666,7 @@ def download_report(request, id):
             shutil.rmtree(report_dir_path)
 
         runner = HttpRunner()
-        runner.summary = eval(TestReports.objects.get(id=id).reports)
+        runner.summary = json.loads(TestReports.objects.get(id=id).reports)
         runner.gen_html_report()
 
         html_report_name = runner.summary['time']['start_at'].replace(":", "-") + '.html'
