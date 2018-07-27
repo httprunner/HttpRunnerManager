@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -8,6 +9,7 @@ import sys
 import paramiko
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
 
@@ -18,7 +20,7 @@ from ApiManager.utils.common import module_info_logic, project_info_logic, case_
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
     init_filter_session, get_total_values, timestamp_to_datetime
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
-    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data
+    del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data, add_test_reports
 from ApiManager.utils.pagination import get_pager_info
 from ApiManager.utils.runner import run_by_batch, run_test_by_type
 from ApiManager.utils.task_opt import delete_task, change_task_status
@@ -218,17 +220,11 @@ def run_test(request):
     testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
 
     if request.is_ajax():
-        try:
-            kwargs = json.loads(request.body.decode('utf-8'))
-        except ValueError:
-            logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
-            return HttpResponse('信息解析异常，请重试')
+        kwargs = json.loads(request.body.decode('utf-8'))
         id = kwargs.pop('id')
         base_url = kwargs.pop('env_name')
         type = kwargs.pop('type')
-
         run_test_by_type(id, base_url, testcase_dir_path, type)
-
         report_name = kwargs.get('report_name', None)
         main_hrun.delay(testcase_dir_path, report_name)
         return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
@@ -238,12 +234,11 @@ def run_test(request):
         type = request.POST.get('type', 'test')
 
         run_test_by_type(id, base_url, testcase_dir_path, type)
-
         runner.run(testcase_dir_path)
-
         shutil.rmtree(testcase_dir_path)
-        summary = timestamp_to_datetime(runner.summary)
-        return render_to_response('report_template.html', summary)
+        runner.summary = timestamp_to_datetime(runner.summary,type=False)
+
+        return render_to_response('report_template.html', runner.summary)
 
 
 @login_check
@@ -263,11 +258,7 @@ def run_batch_test(request):
     testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
 
     if request.is_ajax():
-        try:
-            kwargs = json.loads(request.body.decode('utf-8'))
-        except ValueError:
-            logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
-            return HttpResponse('信息解析异常，请重试')
+        kwargs = json.loads(request.body.decode('utf-8'))
         test_list = kwargs.pop('id')
         base_url = kwargs.pop('env_name')
         type = kwargs.pop('type')
@@ -287,8 +278,9 @@ def run_batch_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        summary = timestamp_to_datetime(runner.summary)
-        return render_to_response('report_template.html', summary)
+        runner.summary = timestamp_to_datetime(runner.summary,type=False)
+
+        return render_to_response('report_template.html', runner.summary)
 
 
 @login_check
@@ -551,8 +543,8 @@ def view_report(request, id):
     :param id: str or int：报告名称索引
     :return:
     """
-    reports = json.loads(TestReports.objects.get(id=id).reports)
-    return render_to_response('report_template.html', reports)
+    reports = TestReports.objects.get(id=id).reports
+    return render_to_response('view_report.html', {"reports": mark_safe(reports)})
 
 
 @login_check
@@ -661,16 +653,18 @@ def get_project_info(request):
 @login_check
 def download_report(request, id):
     if request.method == 'GET':
-        report_dir_path = os.path.join(os.getcwd(), "reports")
-        if os.path.exists(report_dir_path):
-            shutil.rmtree(report_dir_path)
 
-        runner = HttpRunner()
-        runner.summary = json.loads(TestReports.objects.get(id=id).reports)
-        runner.gen_html_report()
+        summary = TestReports.objects.get(id=id)
+        reports = summary.reports
+        start_at = summary.start_at
 
-        html_report_name = runner.summary['time']['start_at'].replace(":", "-") + '.html'
-        report_dir_path = os.path.join(report_dir_path, html_report_name)
+        if os.path.exists(os.path.join(os.getcwd(), "reports")):
+            shutil.rmtree(os.path.join(os.getcwd(), "reports"))
+        os.makedirs(os.path.join(os.getcwd(), "reports"))
+
+        report_path = os.path.join(os.getcwd(), "reports{}{}.html".format(separator, start_at.replace(":", "-")))
+        with open(report_path, 'w+', encoding='utf-8') as stream:
+            stream.write(reports)
 
         def file_iterator(file_name, chunk_size=512):
             with open(file_name, encoding='utf-8') as f:
@@ -681,10 +675,9 @@ def download_report(request, id):
                     else:
                         break
 
-        the_file_name = report_dir_path
-        response = StreamingHttpResponse(file_iterator(the_file_name))
+        response = StreamingHttpResponse(file_iterator(report_path))
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(start_at.replace(":", "-") + '.html')
         return response
 
 

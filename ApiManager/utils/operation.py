@@ -1,11 +1,13 @@
-import json
+import datetime
 import logging
+import os
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
     TestSuite
+from ApiManager.views import separator
 
 logger = logging.getLogger('HttpRunnerManager')
 
@@ -110,7 +112,7 @@ def add_module_data(type, **kwargs):
     else:
         if module_name != module_opt.get_module_name('', type=False, id=kwargs.get('index')) \
                 and module_opt.filter(belong_project__project_name__exact=belong_project) \
-                        .filter(module_name__exact=module_name).count() > 0:
+                .filter(module_name__exact=module_name).count() > 0:
             return '该模块已存在，请重新命名'
         try:
             module_opt.update_module(kwargs.pop('index'), **kwargs)
@@ -227,7 +229,7 @@ def edit_suite_data(**kwargs):
     suite_obj = TestSuite.objects.get(id=id)
     try:
         if suite_name != suite_obj.suite_name and \
-                        TestSuite.objects.filter(belong_project=belong_project, suite_name=suite_name).count() > 0:
+                TestSuite.objects.filter(belong_project=belong_project, suite_name=suite_name).count() > 0:
             return 'Suite已存在, 请重新命名'
         suite_obj.suite_name = suite_name
         suite_obj.belong_project = belong_project
@@ -425,7 +427,7 @@ def copy_suite_data(id, name):
     return 'ok'
 
 
-def add_test_reports(report_name=None, **kwargs):
+def add_test_reports(runner, report_name=None):
     """
     定时任务或者异步执行报告信息落地
     :param start_at: time: 开始时间
@@ -433,15 +435,25 @@ def add_test_reports(report_name=None, **kwargs):
     :param kwargs: dict: 报告结果值
     :return:
     """
-    report_name = report_name if report_name else kwargs['time']['start_at']
-    kwargs['html_report_name'] = report_name
+    time_stamp = int(runner.summary["time"]["start_at"])
+    runner.summary['time']['start_datetime'] = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+    report_name = report_name if report_name else runner.summary['time']['start_datetime']
+    runner.summary['html_report_name'] = report_name
+
+    report_path = os.path.join(os.getcwd(), "reports{}{}.html".format(separator, int(runner.summary['time']['start_at'])))
+    runner.gen_html_report(html_report_template=os.path.join(os.getcwd(), "templates{}extent_report_template.html".format(separator)))
+
+    with open(report_path, encoding='utf-8') as stream:
+        reports = stream.read()
+
     test_reports = {
         'report_name': report_name,
-        'status': kwargs.get('success'),
-        'successes': kwargs.get('stat').get('successes'),
-        'testsRun': kwargs.get('stat').get('testsRun'),
-        'start_at': kwargs['time']['start_at'],
-        'reports': json.dumps(kwargs)
+        'status': runner.summary.get('success'),
+        'successes': runner.summary.get('stat').get('successes'),
+        'testsRun': runner.summary.get('stat').get('testsRun'),
+        'start_at': runner.summary['time']['start_datetime'],
+        'reports': reports
     }
 
     TestReports.objects.create(**test_reports)
+    return report_path

@@ -31,9 +31,10 @@ def main_hrun(testset_path, report_name):
     runner = HttpRunner(**kwargs)
     runner.run(testset_path)
     shutil.rmtree(testset_path)
+
     runner.summary = timestamp_to_datetime(runner.summary)
-    add_test_reports(report_name=report_name, **runner.summary)
-    return runner.summary
+    report_path = add_test_reports(runner, report_name=report_name)
+    os.remove(report_path)
 
 
 @shared_task
@@ -57,16 +58,14 @@ def project_hrun(name, base_url, project, receiver):
     run_by_project(id, base_url, testcase_dir_path)
 
     runner.run(testcase_dir_path)
-
     shutil.rmtree(testcase_dir_path)
-    runner.summary = timestamp_to_datetime(runner.summary)
 
-    add_test_reports(report_name=name, **runner.summary)
+    runner.summary = timestamp_to_datetime(runner.summary)
+    report_path = add_test_reports(runner, report_name=name)
 
     if receiver != '':
-        send_html_reports(receiver, runner)
-
-    return runner.summary
+        send_email_reports(receiver, report_path)
+    os.remove(report_path)
 
 
 @shared_task
@@ -98,12 +97,11 @@ def module_hrun(name, base_url, module, receiver):
 
     shutil.rmtree(testcase_dir_path)
     runner.summary = timestamp_to_datetime(runner.summary)
-    add_test_reports(report_name=name, **runner.summary)
+    report_path = add_test_reports(runner, report_name=name)
 
     if receiver != '':
-        send_html_reports(receiver, runner)
-
-    return runner.summary
+        send_email_reports(receiver, report_path)
+    os.remove(report_path)
 
 
 @shared_task
@@ -131,28 +129,13 @@ def suite_hrun(name, base_url, suite, receiver):
     except ObjectDoesNotExist:
         return '找不到Suite信息'
 
-
     runner.run(testcase_dir_path)
 
     shutil.rmtree(testcase_dir_path)
+
     runner.summary = timestamp_to_datetime(runner.summary)
-    add_test_reports(report_name=name, **runner.summary)
+    report_path = add_test_reports(runner, report_name=name)
 
     if receiver != '':
-        send_html_reports(receiver, runner)
-
-    return runner.summary
-
-
-def send_html_reports(receiver, runner):
-    report_dir_path = os.path.join(os.getcwd(), "reports")
-
-    if os.path.exists(report_dir_path):
-        shutil.rmtree(report_dir_path)
-
-    html_report_name = runner.summary.get('time')['start_at'].replace(":", "-") + '.html'
-    report_dir_path = os.path.join(report_dir_path, html_report_name)
-
-    runner.gen_html_report()
-
-    send_email_reports(receiver, report_dir_path)
+        send_email_reports(receiver, report_path)
+    os.remove(report_path)

@@ -94,7 +94,7 @@ class TestReports(BaseTable):
     status = models.BooleanField()
     testsRun = models.IntegerField()
     successes = models.IntegerField()
-    reports = models.TextField(null=False)
+    reports = models.TextField()
 
 
 class EnvInfo(BaseTable):

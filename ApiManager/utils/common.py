@@ -607,9 +607,12 @@ def update_include(include):
     return include
 
 
-def timestamp_to_datetime(summary):
-    time_stamp = int(summary["time"]["start_at"])
-    summary["time"]["start_at"] = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+def timestamp_to_datetime(summary, type=True):
+    if not type:
+        time_stamp = int(summary["time"]["start_at"])
+        summary['time']['start_datetime'] = datetime.datetime. \
+            fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+
     for detail in summary['details']:
         try:
             time_stamp = int(detail['time']['start_at'])
@@ -624,23 +627,4 @@ def timestamp_to_datetime(summary):
                     datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
             except Exception:
                 pass
-
-            record.get('meta_data', {}).get('response', {}).pop('content')
-            record.get('meta_data', {}).get('response', {}).pop('content_type')
-            record.get('meta_data', {}).get('response', {}).pop('url')
-            record.get('meta_data', {}).get('response', {}).pop('ok')
-            record.get('meta_data', {}).get('response', {}).pop('encoding')
-
-            try:
-                body = record['meta_data']['request']['body']
-            except KeyError:
-                pass
-            else:
-                if isinstance(body, bytes):
-                    record['meta_data']['request'].pop('body')
-            try:
-               record['meta_data']['request'].pop('files')
-            except KeyError:
-                pass
-
     return summary

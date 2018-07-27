@@ -48,7 +48,6 @@ def run_by_single(index, base_url, path):
         except ObjectDoesNotExist:
             debugtalk = ''
 
-        dump_python_file(os.path.join(testcase_dir_path, '__init__.py'), '')
         dump_python_file(os.path.join(testcase_dir_path, 'debugtalk.py'), debugtalk)
 
     testcase_dir_path = os.path.join(testcase_dir_path, module)
