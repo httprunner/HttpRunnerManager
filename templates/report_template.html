@@ -516,21 +516,23 @@
 
                                         </tr>
                                         {% for record in test_suite_summary.records %}
-                                            <tr>
-                                                <td>{{ record.meta_data.request.start_timestamp }}</td>
-                                                <td class='linked'
-                                                    test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
-                                                {% if record.status == 'success' %}
-                                                    <td><span class='test-status pass'>pass</span></td>
-                                                {% elif record.status == 'failure' %}
-                                                    <td><span class='test-status fail'>fail</span></td>
-                                                {% elif record.status == 'error' %}
-                                                    <td><span class='test-status error'>error</span></td>
-                                                {% elif record.status == 'skipped' %}
-                                                    <td><span class='test-status' style="color: #fbc02d">skip</span>
-                                                    </td>
-                                                {% endif %}
-                                            </tr>
+                                            {% if record.name !=  test_suite_summary.name %}
+                                                <tr>
+                                                    <td>{{ record.meta_data.request.start_timestamp }}</td>
+                                                    <td class='linked'
+                                                        test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
+                                                    {% if record.status == 'success' %}
+                                                        <td><span class='test-status pass'>pass</span></td>
+                                                    {% elif record.status == 'failure' %}
+                                                        <td><span class='test-status fail'>fail</span></td>
+                                                    {% elif record.status == 'error' %}
+                                                        <td><span class='test-status error'>error</span></td>
+                                                    {% elif record.status == 'skipped' %}
+                                                        <td><span class='test-status' style="color: #fbc02d">skip</span>
+                                                        </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endif %}
                                         {% endfor %}
                                     {% endfor %}
                                     </tbody>
@@ -575,23 +577,21 @@
                                         </thead>
                                         <tbody>
                                         {% for record in test_suite_summary.records %}
-                                            {% if record.name !=  test_suite_summary.name %}
-                                                <tr>
-                                                    <td>{{ record.meta_data.request.start_timestamp }}</td>
-                                                    <td class='linked'
-                                                        test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
-                                                    {% if record.status == 'success' %}
-                                                        <td><span class='test-status pass'>pass</span></td>
-                                                    {% elif record.status == 'failure' %}
-                                                        <td><span class='test-status fail'>fail</span></td>
-                                                    {% elif record.status == 'error' %}
-                                                        <td><span class='test-status error'>error</span></td>
-                                                    {% elif record.status == 'skipped' %}
-                                                        <td><span class='test-status' style="color: #fbc02d">skip</span>
-                                                        </td>
-                                                    {% endif %}
-                                                </tr>
-                                            {% endif %}
+                                            <tr>
+                                                <td>{{ record.meta_data.request.start_timestamp }}</td>
+                                                <td class='linked'
+                                                    test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ forloop.counter }}'>{{ record.name }}</td>
+                                                {% if record.status == 'success' %}
+                                                    <td><span class='test-status pass'>pass</span></td>
+                                                {% elif record.status == 'failure' %}
+                                                    <td><span class='test-status fail'>fail</span></td>
+                                                {% elif record.status == 'error' %}
+                                                    <td><span class='test-status error'>error</span></td>
+                                                {% elif record.status == 'skipped' %}
+                                                    <td><span class='test-status' style="color: #fbc02d">skip</span>
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
