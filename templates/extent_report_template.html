@@ -38,7 +38,7 @@
 
 <nav>
     <div class="nav-wrapper">
-        <a href="#!" class="brand-logo blue darken-3">API</a>
+        <a href="#!" class="brand-logo blue darken-3">Extent</a>
 
         <!-- slideout menu -->
         <ul id='slide-out' class='side-nav fixed hide-on-med-and-down'>
@@ -576,21 +576,23 @@
                                         </thead>
                                         <tbody>
                                         {% for record in test_suite_summary.records %}
-                                            <tr>
-                                                <td>{{ record.meta_data.request.start_timestamp }}</td>
-                                                <td class='linked'
-                                                    test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ loop.index }}'>{{ record.name }}</td>
-                                                {% if record.status == 'success' %}
-                                                    <td><span class='test-status pass'>pass</span></td>
-                                                {% elif record.status == 'failure' %}
-                                                    <td><span class='test-status fail'>fail</span></td>
-                                                {% elif record.status == 'error' %}
-                                                    <td><span class='test-status error'>error</span></td>
-                                                {% elif record.status == 'skipped' %}
-                                                    <td><span class='test-status' style="color: #fbc02d">skip</span>
-                                                    </td>
-                                                {% endif %}
-                                            </tr>
+                                            {% if record.name !=  test_suite_summary.name %}
+                                                <tr>
+                                                    <td>{{ record.meta_data.request.start_timestamp }}</td>
+                                                    <td class='linked'
+                                                        test-id='{{ test_suite_summary.name }}_{{ record.name }}_{{ loop.index }}'>{{ record.name }}</td>
+                                                    {% if record.status == 'success' %}
+                                                        <td><span class='test-status pass'>pass</span></td>
+                                                    {% elif record.status == 'failure' %}
+                                                        <td><span class='test-status fail'>fail</span></td>
+                                                    {% elif record.status == 'error' %}
+                                                        <td><span class='test-status error'>error</span></td>
+                                                    {% elif record.status == 'skipped' %}
+                                                        <td><span class='test-status' style="color: #fbc02d">skip</span>
+                                                        </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endif %}
                                         {% endfor %}
                                         </tbody>
                                     </table>
