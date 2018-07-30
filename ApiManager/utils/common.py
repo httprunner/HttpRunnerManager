@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import os
+import platform
 from json import JSONDecodeError
 
 import yaml
@@ -13,6 +14,7 @@ from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports, TestSuite
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
     add_register_data
 from ApiManager.utils.task_opt import create_task
+
 
 logger = logging.getLogger('HttpRunnerManager')
 

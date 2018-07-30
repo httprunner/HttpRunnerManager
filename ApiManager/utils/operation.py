@@ -5,9 +5,10 @@ import os
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
+from ApiManager import separator
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
     TestSuite
-from ApiManager.views import separator
+
 
 logger = logging.getLogger('HttpRunnerManager')
 
