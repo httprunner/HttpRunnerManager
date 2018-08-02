@@ -7,6 +7,7 @@ import platform
 from json import JSONDecodeError
 
 import yaml
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
 from djcelery.models import PeriodicTask
 
@@ -598,14 +599,27 @@ def update_include(include):
     for i in range(0, len(include)):
         if isinstance(include[i], dict):
             id = include[i]['config'][0]
-            name = TestCaseInfo.objects.get(id=id).name
+            source_name = include[i]['config'][1]
+            try:
+                name = TestCaseInfo.objects.get(id=id).name
+            except ObjectDoesNotExist:
+                name = source_name+'_已删除!'
+                logger.warning('依赖的 {name} 用例/配置已经被删除啦！！'.format(name=source_name))
+
             include[i] = {
                 'config': [id, name]
             }
         else:
             id = include[i][0]
-            name = TestCaseInfo.objects.get(id=id).name
+            source_name = include[i][1]
+            try:
+                name = TestCaseInfo.objects.get(id=id).name
+            except ObjectDoesNotExist:
+                name = source_name + ' 已删除'
+                logger.warning('依赖的 {name} 用例/配置已经被删除啦！！'.format(name=source_name))
+
             include[i] = [id, name]
+
     return include
 
 
