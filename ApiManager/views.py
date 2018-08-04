@@ -7,7 +7,6 @@ import sys
 import paramiko
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
-from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
 
@@ -219,11 +218,17 @@ def run_test(request):
     testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
 
     if request.is_ajax():
-        kwargs = json.loads(request.body.decode('utf-8'))
+        try:
+            kwargs = json.loads(request.body.decode('utf-8'))
+        except ValueError:
+            logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
+            return HttpResponse('信息解析异常，请重试')
         id = kwargs.pop('id')
         base_url = kwargs.pop('env_name')
         type = kwargs.pop('type')
+
         run_test_by_type(id, base_url, testcase_dir_path, type)
+
         report_name = kwargs.get('report_name', None)
         main_hrun.delay(testcase_dir_path, report_name)
         return HttpResponse('用例执行中，请稍后查看报告即可,默认时间戳命名报告')
@@ -233,11 +238,11 @@ def run_test(request):
         type = request.POST.get('type', 'test')
 
         run_test_by_type(id, base_url, testcase_dir_path, type)
-        runner.run(testcase_dir_path)
-        shutil.rmtree(testcase_dir_path)
-        runner.summary = timestamp_to_datetime(runner.summary,type=False)
 
-        return render_to_response('report_template.html', runner.summary)
+        runner.run(testcase_dir_path)
+
+        shutil.rmtree(testcase_dir_path)
+        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
 
 
 @login_check
@@ -257,7 +262,11 @@ def run_batch_test(request):
     testcase_dir_path = os.path.join(testcase_dir_path, get_time_stamp())
 
     if request.is_ajax():
-        kwargs = json.loads(request.body.decode('utf-8'))
+        try:
+            kwargs = json.loads(request.body.decode('utf-8'))
+        except ValueError:
+            logging.error('待运行用例信息解析异常：{kwargs}'.format(kwargs=kwargs))
+            return HttpResponse('信息解析异常，请重试')
         test_list = kwargs.pop('id')
         base_url = kwargs.pop('env_name')
         type = kwargs.pop('type')
@@ -277,9 +286,7 @@ def run_batch_test(request):
         runner.run(testcase_dir_path)
 
         shutil.rmtree(testcase_dir_path)
-        runner.summary = timestamp_to_datetime(runner.summary,type=False)
-
-        return render_to_response('report_template.html', runner.summary)
+        return render_to_response('report_template.html', timestamp_to_datetime(runner.summary))
 
 
 @login_check
@@ -368,8 +375,10 @@ def test_list(request, id):
 
     else:
         filter_query = set_filter_session(request)
+
         test_list = get_pager_info(
             TestCaseInfo, filter_query, '/api/test_list/', id)
+        print(TestCaseInfo)
         manage_info = {
             'account': account,
             'test': test_list[1],
@@ -378,7 +387,9 @@ def test_list(request, id):
             'env': EnvInfo.objects.all().order_by('-create_time'),
             'project': ProjectInfo.objects.all().order_by('-update_time')
         }
+        print(manage_info)
         return render_to_response('test_list.html', manage_info)
+        print(00000000000)
 
 
 @login_check
@@ -411,6 +422,23 @@ def config_list(request, id):
         }
         return render_to_response('config_list.html', manage_info)
 
+from urllib import parse
+import collections
+
+def str_to_post_data(str):
+    """
+    从abc=123转成字典
+    :param str:
+    :return:dic
+    """
+
+    str = parse.unquote(str)
+    dic = collections.OrderedDict()
+    arr = str.split('&')
+    for item in arr:
+        item_arr = item.split('=')
+        dic[item_arr[0]] = item_arr[1]
+    return dic
 
 @login_check
 def edit_case(request, id=None):
@@ -429,6 +457,14 @@ def edit_case(request, id=None):
 
     test_info = TestCaseInfo.objects.get_case_by_id(id)
     request = eval(test_info[0].request)
+    print('---------------')
+    if 'data' in request['test']['request']:
+        str_test_data = request['test']['request']['data']
+        if '=' in str_test_data:
+            dic_test_data = str_to_post_data(str_test_data)
+            request['test']['request']['data'] = dic_test_data
+            print(request['test']['request']['data'])
+    print('---------------')
     include = eval(test_info[0].include)
     manage_info = {
         'account': account,
@@ -542,8 +578,10 @@ def view_report(request, id):
     :param id: str or int：报告名称索引
     :return:
     """
-    reports = TestReports.objects.get(id=id).reports
-    return render_to_response('view_report.html', {"reports": mark_safe(reports)})
+
+    reports = eval(TestReports.objects.get(id=id).reports)
+    reports.get('time')['start_at'] = TestReports.objects.get(id=id).start_at
+    return render_to_response('report_template.html', reports)
 
 
 @login_check
@@ -652,18 +690,16 @@ def get_project_info(request):
 @login_check
 def download_report(request, id):
     if request.method == 'GET':
+        report_dir_path = os.path.join(os.getcwd(), "reports")
+        if os.path.exists(report_dir_path):
+            shutil.rmtree(report_dir_path)
 
-        summary = TestReports.objects.get(id=id)
-        reports = summary.reports
-        start_at = summary.start_at
+        runner = HttpRunner()
+        runner.summary = eval(TestReports.objects.get(id=id).reports)
+        runner.gen_html_report()
 
-        if os.path.exists(os.path.join(os.getcwd(), "reports")):
-            shutil.rmtree(os.path.join(os.getcwd(), "reports"))
-        os.makedirs(os.path.join(os.getcwd(), "reports"))
-
-        report_path = os.path.join(os.getcwd(), "reports{}{}.html".format(separator, start_at.replace(":", "-")))
-        with open(report_path, 'w+', encoding='utf-8') as stream:
-            stream.write(reports)
+        html_report_name = runner.summary.get('time')['start_at'] + '.html'
+        report_dir_path = os.path.join(report_dir_path, html_report_name)
 
         def file_iterator(file_name, chunk_size=512):
             with open(file_name, encoding='utf-8') as f:
@@ -674,9 +710,10 @@ def download_report(request, id):
                     else:
                         break
 
-        response = StreamingHttpResponse(file_iterator(report_path))
+        the_file_name = report_dir_path
+        response = StreamingHttpResponse(file_iterator(the_file_name))
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(start_at.replace(":", "-") + '.html')
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(html_report_name)
         return response
 
 
