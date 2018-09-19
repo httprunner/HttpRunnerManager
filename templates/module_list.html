@@ -232,6 +232,11 @@
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
                                             onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '批量导出', trigger: 'hover focus'}"
+                                            onclick="download_from_project('{{ foo.id }}'+'_module')"><span
+                                            class="am-icon-download"></span></button>
                                 </div>
                             </div>
                         </td>
