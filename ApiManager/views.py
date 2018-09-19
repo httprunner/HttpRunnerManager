@@ -5,8 +5,10 @@ import shutil
 import sys
 
 import paramiko
+import yaml
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
+from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
@@ -799,3 +801,47 @@ def echo(request):
             for i, line in enumerate(stdout):
                 request.websocket.send(bytes(line, encoding='utf8'))
             client.close()
+
+
+@login_check
+def file_down(request, id):
+    if request.method == 'GET':
+        if id:
+            info = id.split('_')
+        id = info[0]
+        type = info[1]
+        if type == 'project':
+            summary = ProjectInfo.objects.get(id=id)
+            request = TestCaseInfo.objects.filter(belong_module__belong_project=id)
+            name = summary.project_name
+        elif type == 'module':
+            summary = ModuleInfo.objects.get(id=id)
+            request = TestCaseInfo.objects.filter(belong_module=id)
+            name = summary.module_name
+
+        if os.path.exists(os.path.join(os.getcwd(), "download")):
+            shutil.rmtree(os.path.join(os.getcwd(), "download"))
+        os.makedirs(os.path.join(os.getcwd(), "download"))
+        download_path = os.path.join(os.getcwd(), "download") + "{}{}.yaml".format(separator, name)
+        with open(download_path, 'a+', encoding='utf-8') as stream:
+            for i in request:
+
+                yaml.dump(eval(i.request), stream, encoding='utf-8', allow_unicode=True)
+
+    def file_iterator(file_name, chunk_size=512):
+
+        with open(file_name) as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    the_file_name = name+".yaml"
+    file_path = os.path.join(os.getcwd(), "download")+"/"+the_file_name
+    response = StreamingHttpResponse(file_iterator(file_path))
+    response['Content-Type'] = 'application/octet-stream'
+    # 如果文件名中带有中文，必须使用如下代码进行编码，否则会使用默认名字
+    response['Content-Disposition'] = "attachment; filename*=utf-8''{}".format(escape_uri_path(the_file_name))
+    return response
+
