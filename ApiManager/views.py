@@ -5,10 +5,8 @@ import shutil
 import sys
 
 import paramiko
-import yaml
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render_to_response
-from django.utils.encoding import escape_uri_path
 from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
@@ -19,7 +17,7 @@ from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, E
 from ApiManager.tasks import main_hrun
 from ApiManager.utils.common import module_info_logic, project_info_logic, case_info_logic, config_info_logic, \
     set_filter_session, get_ajax_msg, register_info_logic, task_logic, load_modules, upload_file_logic, \
-    init_filter_session, get_total_values, timestamp_to_datetime
+    init_filter_session, get_total_values, timestamp_to_datetime, make_targz
 from ApiManager.utils.operation import env_data_logic, del_module_data, del_project_data, del_test_data, copy_test_data, \
     del_report_data, add_suite_data, copy_suite_data, del_suite_data, edit_suite_data
 from ApiManager.utils.pagination import get_pager_info
@@ -261,6 +259,7 @@ def run_batch_test(request):
     if request.is_ajax():
         kwargs = json.loads(request.body.decode('utf-8'))
         test_list = kwargs.pop('id')
+        print(test_list)
         base_url = kwargs.pop('env_name')
         type = kwargs.pop('type')
         report_name = kwargs.get('report_name', None)
@@ -803,45 +802,36 @@ def echo(request):
             client.close()
 
 
-@login_check
-def file_down(request, id):
-    if request.method == 'GET':
-        if id:
-            info = id.split('_')
-        id = info[0]
-        type = info[1]
-        if type == 'project':
-            summary = ProjectInfo.objects.get(id=id)
-            request = TestCaseInfo.objects.filter(belong_module__belong_project=id)
-            name = summary.project_name
-        elif type == 'module':
-            summary = ModuleInfo.objects.get(id=id)
-            request = TestCaseInfo.objects.filter(belong_module=id)
-            name = summary.module_name
-
-        if os.path.exists(os.path.join(os.getcwd(), "download")):
-            shutil.rmtree(os.path.join(os.getcwd(), "download"))
-        os.makedirs(os.path.join(os.getcwd(), "download"))
-        download_path = os.path.join(os.getcwd(), "download") + "{}{}.yaml".format(separator, name)
-        with open(download_path, 'a+', encoding='utf-8') as stream:
-            for i in request:
-
-                yaml.dump(eval(i.request), stream, encoding='utf-8', allow_unicode=True)
+def file_down(request):
+    if os.path.exists(os.path.join(os.getcwd(), "download")):
+        shutil.rmtree(os.path.join(os.getcwd(), "download"))
+    download_dir_path = os.path.join(os.getcwd(), "download")
+    zip_dir_path = os.path.join(download_dir_path, get_time_stamp())
+    the_file_name = 'export.tar.gz'
+    if request.method == 'POST':
+        kwargs = request.POST
+        id = kwargs.get('id')
+        base_url = kwargs.get('env_name', '')
+        type = kwargs.get('type')
+        run_test_by_type(id, base_url, zip_dir_path, type)
+        status = make_targz(download_dir_path+'/'+the_file_name, zip_dir_path)
+        if status != None:
+            if type == 'project':
+                return HttpResponse(get_ajax_msg(status, 'ok'))
+            else:
+                return HttpResponse(get_ajax_msg(status, 'ok'))
 
     def file_iterator(file_name, chunk_size=512):
-
-        with open(file_name) as f:
+        with open(file_name, 'rb') as f:
             while True:
                 c = f.read(chunk_size)
                 if c:
                     yield c
                 else:
                     break
-    the_file_name = name+".yaml"
-    file_path = os.path.join(os.getcwd(), "download")+"/"+the_file_name
-    response = StreamingHttpResponse(file_iterator(file_path))
+    response = StreamingHttpResponse(file_iterator(download_dir_path+'/'+the_file_name))
     response['Content-Type'] = 'application/octet-stream'
     # 如果文件名中带有中文，必须使用如下代码进行编码，否则会使用默认名字
-    response['Content-Disposition'] = "attachment; filename*=utf-8''{}".format(escape_uri_path(the_file_name))
+    response['Content-Disposition'] = "attachment; filename*=utf-8''{}".format(the_file_name)
     return response
 

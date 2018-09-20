@@ -425,11 +425,3 @@ function init_acs(language, theme, editor) {
 }
 
 
-function download_from_project(id,type) {
-    var $eleForm = $("<form method='get'></form>");
-    $eleForm.attr("action", "/api/file_down/"+id);
-    $(document.body).append($eleForm);
-    $eleForm.submit();
-}
-
-

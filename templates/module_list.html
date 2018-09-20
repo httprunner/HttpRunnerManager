@@ -235,7 +235,7 @@
                                     <button type="button"
                                             class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
                                             data-am-popover="{content: '批量导出', trigger: 'hover focus'}"
-                                            onclick="download_from_project('{{ foo.id }}'+'_module')"><span
+                                            onclick="post('/api/file_down/',{'id':'{{ foo.id }}','type':'module'})"><span
                                             class="am-icon-download"></span></button>
                                 </div>
                             </div>

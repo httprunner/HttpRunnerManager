@@ -3,7 +3,7 @@ import io
 import json
 import logging
 import os
-import platform
+import tarfile
 from json import JSONDecodeError
 
 import yaml
@@ -644,3 +644,11 @@ def timestamp_to_datetime(summary, type=True):
             except Exception:
                 pass
     return summary
+
+
+def make_targz(output_filename, source_dir):
+    try:
+        with tarfile.open(output_filename, "w:gz") as tar:
+            tar.add(source_dir, arcname=os.path.basename(source_dir))
+    except IOError:
+        return "读写异常，请重试"
