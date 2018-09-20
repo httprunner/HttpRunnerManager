@@ -341,13 +341,13 @@
                                                         <td class='timestamp'>{{ key }}</td>
                                                         <td class='step-details'>
                                                             {% if key == "headers" %}
-                                                                {% for header_key, header_value in record.meta_data.request.headers.items %}
+                                                                {% for header_key, header_value in record.meta_data.response.headers.items %}
                                                                     <div>
                                                                         <strong>{{ header_key }}</strong>: {{ header_value }}
                                                                     </div>
                                                                 {% endfor %}
                                                             {% elif key == "text" %}
-                                                                {% if value == "image" %}
+                                                                {% if  record.meta_data.response.content_type == 'image' %}
                                                                     <img src="{{ record.meta_data.response.content }}"/>
                                                                 {% else %}
                                                                     <pre>{{ record.meta_data.response.text }}</pre>
