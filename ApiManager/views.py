@@ -11,7 +11,6 @@ from django.utils.safestring import mark_safe
 from djcelery.models import PeriodicTask
 from dwebsocket import accept_websocket
 
-from ApiManager import separator
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
     TestSuite
 from ApiManager.tasks import main_hrun
@@ -610,7 +609,7 @@ def upload_file(request):
         if project_name == '请选择' or module_name == '请选择':
             return JsonResponse({"status": '项目或模块不能为空'})
 
-        upload_path = sys.path[0] + separator + 'upload' + separator
+        upload_path = os.path.join(sys.path[0], 'upload')
 
         if os.path.exists(upload_path):
             shutil.rmtree(upload_path)
@@ -620,7 +619,7 @@ def upload_file(request):
         upload_obj = request.FILES.getlist('upload')
         file_list = []
         for i in range(len(upload_obj)):
-            temp_path = upload_path + upload_obj[i].name
+            temp_path = os.path.join(upload_path, upload_obj[i].name)
             file_list.append(temp_path)
             try:
                 with open(temp_path, 'wb') as data:
@@ -661,7 +660,7 @@ def download_report(request, id):
             shutil.rmtree(os.path.join(os.getcwd(), "reports"))
         os.makedirs(os.path.join(os.getcwd(), "reports"))
 
-        report_path = os.path.join(os.getcwd(), "reports{}{}.html".format(separator, start_at.replace(":", "-")))
+        report_path = os.path.join(os.getcwd(), "reports", "{}.html".format(start_at.replace(":", "-")))
         with open(report_path, 'w+', encoding='utf-8') as stream:
             stream.write(reports)
 
