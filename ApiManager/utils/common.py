@@ -10,6 +10,7 @@ import yaml
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
 from djcelery.models import PeriodicTask
+from har2case.core import HarParser
 
 from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports, TestSuite
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
@@ -537,6 +538,17 @@ def upload_file_logic(files, project, module, account):
         elif file_suffix in ['.yaml', '.yml']:
             with io.open(file, 'r', encoding='utf-8') as stream:
                 content = yaml.load(stream)
+
+        elif file_suffix in ['.har']:
+            hp = HarParser(file)
+            jfile = os.path.splitext(file)[0] + '.json'
+            hp.gen_json(jfile)
+            with io.open(jfile, encoding='utf-8') as json_file:
+                try:
+                    content = json.load(json_file)
+                except JSONDecodeError:
+                    err_msg = u"JSONDecodeError: JSON file format error: {}".format(file)
+                    logging.error(err_msg)
 
         for test_case in content:
             test_dict = {
