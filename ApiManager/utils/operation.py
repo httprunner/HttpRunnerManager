@@ -5,7 +5,6 @@ import os
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError
 
-from ApiManager import separator
 from ApiManager.models import ProjectInfo, ModuleInfo, TestCaseInfo, UserInfo, EnvInfo, TestReports, DebugTalk, \
     TestSuite
 
@@ -441,8 +440,8 @@ def add_test_reports(runner, report_name=None):
     report_name = report_name if report_name else runner.summary['time']['start_datetime']
     runner.summary['html_report_name'] = report_name
 
-    report_path = os.path.join(os.getcwd(), "reports{}{}.html".format(separator, int(runner.summary['time']['start_at'])))
-    runner.gen_html_report(html_report_template=os.path.join(os.getcwd(), "templates{}extent_report_template.html".format(separator)))
+    report_path = os.path.join(os.getcwd(), "reports", "{}.html".format(int(runner.summary['time']['start_at'])))
+    runner.gen_html_report(html_report_template=os.path.join(os.getcwd(), "templates", "extent_report_template.html"))
 
     with open(report_path, encoding='utf-8') as stream:
         reports = stream.read()
