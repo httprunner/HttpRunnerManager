@@ -159,6 +159,7 @@
                 <button type="button" class="am-btn am-btn-danger am-round am-btn-xs am-icon-bug"
                         onclick="run_test('batch', '/api/run_batch_test/', 'project')">运行
                 </button>
+
             </dl>
         </div>
 
@@ -251,6 +252,11 @@
                                             data-am-popover="{content: '删除', trigger: 'hover focus'}"
                                             onclick="invalid('{{ foo.id }}')"><span
                                             class="am-icon-trash-o"></span></button>
+                                    <button type="button"
+                                            class="am-btn am-btn-default am-btn-xs am-text-danger am-round"
+                                            data-am-popover="{content: '批量导出', trigger: 'hover focus'}"
+                                            onclick="post('/api/file_down/',{'id':'{{ foo.id }}','type':'project'})"><span
+                                            class="am-icon-download"></span></button>
                                 </div>
                             </div>
                         </td>

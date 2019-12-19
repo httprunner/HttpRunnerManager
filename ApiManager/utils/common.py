@@ -3,7 +3,7 @@ import io
 import json
 import logging
 import os
-import platform
+import tarfile
 from json import JSONDecodeError
 
 import yaml
@@ -13,7 +13,7 @@ from djcelery.models import PeriodicTask
 
 from ApiManager.models import ModuleInfo, TestCaseInfo, TestReports, TestSuite
 from ApiManager.utils.operation import add_project_data, add_module_data, add_case_data, add_config_data, \
-    add_register_data
+    add_register_data, env_data_logic
 from ApiManager.utils.task_opt import create_task
 
 
@@ -548,6 +548,14 @@ def upload_file_logic(files, project, module, account):
             if 'config' in test_case.keys():
                 test_case.get('config')['config_info'] = test_dict
                 add_config_data(type=True, **test_case)
+                if test_case['config'].get('request').get('base_url', '') is '':
+                    pass
+                else:
+                    env_config = dict()
+                    env_config['index'] = 'add'
+                    env_config['env_name'] = test_case['config']['name']
+                    env_config['base_url'] = test_case['config']['request']['base_url']
+                    env_data_logic(**env_config)
 
             if 'test' in test_case.keys():  # 忽略config
                 test_case.get('test')['case_info'] = test_dict
@@ -644,3 +652,11 @@ def timestamp_to_datetime(summary, type=True):
             except Exception:
                 pass
     return summary
+
+
+def make_targz(output_filename, source_dir):
+    try:
+        with tarfile.open(output_filename, "w:gz") as tar:
+            tar.add(source_dir, arcname=os.path.basename(source_dir))
+    except IOError:
+        return "读写异常，请重试"
